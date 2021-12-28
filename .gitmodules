@@ -4,3 +4,6 @@
 [submodule "ThirdParty/glfw"]
 	path = ThirdParty/glfw
 	url = https://github.com/MadLadSquad/glfw.git
+[submodule "ThirdParty/logger"]
+	path = ThirdParty/logger
+	url = https://github.com/MadLadSquad/UntitledLog.git
