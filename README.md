@@ -14,6 +14,7 @@ The manager requires the following to be installed on your system:
 - X
 - PulseAudio
 - An AMD/Intel/Nvidia GPU with supported drivers
+- The cli install scripts require bash, since for now they include bashisms and don't fully conform
 ## Install
 ### Dependencies and host setup
 First make sure you have the dependencies listed above!
