@@ -11,7 +11,6 @@ while true; do
     esac
 done
 
-exit
 # Enable lxd daemon
 rc-update add lxd default || systemctl enable lxd.service
 
@@ -39,9 +38,12 @@ usermod -a -G lxd "${user}"
 # Start the lxd service
 /etc/init.d/lxd start || systemctl start lxd.service
 
-su "${user}" -c "xhost +local: && exit"
+su "${user}" -c "(xhost +local: | grep 'access control disabled' || xhost +local:) && exit"
 
 # This complicated line checks if the needed string is there, if it is continue, if it's not add it, restart pulseaudio and continue
 (grep "load-module module-native-protocol-unix auth-anonymous=1" /etc/pulse/default.pa &> /dev/null && echo -e "\x1B[32mPulseAudio already installed!\x1B[0m") || (sed -i "s/load-module module-native-protocol-unix/& auth-anonymous=1/" /etc/pulse/default.pa && su "${user}" -c "killall pulseaudio && pulseaudio &> /dev/null & disown && exit")
+
+# Start lxd init
+lxd init --auto --storage-backend=dir
 
 echo -e "\x1B[32mPre-install finished successfully!\x1B[0m"
