@@ -84,4 +84,45 @@ namespace UGM::Core::Utilities
      * @return The process ID of the child process, needed so that when used with multithreading users can kill the process after they join the thread!
      */
     pid_t loadLineByLineFromPID(std::vector<std::string>& lineBuffer, char* const* command, bool bUsingThreads = false, std::thread* thread = nullptr);
+
+    /**
+     * @brief The ScriptRunner class is a wrapper that executes a program and writes its stderr and stdout output to a
+     * unix pipe, which can be used to read the input from stderr and stdout
+     */
+    class ScriptRunner
+    {
+    public:
+        /**
+         * @brief Will initialize the runner with the command that was passed as a parameter. It will create a unix pipe,
+         * fork the current process, execute the command in the child process, then enable a bool to signal readiness
+         * for update
+         * @param cmd The command to run
+         */
+        void init(char* const* cmd);
+        /**
+         * @brief This update function reads everything that came from the pipe and add it to the line buffer accordingly,
+         * because this is a direct read, it needs to be rate-limited as to not slow down rendering of the GUI, which is one
+         * of the reasons the "updateBufferSize" function exists
+         * @param bFirst This bool is used to check if we're running on an initial update
+         */
+        void update(bool bFirst = false);
+        /**
+         * @brief This update function is used to make performance faster by moving buffer clearing and resizing to a
+         * different frame, between 2 regular updates
+         */
+        void updateBufferSize();
+        void destroy();
+        std::vector<std::string>& data();
+        // Returns if the process is valid
+        [[nodiscard]] bool valid() const;
+        [[nodiscard]] pid_t& getPID();
+    private:
+        std::vector<std::string> lineBuffer; // The buffer of lined messages used for displaying text line by line
+        pid_t pid = 0; // The process ID of the child process
+        int pipefd[2]; // The unix pipe file descriptors
+
+        std::string stringBuffer; // The temporary string buffer that is used on every update call
+        bool bCanUpdate = false; // A bool used to check if we're ready for an update as to not update without actually having a valid pipe or pid
+        bool bValid = true;
+    };
 }

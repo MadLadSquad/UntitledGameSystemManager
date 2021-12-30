@@ -3,7 +3,7 @@
 #include <cpp/imgui_stdlib.h>
 #include <Core/../../GUI/Window.hpp>
 #include <Core/Utilities.hpp>
-#include <csignal>
+#include <sys/wait.h>
 
 void UGM::Installer::GUI::render(UGM::GUI::Window& mainWindow)
 {
@@ -45,34 +45,49 @@ void UGM::Installer::GUI::slide0(UGM::GUI::Window& mainWindow, uint8_t& currentS
 void UGM::Installer::GUI::slide1(UGM::GUI::Window& mainWindow, uint8_t& currentSlide) noexcept
 {
     static std::string username = "root";
-    static std::vector<std::string> usernamesBuffer;
+    //static std::vector<std::string> usernamesBuffer;
     static bool bEnabled = false;
     static bool bFirst = true;
-    static std::thread tr;
-    static pid_t pid;
-    static std::vector<std::string> messageBuffer;
+    static bool bFirstTimeRunning = true;
+    //static std::thread tr;
+    //static pid_t pid;
+    //static std::vector<std::string> messageBuffer;
     static bool bStartedScript = false;
-    static std::thread scriptThread;
-    static pid_t scriptpid;
+    //static std::thread scriptThread;
+    //static pid_t scriptpid;
+    static Core::Utilities::ScriptRunner userRunner;
+    static Core::Utilities::ScriptRunner installRunner;
+    static uint8_t framesPassed = 0; // Used to ratelimit calls to update
+    static std::thread scriptRunOffloader;
 
+    framesPassed++;
     if (bFirst)
     {
-        char* const args[] = { (char*)"awk", (char*)"-F:", (char*)"{ print $1}", (char*)"/etc/passwd", nullptr };
-        pid = UGM::Core::Utilities::loadLineByLineFromPID(usernamesBuffer, args, true, &tr);
+        constexpr char* const args[] = { (char*)"awk", (char*)"-F:", (char*)"{ print $1}", (char*)"/etc/passwd", nullptr };
+        userRunner.init(args);
+        userRunner.updateBufferSize();
+        userRunner.update(true);
+        //pid = UGM::Core::Utilities::loadLineByLineFromPID(usernamesBuffer, args, true, &tr);
         bFirst = false;
     }
-
-    if (tr.joinable())
+    if (!bFirstTimeRunning)
     {
-        tr.join();
-        kill(pid, SIGTERM);
+        userRunner.update();
+        userRunner.updateBufferSize();
     }
+    if (framesPassed > 30)
+        framesPassed = 0;
+    //if (tr.joinable())
+    //{
+    //    tr.join();
+    //    kill(pid, SIGTERM);
+    //}
 
     ImGui::TextWrapped("Select your regular user");
     ImGui::SameLine();
     if (ImGui::BeginCombo("##ComboUserIn", username.c_str()))
     {
-        for (auto& a : usernamesBuffer)
+        for (auto& a : userRunner.data())
             if (ImGui::MenuItem(a.c_str()))
                 username = a;
         ImGui::EndCombo();
@@ -90,27 +105,39 @@ void UGM::Installer::GUI::slide1(UGM::GUI::Window& mainWindow, uint8_t& currentS
     if (ImGui::Button("Exit"))
         mainWindow.closeWindow();
     ImGui::SameLine();
-    if (ImGui::Button("Start") && bEnabled)
+    if (ImGui::Button("Start") && bEnabled && bFirstTimeRunning)
     {
         bStartedScript = true;
-        char* const args[] = { (char*)"lxc", (char*)"exec", (char*)"steam-ubuntu", (char*)"--", (char*)"bash", (char*)"-c", (char*)"su ubuntu -c steam", nullptr };
-        scriptpid = UGM::Core::Utilities::loadLineByLineFromPID(messageBuffer, args, true, &scriptThread);
+        constexpr char* const args[] = { (char*)"lxc", (char*)"exec", (char*)"steam-ubuntu", (char*)"--", (char*)"bash", (char*)"-c", (char*)"su ubuntu -c 'ping -c 5 google.com'", nullptr };
+        //constexpr char* const args[] = { (char*)"lxc", (char*)"exec", (char*)"steam-ubuntu", (char*)"--", (char*)"bash", (char*)"-c", (char*)"su ubuntu -c steam", nullptr };
+        //scriptpid = UGM::Core::Utilities::loadLineByLineFromPID(messageBuffer, args, true, &scriptThread);
+        installRunner.init(args);
+        installRunner.updateBufferSize();
+        installRunner.update(true);
+        scriptRunOffloader = std::thread([&](){
+            while (installRunner.valid() && !mainWindow.getWindowClose())
+            {
+                installRunner.updateBufferSize();
+                installRunner.update();
+                std::cout << "Test" << std::endl;
+            }
+        });
+        bFirstTimeRunning = false;
     }
+    // Since we're running at 60 FPS, we refresh once every 10 frames or 6 times a second
     if (bStartedScript)
     {
         ImGui::Separator();
         ImGui::BeginChild("##MessageLog");
-        for (auto& a : messageBuffer)
-            ImGui::TextWrapped("%s", a.c_str());
+        for (auto& a : installRunner.data())
+            ImGui::Text("%s", a.c_str());
         if (ImGui::GetScrollY() >= ImGui::GetScrollMaxY())
             ImGui::SetScrollHereY(1.0f);
         ImGui::EndChild();
-        if (scriptThread.joinable())
-        {
-            scriptThread.join();
-            kill(scriptpid, SIGTERM);
-            currentSlide++;
-        }
+        if (!scriptRunOffloader.joinable())
+            scriptRunOffloader.join();
+        //if (scriptRunOffloader.joinable())
+        //    scriptRunOffloader.join();
     }
 }
 
