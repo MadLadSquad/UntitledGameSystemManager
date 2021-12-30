@@ -14,7 +14,7 @@ The manager requires the following to be installed on your system:
 - X
 - PulseAudio
 - An AMD/Intel/Nvidia GPU with supported drivers
-- The cli install scripts require bash, since for now they include bashisms and don't fully conform
+- The cli install scripts require bash, since for now they include bash isms and don't fully conform
 ## Install
 ### GUI install
 The GUI installer is a GUI frontend for the scripts that we have in the cli install. 
@@ -32,7 +32,7 @@ Next, before we start with the automatic installation some manual work needs to 
 1. Install lxd and lxc
   - Gentoo: `root # emerge lxd`
   - Debian/Ubuntu: `root # apt install lxd`
-2. The following setup can be automated by running the following script `root # ./ugm-cli-prepare-install.sh`. Steps 3 trough 8 are for manual install, so if you're installing using the script skip to step 9 after you run the script!
+2. The following setup can be automated by running the following script `root # ./ugm-cli-prepare-install.sh`. Steps 3 trough 8 are for manual install, so if you're installing using the script skip to step 10 after you run the script!
 3. Add the lxd daemon to start on startup
   - OpenRC: `root # rc-update add lxd default`
   - SystemD: `root # systemctl enable lxd.service`
@@ -84,9 +84,9 @@ Next, before we start with the automatic installation some manual work needs to 
     ```
     Error: Failed to start dqlite server: raft_start(): io: load closed segment 0000000000000002-0000000000000002: unexpected format version 8095768602490157155
     ```
-    3. Change into the `/var/lib/lxd/database/global` folder and delete all of the segments mentioned in the error, and then rerun the commands
+    3. Change into the `/var/lib/lxd/database/global` folder and delete all the segments mentioned in the error, and then rerun the commands
     4. Note: this error can also happen from regular usage, from time to time
-11. The following 3 commands have been safely executed by the automated script so you can skip these steps! The following 3 commands should only be run **once**, in order to set up the host! Do **NOT** repeat them or you are going to break your system!
+11. The following 3 commands have been safely executed by the automated script, so you can skip these steps! The following 3 commands should only be run **once**, in order to set up the host! Do **NOT** repeat them, or you are going to break your system!
 13. Next run the following command `user $ xhost +local:`, this will allow X connections
 14. Now as root, run the following `root # sed -i "s/load-module module-native-protocol-unix/& auth-anonymous=1/" /etc/pulse/default.pa`
 15. Now as a normal user `user $ killall pulseaudio` and start pulseaudio again, a restart is recommended since your audio setup might break for the current session
@@ -96,23 +96,20 @@ Next, before we start with the automatic installation some manual work needs to 
   ```
 18. And you're now ready to install!
 ### CLI install
-To install trough the cli we have a handy script that you can run
+To install through the cli we have a handy script that you can run
 1. If you have done all of that setup in a single terminal instance, it's recommended that you restart your terminal instance and start fresh
-2. For users that ran with the automated method in the previous step. Run `root # lxc network edit lxdbr0`, this will open a terminal text editor, navigate to the line says `ipv6.address` and set it to `none`, next navigate to the line where it says `ipv6.nat` and set it to `"false"`. Now restart lxd
-  - OpenRC - `root # /etc/init.d/lxd restart`
-  - SystemD - `root # systemctl restart lxd.service`
 4. Next, run the following script with `user $ ./ugm-cli-install.sh`
 5. You will be asked to put in your container's name, type it in and press `Enter` when you're ready to go to the next step
 6. Next, you're going to need to select a graphics driver for your GPU, `N` for NVidia, `M` for Mesa(Intel/AMD)
-7. Pressing enter will start installing all of the necessary packages and features your gaming container needs
-8. By the end of the install your container should have the following software installed
+7. Pressing enter will start installing all the necessary packages and features your gaming container needs
+8. By the end of the installation your container should have the following software installed
   - Firefox(for managing links that come from the container)
   - Steam
   - Wine
   - Lutris
   - Winetricks
   - Protontricks
-9. The install's going to be slow, so leave the script to automatically handle installation, while all of the packages download
+9. The installation is going to be slow, so leave the script to automatically handle installation, while all the packages download
 ## Managers
 ### GUI manager
 Coming soon!
