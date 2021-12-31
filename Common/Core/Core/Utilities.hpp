@@ -6,6 +6,10 @@
 
 namespace UGM::Core::Utilities
 {
+    std::string toLower(const char* str);
+    std::string toLower(const std::string& str);
+    void toLower(std::string& str);
+
     template<typename T>
     struct Vector2
     {
@@ -125,4 +129,6 @@ namespace UGM::Core::Utilities
         bool bCanUpdate = false; // A bool used to check if we're ready for an update as to not update without actually having a valid pipe or pid
         bool bValid = true;
     };
+
+    void execandwait(char* const* command);
 }

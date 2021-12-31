@@ -49,4 +49,7 @@ lxd init --auto --storage-backend=dir
 lxc network set lxdbr0 ipv6.nat=false
 lxc network set lxdbr0 ipv6.address=none
 
+
+
 echo -e "\x1B[32mPre-install finished successfully!\x1B[0m"
+echo -e "\x1B[32mAdd the following path to your PATH environment variable in order for scripts to work: ~/.config/UntitledLinuxGamingManager/scripts/\x1B[0m"

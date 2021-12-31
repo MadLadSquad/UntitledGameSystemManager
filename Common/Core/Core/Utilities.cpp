@@ -4,6 +4,27 @@
 #include <Core/Defines.hpp>
 #include <sys/wait.h>
 
+
+std::string UGM::Core::Utilities::toLower(const char* str)
+{
+    std::string ret = str;
+    toLower(ret);
+    return ret;
+}
+
+void UGM::Core::Utilities::toLower(std::string& str)
+{
+    for (auto& a : str)
+        a = tolower(a);
+}
+
+std::string UGM::Core::Utilities::toLower(const std::string& str)
+{
+    std::string ret = str;
+    toLower(ret);
+    return ret;
+}
+
 pid_t UGM::Core::Utilities::loadLineByLineFromPID(std::vector<std::string>& lineBuffer, char* const* command, bool bUsingThreads, std::thread* thread)
 {
     int pipefd[2];
@@ -163,4 +184,16 @@ bool UGM::Core::Utilities::ScriptRunner::valid() const
 pid_t& UGM::Core::Utilities::ScriptRunner::getPID()
 {
     return pid;
+}
+
+void UGM::Core::Utilities::execandwait(char* const* command)
+{
+    auto pid = fork();
+    if (pid != -1)
+    {
+        if (pid == 0)
+            execvp(command[0], command);
+        else
+            wait(&pid);
+    }
 }

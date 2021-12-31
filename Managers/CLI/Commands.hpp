@@ -1,14 +1,20 @@
-//
-// Created by i-use-gentoo-btw on 12/31/21.
-//
+#pragma once
+#include <iostream>
 
-#ifndef UGM_GUI_INSTALLER_COMMANDS_HPP
-#define UGM_GUI_INSTALLER_COMMANDS_HPP
+namespace UGM::Managers::CLI
+{
+    void help();
 
+    void restart(bool bAll = false, char* name = (char*)"none");
+    void poweroff(bool bAll = false, char* name = (char*)"none");
+    void poweron(bool bAll = false, char* name = (char*)"none");
 
-class Commands {
+    void newContainer(char* name);
 
-};
+    void execBash(char* containerName);
+    void execProgram(char* containerName, char* command);
 
-
-#endif //UGM_GUI_INSTALLER_COMMANDS_HPP
+    void genscript(char* containerName, char* program);
+    void list();
+    void pin(char* containerName, char* program);
+}

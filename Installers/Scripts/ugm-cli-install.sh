@@ -70,4 +70,6 @@ lxc exec "${containerName}" -- bash -c "pipx install protontricks && pipx ensure
 lxc stop "${containerName}"
 lxc start "${containerName}"
 
+
+
 echo -e "\x1B[32mUbuntu container installation finished! You might experience network/audio problems, reboot and it should be fixed!\x1B[0m"

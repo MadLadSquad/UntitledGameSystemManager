@@ -10,3 +10,6 @@
 [submodule "ThirdParty/glew"]
 	path = ThirdParty/glew
 	url = https://github.com/MadLadSquad/glew-cmake.git
+[submodule "ThirdParty/yaml-cpp"]
+	path = ThirdParty/yaml-cpp
+	url = https://github.com/MadLadSquad/yaml-cpp.git

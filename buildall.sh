@@ -15,5 +15,31 @@ cd ../../../
 
 echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
 echo -e "\x1B[32mCompiled the GUI installer! \x1B[0m"
-echo -e "\x1B[32mNothing more to compile! Installer finished!\x1B[0m"
+echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
+
+cd Managers/CLI/ || exit
+mkdir build
+cd build || exit
+cmake .. -G "Unix Makefiles"
+make -j "${cpus}"
+cp ugm-cli ../../../
+
+cd ../../../
+
+echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
+echo -e "\x1B[32mCompiled the CLI manager! \x1B[0m"
+echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
+
+cd Managers/GUI/ || exit
+mkdir build
+cd build || exit
+cmake .. -G "Unix Makefiles"
+make -j "${cpus}"
+cp ugm-gui ../../../
+
+cd ../../../
+
+echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
+echo -e "\x1B[32mCompiled the GUI manager! \x1B[0m"
+echo -e "\x1B[32mNothing more to build, build finished!\x1B[0m"
 echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
