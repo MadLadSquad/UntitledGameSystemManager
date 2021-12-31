@@ -74,15 +74,15 @@ void UGM::Managers::CLI::list()
 
 void UGM::Managers::CLI::execBash(char* containerName)
 {
-    // Who the fuck cares if this
-    char* const args[] = { (char*)"lxc", (char*)"exec", containerName, (char*)"-- bash", nullptr };
+    // The current implementation doesn't work
+    char* const args[] = { (char*)"lxc", (char*)"exec", containerName, (char*)" -- bash", nullptr };
     execvp(args[0], args);
 }
 
 void UGM::Managers::CLI::execProgram(char* containerName, char* command)
 {
     // construct a really large string to run our command
-    std::string cmd = (std::string("lxc exec ") + std::string(containerName) + " -- bash -c 'su ubuntu -c " + std::string(command) + "' &> /tmp/" + command + ".log & disown");
+    std::string cmd = (std::string("lxc exec ") + std::string(containerName) + " -- bash -c \"su ubuntu -c '" + std::string(command) + "'\" &> /tmp/" + command + ".log & disown");
     // Ugly ass const cast right here
     char* const args[] = { (char*)"bash", (char*)"-c", const_cast<char*>(cmd.c_str()), nullptr };
     UGM::Core::Utilities::execandwait(args);
@@ -90,19 +90,23 @@ void UGM::Managers::CLI::execProgram(char* containerName, char* command)
 
 void UGM::Managers::CLI::genscript(char* containerName, char* program)
 {
-    std::ofstream out("~/.config/UntitledLinuxGameManager/scripts/program.sh");
+    std::cout << program << std::endl;
+    std::ofstream out(std::string("~/.config/UntitledLinuxGameManager/scripts/") + std::string(program) + ".sh");
     out << "#!/bin/bash" << std::endl;
     out << R"(if [ "$1" == "-q" ] || [ "$1" == "-Q" ] || [ "$1" == "quiet" ] || [ "$1" == "--quiet" ]; then)" << std::endl;
-    out << "    lxc exec " << containerName << " -- bash -c 'su ubuntu -c '" << program << "'' &> /tmp/" << program << ".log & disown" << std::endl;
+    out << "    lxc exec " << containerName << " -- bash -c \"su ubuntu -c '" << program << "'\" &> /tmp/" << program << ".log & disown" << std::endl;
     out << "else" << std::endl;
-    out << "    lxc exec " << containerName << " -- bash -c 'su ubuntu -c '" << program << "''" << std::endl;
+    out << "    lxc exec " << containerName << " -- bash -c \"su ubuntu -c '" << program << "'\"" << std::endl;
     out << "fi" << std::endl;
     out.close();
+
+
 }
 
 void UGM::Managers::CLI::newContainer(char* name)
 {
-    char* const args[] = { (char*)"bash", (char*)"-c", (char*)"ugm-cli-install", nullptr };
+    std::string cmd = std::string("'~/.config/UntitledLinuxGameManager/ugm-cli-install.sh --name ") + std::string(name) + "'";
+    char* const args[] = { (char*)"bash", (char*)"-c", const_cast<char*>(cmd.c_str()), nullptr };
     UGM::Core::Utilities::execandwait(args);
 }
 
