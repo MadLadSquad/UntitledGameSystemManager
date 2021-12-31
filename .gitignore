@@ -34,3 +34,4 @@
 .idea/
 Installers/GUI/cmake-build-*/
 Managers/GUI/cmake-build-*/
+Managers/CLI/cmake-build-*/
