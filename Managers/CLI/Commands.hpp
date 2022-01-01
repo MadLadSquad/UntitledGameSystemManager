@@ -9,7 +9,8 @@ namespace UGM::Managers::CLI
     void poweroff(bool bAll = false, char* name = (char*)"none");
     void poweron(bool bAll = false, char* name = (char*)"none");
 
-    void newContainer(char* name);
+    void newContainer(char* name, char* driverType);
+    void deleteContainer(char* name);
 
     void execBash(char* containerName);
     void execProgram(char* containerName, char* command);
@@ -17,4 +18,5 @@ namespace UGM::Managers::CLI
     void genscript(char* containerName, char* program);
     void list();
     void pin(char* containerName, char* program);
+    void unpin(char* containerName, char* program);
 }

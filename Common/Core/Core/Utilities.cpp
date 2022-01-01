@@ -28,10 +28,10 @@ std::string UGM::Core::Utilities::toLower(const std::string& str)
 pid_t UGM::Core::Utilities::loadLineByLineFromPID(std::vector<std::string>& lineBuffer, char* const* command, bool bUsingThreads, std::thread* thread)
 {
     int pipefd[2];
-    pipe(pipefd);
+    auto pout = pipe(pipefd);
 
     auto pid = fork();
-    if (pid != -1)
+    if (pid != -1 && pout != -1)
     {
         if (pid == 0)
         {
@@ -106,10 +106,10 @@ pid_t UGM::Core::Utilities::loadLineByLineFromPID(std::vector<std::string>& line
 void UGM::Core::Utilities::ScriptRunner::init(char* const* cmd)
 {
     stringBuffer.reserve(STRING_BUFFER_SIZE);
-    pipe(pipefd);
+    auto pout = pipe(pipefd);
 
     pid = fork();
-    if (pid != -1)
+    if (pid != -1 && pout != -1)
     {
         if (pid == 0)
         {

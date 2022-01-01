@@ -6,12 +6,12 @@
 
 namespace UGM::Core::Utilities
 {
-    std::string toLower(const char* str);
-    std::string toLower(const std::string& str);
-    void toLower(std::string& str);
+    [[maybe_unused]] std::string toLower(const char* str);
+    [[maybe_unused]] std::string toLower(const std::string& str);
+    [[maybe_unused]] void toLower(std::string& str);
 
     template<typename T>
-    struct Vector2
+    struct [[maybe_unused]] Vector2
     {
         Vector2() = default;
         explicit Vector2(const T& mult)
@@ -19,7 +19,7 @@ namespace UGM::Core::Utilities
             x = mult;
             y = mult;
         }
-        Vector2(const T& xx, const T& yy)
+        [[maybe_unused]] Vector2(const T& xx, const T& yy)
         {
             x = xx;
             y = yy;
@@ -38,7 +38,7 @@ namespace UGM::Core::Utilities
             y = mult;
             z = mult;
         }
-        Vector3(const T& xx, const T& yy, const T& zz)
+        [[maybe_unused]] Vector3(const T& xx, const T& yy, const T& zz)
         {
             x = xx;
             y = yy;
@@ -50,7 +50,7 @@ namespace UGM::Core::Utilities
     };
 
     template<typename T>
-    struct Vector4
+    struct [[maybe_unused]] Vector4
     {
         Vector4() = default;
         explicit Vector4(const T& mult)
@@ -60,7 +60,7 @@ namespace UGM::Core::Utilities
             z = mult;
             w = mult;
         }
-        Vector4(const T& xx, const T& yy, const T& zz, const T& ww)
+        [[maybe_unused]] Vector4(const T& xx, const T& yy, const T& zz, const T& ww)
         {
             x = xx;
             y = yy;
@@ -87,13 +87,13 @@ namespace UGM::Core::Utilities
      * @param thread A pointer to a std::thread
      * @return The process ID of the child process, needed so that when used with multithreading users can kill the process after they join the thread!
      */
-    pid_t loadLineByLineFromPID(std::vector<std::string>& lineBuffer, char* const* command, bool bUsingThreads = false, std::thread* thread = nullptr);
+    [[maybe_unused]] pid_t loadLineByLineFromPID(std::vector<std::string>& lineBuffer, char* const* command, bool bUsingThreads = false, std::thread* thread = nullptr);
 
     /**
      * @brief The ScriptRunner class is a wrapper that executes a program and writes its stderr and stdout output to a
      * unix pipe, which can be used to read the input from stderr and stdout
      */
-    class ScriptRunner
+    class [[maybe_unused]] ScriptRunner
     {
     public:
         /**
@@ -102,24 +102,24 @@ namespace UGM::Core::Utilities
          * for update
          * @param cmd The command to run
          */
-        void init(char* const* cmd);
+        [[maybe_unused]] void init(char* const* cmd);
         /**
          * @brief This update function reads everything that came from the pipe and add it to the line buffer accordingly,
          * because this is a direct read, it needs to be rate-limited as to not slow down rendering of the GUI, which is one
          * of the reasons the "updateBufferSize" function exists
          * @param bFirst This bool is used to check if we're running on an initial update
          */
-        void update(bool bFirst = false);
+        [[maybe_unused]] void update(bool bFirst = false);
         /**
          * @brief This update function is used to make performance faster by moving buffer clearing and resizing to a
          * different frame, between 2 regular updates
          */
-        void updateBufferSize();
-        void destroy();
-        std::vector<std::string>& data();
+        [[maybe_unused]] void updateBufferSize();
+        [[maybe_unused]] void destroy();
+        [[maybe_unused]] std::vector<std::string>& data();
         // Returns if the process is valid
-        [[nodiscard]] bool valid() const;
-        [[nodiscard]] pid_t& getPID();
+        [[maybe_unused]] [[nodiscard]] bool valid() const;
+        [[maybe_unused]] [[nodiscard]] pid_t& getPID();
     private:
         std::vector<std::string> lineBuffer; // The buffer of lined messages used for displaying text line by line
         pid_t pid = 0; // The process ID of the child process

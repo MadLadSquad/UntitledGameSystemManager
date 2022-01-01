@@ -1,16 +1,28 @@
 #!/bin/bash
-read -rp "Enter your container's name: " containerName
+if [ "$1" == "--name" ] && [ "$2" != "" ] && [ "$3" == "--driver" ] && [ "$4" != "" ]; then
+  if [ "$4" == "N" ]; then
+    pro=true
+    containerName="$2"
+  elif [ "$4" == "M" ]; then
+    pro=false
+    containerName="$2"
+  else
+    echo "You're trying to do an automated install but didn't provide the right arguments!"
+    exit
+  fi
+else
+  read -rp "Enter your container's name: " containerName
 
-pro=false
-while true; do
-    echo -e "What video drivers do you use want to use Mesa(AMD/Intel) or NVidia?"
-    read -rp "M(mesa)/N(NVidia): " yn
-    case $yn in
-        [Mm]* ) pro=false;break;;
-        [Nn]* ) pro=true;break;;
-        * ) echo "Please answer with M(Mesa) or N(NVidia)!";;
-    esac
-done
+  while true; do
+      echo -e "What video drivers do you use want to use Mesa(AMD/Intel) or NVidia?"
+      read -rp "M(mesa)/N(NVidia): " yn
+      case $yn in
+          [Mm]* ) pro=false;break;;
+          [Nn]* ) pro=true;break;;
+          * ) echo "Please answer with M(Mesa) or N(NVidia)!";;
+      esac
+  done
+fi
 
 echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
 echo -e "\x1B[32mStarting container installation!\x1B[0m"
