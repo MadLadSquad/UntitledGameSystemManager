@@ -1,14 +1,21 @@
-//
-// Created by i-use-gentoo-btw on 12/31/21.
-//
+#pragma once
+#include <Core/../../GUI/Window.hpp>
 
-#ifndef UGM_GUI_INSTALLER_GUI_HPP
-#define UGM_GUI_INSTALLER_GUI_HPP
+namespace UGM::Managers::GUI
+{
+    void render(UGM::GUI::Window& mainWindow);
 
+    void renderAboutUs(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderInfo(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderNew(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderRestart(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderPoweroff(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderPoweron(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderExit(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderDirectories(UGM::GUI::Window& mainWindow, bool& bOpen);
 
-class GUI {
+    std::string* renderSidebar(UGM::GUI::Window& mainWindow);
+    void renderMainView(UGM::GUI::Window& mainWindow, std::string* seletedContainer, const bool& bReset = false);
 
-};
-
-
-#endif //UGM_GUI_INSTALLER_GUI_HPP
+    void renderWindows(UGM::GUI::Window& mainWindow);
+}

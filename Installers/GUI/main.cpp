@@ -5,7 +5,7 @@
 int main()
 {
     UGM::GUI::Window window;
-    window.init("Untitled Linux Game Manager GUI Installer", nullptr, UGM::Installer::GUI::render);
+    window.init("Untitled Linux Game Manager GUI Installer", nullptr, UGM::Installer::GUI::render, [](UGM::GUI::Window&){});
     UGM::GUI::ImGuiUtils::init(window.data());
     while (!window.getWindowClose())
         window.tick();

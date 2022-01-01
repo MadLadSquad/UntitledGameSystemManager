@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <imgui_impl_glfw.h>
 #include <imgui_impl_opengl3.h>
+#include <imgui_internal.h>
 #include <glfw3.h>
 #include "Window.hpp"
 
@@ -70,7 +71,7 @@ void UGM::GUI::ImGuiUtils::setupTheme(ImVec4* colours)
     colours[ImGuiCol_PopupBg] = { 0.1, 0.1, 0.1, 1.0 };
 }
 
-void UGM::GUI::ImGuiUtils::beginUI(const std::function<void(Window&)>& renderFunc, Window& mainWindow)
+void UGM::GUI::ImGuiUtils::beginUI(const std::function<void(Window&)>& renderFunc, const std::function<void(Window&)>& renderWindowFunc, Window& mainWindow)
 {
     static bool opt_fullscreen = true;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
@@ -85,11 +86,11 @@ void UGM::GUI::ImGuiUtils::beginUI(const std::function<void(Window&)>& renderFun
         ImGui::SetNextWindowPos(viewport->WorkPos);
         ImGui::SetNextWindowSize(viewport->WorkSize);
         ImGui::SetNextWindowViewport(viewport->ID);
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 12.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
         window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
         window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
-        dockspace_flags |= ImGuiDockNodeFlags_PassthruCentralNode;
+        dockspace_flags |= ImGuiDockNodeFlags_PassthruCentralNode | ImGuiDockNodeFlags_AutoHideTabBar | ImGuiDockNodeFlags_NoTabBar;
     }
     else
         dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
@@ -102,12 +103,13 @@ void UGM::GUI::ImGuiUtils::beginUI(const std::function<void(Window&)>& renderFun
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
     ImGui::Begin("DockSpace Demo", &bIsOpen, window_flags | ImGuiWindowFlags_NoCollapse);
-    renderFunc(mainWindow);
     ImGui::PopStyleVar();
+    renderFunc(mainWindow);
 
     if (opt_fullscreen)
         ImGui::PopStyleVar(2);
-
+    //ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, { 0.0f, 0.0f });
+    //ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, { 0.0f, 0.0f });
     // DockSpace
     ImGuiIO& io = ImGui::GetIO();
     if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
@@ -115,8 +117,10 @@ void UGM::GUI::ImGuiUtils::beginUI(const std::function<void(Window&)>& renderFun
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
     }
+    renderWindowFunc(mainWindow);
     ImGui::End();
     ImGui::Render();
+
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
     if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)

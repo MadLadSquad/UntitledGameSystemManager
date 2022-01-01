@@ -13,7 +13,7 @@ namespace UGM::GUI
         ImGuiUtils() = default;
 
         static void init(GLFWwindow* glfwwindow);
-        static void beginUI(const std::function<void(Window&)>& renderFunc, Window& mainWindow);
+        static void beginUI(const std::function<void(Window&)>& renderFunc, const std::function<void(Window&)>& renderWindowFunc, Window& mainWindow);
         static void setupTheme(ImVec4* colours);
         static void beginFrame();
         static void shutdown();

@@ -12,9 +12,10 @@ UGM::GUI::Window::~Window()
     destroy();
 }
 
-void UGM::GUI::Window::init(const char* title, const char* imageName, const std::function<void(Window&)>& editorRenderFunc)
+void UGM::GUI::Window::init(const char* title, const char* imageName, const std::function<void(Window&)>& editorRenderFunc, const std::function<void(Window&)>& winRenderFunc)
 {
     uiRenderFunc = editorRenderFunc;
+    windowRenderFunc = winRenderFunc;
     // Crash the app when there is an error reported!
     logger.setCrashOnError(true);
     if (!glfwInit())
@@ -97,7 +98,7 @@ void UGM::GUI::Window::tick()
     glClear(GL_COLOR_BUFFER_BIT);
     ImGuiUtils::beginFrame();
     glUseProgram(0);
-    ImGuiUtils::beginUI(uiRenderFunc, *this);
+    ImGuiUtils::beginUI(uiRenderFunc, windowRenderFunc, *this);
     glfwSwapBuffers(windowMain);
 }
 

@@ -12,7 +12,7 @@ namespace UGM::GUI
         void operator=(Window const&) = delete;
         ~Window();
 
-        void init(const char* title, const char* imageName, const std::function<void(Window&)>& editorRenderFunc);
+        void init(const char* title, const char* imageName, const std::function<void(Window&)>& editorRenderFunc, const std::function<void(Window&)>& winRenderFunc);
         bool getWindowClose();
         void closeWindow();
         void tick();
@@ -23,5 +23,6 @@ namespace UGM::GUI
         static void framebufferSizeCallback(GLFWwindow* window, int width, int height);
         GLFWwindow* windowMain = nullptr;
         std::function<void(Window&)> uiRenderFunc;
+        std::function<void(Window&)> windowRenderFunc;
     };
 }
