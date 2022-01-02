@@ -208,7 +208,7 @@ void UGM::Managers::CLI::genscript(char* containerName, char* program)
 {
     auto* passwd = getpwuid(geteuid());
 
-    std_filesystem::path path = std::string("/home/") + std::string(passwd->pw_name) + std::string("/.config/UntitledLinuxGameManager/scripts/") + std::string(program) + ".sh";
+    std_filesystem::path path = std::string("/home/") + std::string(passwd->pw_name) + std::string("/.config/UntitledLinuxGameManager/scripts/") + std::string(containerName) + "-" + std::string(program) + ".sh";
     std::ofstream out(path);
     out << "#!/bin/bash" << std::endl;
     out << R"(if [ "$1" == "-q" ] || [ "$1" == "-Q" ] || [ "$1" == "quiet" ] || [ "$1" == "--quiet" ]; then)" << std::endl;

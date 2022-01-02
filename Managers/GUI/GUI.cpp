@@ -3,11 +3,11 @@
 #include <cpp/imgui_stdlib.h>
 #include <pwd.h>
 #include <yaml.h>
+#include "Commands.hpp"
 
 void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
 {
     static bool bShowAboutUs = false;
-    static bool bShowNew = false;
     static bool bShowRestart = false;
     static bool bShowPoweroff = false;
     static bool bShowPoweron = false;
@@ -40,6 +40,9 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
 
             if (ImGui::MenuItem("Restart", "all"))
                 bShowRestart = true;
+
+            if (ImGui::MenuItem("New pin"))
+                bShowPin = true;
             ImGui::EndMenu();
         }
 
@@ -67,6 +70,8 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
         renderExit(mainWindow, bShowExit);
     if (bShowDirectories)
         renderDirectories(mainWindow, bShowDirectories);
+    if (bShowPin)
+        renderPin(mainWindow, bShowPin);
 }
 
 void UGM::Managers::GUI::renderAboutUs(UGM::GUI::Window& mainWindow, bool& bOpen)
@@ -124,8 +129,7 @@ std::string* UGM::Managers::GUI::renderSidebar(UGM::GUI::Window& mainWindow)
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::MenuItem("+ New"))
-            if (!ImGui::IsPopupOpen("New Warning"))
-                ImGui::OpenPopup("New Warning");
+            bShowNew = true;
         if (ImGui::MenuItem("* Refresh"))
         {
             containersList.clear();
@@ -184,27 +188,7 @@ void UGM::Managers::GUI::renderMainView(UGM::GUI::Window& mainWindow, std::strin
     // a vector that keeps a pair of the name of the pinned application and a bool of weather it is selected
     static std::vector<std::pair<std::string, bool>> pins;
     if (bReset)
-    {
-        pins.clear();
-        YAML::Node out;
-        auto* passwd = getpwuid(geteuid());
-        std::string file = std::string("/home/") + passwd->pw_name + "/.config/UntitledLinuxGameManager/config/layout.yaml";
-        try
-        {
-            out = YAML::LoadFile(file);
-        }
-        catch (YAML::BadFile&)
-        {
-            logger.consoleLog("Couldn't open the config file!", UVK_LOG_TYPE_ERROR);
-            return;
-        }
-        const YAML::Node& containers = out["containers"];
-        if (containers)
-            for (const YAML::Node& a : containers)
-                if (a["container"] && a["pins"] && a["container"].as<std::string>() == *selectedContainer)
-                    for (const YAML::Node& f : a["pins"])
-                        pins.emplace_back( f.as<std::string>(), false );
-    }
+        refreshPins(pins);
     else
     {
         ImGui::Begin("Main", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_MenuBar);
@@ -212,31 +196,21 @@ void UGM::Managers::GUI::renderMainView(UGM::GUI::Window& mainWindow, std::strin
         {
             if (ImGui::BeginMenuBar())
             {
-                if (ImGui::MenuItem("+ New Pin"));
-                if (ImGui::MenuItem("- Delete Pin"));
-                if (ImGui::MenuItem("* Refresh"))
+                if (ImGui::MenuItem("+ New Pin"))
+                    bShowPin = true;
+                if (ImGui::MenuItem("- Delete Pin"))
                 {
-                    pins.clear();
-                    YAML::Node out;
-                    auto* passwd = getpwuid(geteuid());
-                    std::string file = std::string("/home/") + passwd->pw_name + "/.config/UntitledLinuxGameManager/config/layout.yaml";
-                    try
-                    {
-                        out = YAML::LoadFile(file);
-                    }
-                    catch (YAML::BadFile&)
-                    {
-                        logger.consoleLog("Couldn't open the config file!", UVK_LOG_TYPE_ERROR);
-                        return;
-                    }
-                    const YAML::Node& containers = out["containers"];
-                    if (containers)
-                        for (const YAML::Node& a : containers)
-                            if (a["container"] && a["pins"] && a["container"].as<std::string>() == *selectedContainer)
-                                for (const YAML::Node& f : a["pins"])
-                                    pins.emplace_back( f.as<std::string>(), false );
+                    for (auto& p : pins)
+                        if (p.second)
+                            unpin(const_cast<char*>(selectedContainer->c_str()), const_cast<char*>(p.first.c_str()));
+                    refreshPins(pins);
                 }
-                if (ImGui::MenuItem("+ Generate Script"));
+
+                if (ImGui::MenuItem("* Refresh"))
+                    refreshPins(pins);
+                if (ImGui::MenuItem("+ Generate Script"))
+                    for (auto& p : pins)
+                        genscript(const_cast<char*>(selectedContainer->c_str()), const_cast<char*>(p.first.c_str()));
                 ImGui::EndMenuBar();
             }
             size_t i = 0;
@@ -260,24 +234,25 @@ void UGM::Managers::GUI::renderWindows(UGM::GUI::Window& mainWindow)
 {
     // Will render the sidebar, and pass its selected container to the main view
     // The whole selected container passing here is like having a weirder type of singleton lmao
-    renderMainView(mainWindow, renderSidebar(mainWindow));
+    selectedContainerG = renderSidebar(mainWindow);
+    renderMainView(mainWindow, selectedContainerG);
 }
 
 void UGM::Managers::GUI::renderNew(UGM::GUI::Window& mainWindow, bool& bOpen)
 {
     if (!ImGui::IsPopupOpen("New Warning"))
         ImGui::OpenPopup("New Warning");
-    if (ImGui::BeginPopupModal("Restart Warning", &bOpen))
+    if (ImGui::BeginPopupModal("New Warning", &bOpen))
     {
         ImGui::TextWrapped("This will launch the UntitledLinuxGameManager GUI installer!");
 
-        if (ImGui::Button("Cancel##poweroff"))
+        if (ImGui::Button("Cancel##nnew"))
             bOpen = false;
         ImGui::SameLine();
         if (ImGui::Button("Start##new"))
         {
             bOpen = false;
-            mainWindow.closeWindow();
+            newContainer();
         }
         ImGui::EndPopup();
     }
@@ -389,4 +364,50 @@ void UGM::Managers::GUI::renderDirectories(UGM::GUI::Window& mainWindow, bool& b
             bOpen = false;
         ImGui::EndPopup();
     }
+}
+
+void UGM::Managers::GUI::renderPin(UGM::GUI::Window& mainWindow, bool& bOpen)
+{
+    static std::string pinname;
+    if (!ImGui::IsPopupOpen("Pin"))
+        ImGui::OpenPopup("Pin");
+    if (ImGui::BeginPopupModal("Pin"))
+    {
+        ImGui::Text("Type your desired command");
+        ImGui::SameLine();
+        ImGui::InputText("##pinInput", &pinname);
+
+        if (ImGui::Button("Exit##pin"))
+            bOpen = false;
+        ImGui::SameLine();
+        if (ImGui::Button("Pin##pin") && selectedContainerG != nullptr)
+        {
+            pin(const_cast<char*>(selectedContainerG->c_str()), const_cast<char*>(pinname.c_str()));
+            bOpen = false;
+        }
+        ImGui::EndPopup();
+    }
+}
+
+void UGM::Managers::GUI::refreshPins(std::vector<std::pair<std::string, bool>>& pins)
+{
+    pins.clear();
+    YAML::Node out;
+    auto* passwd = getpwuid(geteuid());
+    std::string file = std::string("/home/") + passwd->pw_name + "/.config/UntitledLinuxGameManager/config/layout.yaml";
+    try
+    {
+        out = YAML::LoadFile(file);
+    }
+    catch (YAML::BadFile&)
+    {
+        logger.consoleLog("Couldn't open the config file!", UVK_LOG_TYPE_ERROR);
+        return;
+    }
+    const YAML::Node& containers = out["containers"];
+    if (containers)
+        for (const YAML::Node& a : containers)
+            if (a["container"] && a["pins"] && a["container"].as<std::string>() == *selectedContainerG)
+                for (const YAML::Node& f : a["pins"])
+                    pins.emplace_back( f.as<std::string>(), false );
 }

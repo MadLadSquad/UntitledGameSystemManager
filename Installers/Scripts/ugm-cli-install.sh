@@ -82,6 +82,19 @@ lxc exec "${containerName}" -- bash -c "pipx install protontricks && pipx ensure
 lxc stop "${containerName}"
 lxc start "${containerName}"
 
-
+(grep "containers:" ~/.config/UntitledLinuxGameManager/config/layout.yaml &> /dev/null  && echo "\
+  - container: $containerName
+    pins:
+      - steam
+      - lutris
+      - firefox
+" >> ~/.config/UntitledLinuxGameManager/config/layout.yaml) || echo "\
+containers:
+  - container: $containerName
+    pins:
+      - steam
+      - lutris
+      - firefox
+" >> ~/.config/UntitledLinuxGameManager/config/layout.yaml
 
 echo -e "\x1B[32mUbuntu container installation finished! You might experience network/audio problems, reboot and it should be fixed!\x1B[0m"

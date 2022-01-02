@@ -18,6 +18,6 @@ add_subdirectory(yaml-cpp)
 
 file(GLOB_RECURSE SRC "../../Common/*.cpp" "../../Common/*.hpp" "../../ThirdParty/imgui/backends/everything/*.cpp" "../../ThirdParty/imgui/backends/everything/*.h" "../../ThirdParty/imgui/misc/cpp/*.cpp" "../../ThirdParty/imgui/misc/cpp/*.h" "../../ThirdParty/logger/*.h" "../../ThirdParty/logger/*.cpp")
 
-add_executable(ugm-gui main.cpp GUI.cpp GUI.hpp ../CLI/Commands.hpp ../CLI/Commands.cpp ${SRC})
+add_executable(ugm-gui main.cpp GUI.cpp GUI.hpp Commands.hpp Commands.cpp ${SRC})
 set_target_properties(ugm-gui PROPERTIES LINKER_LANGUAGE CXX)
 target_link_libraries(ugm-gui glfw GLEW OpenGL util pthread yaml-cpp)

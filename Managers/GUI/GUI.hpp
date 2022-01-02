@@ -13,8 +13,17 @@ namespace UGM::Managers::GUI
     void renderExit(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderDirectories(UGM::GUI::Window& mainWindow, bool& bOpen);
 
+    void renderPin(UGM::GUI::Window& mainWindow, bool& bOpen);
+
     std::string* renderSidebar(UGM::GUI::Window& mainWindow);
-    void renderMainView(UGM::GUI::Window& mainWindow, std::string* seletedContainer, const bool& bReset = false);
+    void renderMainView(UGM::GUI::Window& mainWindow, std::string* selectedContainer, const bool& bReset = false);
 
     void renderWindows(UGM::GUI::Window& mainWindow);
+
+    void refreshPins(std::vector<std::pair<std::string, bool>>& pins);
+
+    // Ugly globals here
+    inline bool bShowNew = false;
+    inline bool bShowPin = false;
+    inline std::string* selectedContainerG = nullptr;
 }
