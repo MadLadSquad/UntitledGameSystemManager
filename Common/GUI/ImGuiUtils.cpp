@@ -102,7 +102,7 @@ void UGM::GUI::ImGuiUtils::beginUI(const std::function<void(Window&)>& renderFun
     static bool bIsOpen = true;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
-    ImGui::Begin("DockSpace Demo", &bIsOpen, window_flags | ImGuiWindowFlags_NoCollapse);
+    ImGui::Begin("DockSpace Demo", &bIsOpen, window_flags | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
     ImGui::PopStyleVar();
     renderFunc(mainWindow);
 

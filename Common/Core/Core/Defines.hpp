@@ -1,5 +1,5 @@
 #pragma once
-#define STRING_BUFFER_SIZE 1024
+#define STRING_BUFFER_SIZE 512
 
 #ifndef __MINGW32__
     #if __has_include(<filesystem>)

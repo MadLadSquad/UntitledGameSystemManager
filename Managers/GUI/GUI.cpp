@@ -7,7 +7,6 @@
 void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
 {
     static bool bShowAboutUs = false;
-    static bool bShowInfo = false;
     static bool bShowNew = false;
     static bool bShowRestart = false;
     static bool bShowPoweroff = false;
@@ -48,9 +47,6 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
         {
             if (ImGui::MenuItem("About us"))
                 bShowAboutUs = true;
-
-            if (ImGui::MenuItem("Info"))
-                bShowInfo = true;
             ImGui::EndMenu();
         }
 
@@ -59,8 +55,6 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
 
     if (bShowAboutUs)
         renderAboutUs(mainWindow, bShowAboutUs);
-    if (bShowInfo)
-        renderInfo(mainWindow, bShowInfo);
     if (bShowNew)
         renderNew(mainWindow, bShowNew);
     if (bShowRestart)
@@ -267,11 +261,6 @@ void UGM::Managers::GUI::renderWindows(UGM::GUI::Window& mainWindow)
     // Will render the sidebar, and pass its selected container to the main view
     // The whole selected container passing here is like having a weirder type of singleton lmao
     renderMainView(mainWindow, renderSidebar(mainWindow));
-}
-
-void UGM::Managers::GUI::renderInfo(UGM::GUI::Window& mainWindow, bool& bOpen)
-{
-
 }
 
 void UGM::Managers::GUI::renderNew(UGM::GUI::Window& mainWindow, bool& bOpen)

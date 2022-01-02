@@ -123,7 +123,18 @@ void UGM::Core::Utilities::ScriptRunner::init(char* const* cmd)
             execvp(cmd[0], cmd);
         }
         else
+        {
             bCanUpdate = true;
+            currentpid = pid;
+            signal(SIGCHLD, [](int sig){
+                if (currentpid > 0)
+                {
+                    wait(&currentpid); // Wait for the process to finish
+                    currentpid = -1; // Reset the pid
+                }
+            });
+        }
+
     }
 }
 
@@ -157,8 +168,6 @@ void UGM::Core::Utilities::ScriptRunner::update(bool bFirst)
 
 void UGM::Core::Utilities::ScriptRunner::destroy()
 {
-    if (pid == 0)
-        kill(pid, SIGTERM);
     bValid = false;
 }
 

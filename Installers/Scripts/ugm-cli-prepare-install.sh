@@ -1,15 +1,19 @@
 #!/bin/bash
-read -rp "Enter the name of your regular user: " user
+if [ "$1" == "--name" ] && [ "$2" != "" ]; then
+  user="$2"
+else
+  read -rp "Enter the name of your regular user: " user
 
-while true; do
-    echo -e "Make sure that you have lxd and lxc installed as well as that you're running this as root!"
-    read -rp "Start installation? Y(Yes)/N(No): " yn
-    case $yn in
-        [Yy]* ) break;;
-        [Nn]* ) exit;;
-        * ) echo "Please answer with Y(Yes) or N(No)!";;
-    esac
-done
+  while true; do
+      echo -e "Make sure that you have lxd and lxc installed as well as that you're running this as root!"
+      read -rp "Start installation? Y(Yes)/N(No): " yn
+      case $yn in
+          [Yy]* ) break;;
+          [Nn]* ) exit;;
+          * ) echo "Please answer with Y(Yes) or N(No)!";;
+      esac
+  done
+fi
 
 # Enable lxd daemon
 rc-update add lxd default || systemctl enable lxd.service
@@ -49,7 +53,8 @@ lxd init --auto --storage-backend=dir
 lxc network set lxdbr0 ipv6.nat=false
 lxc network set lxdbr0 ipv6.address=none
 
-
+# Restart LXD so that the network changes can take effect
+/etc/init.d/lxd restart || systemctl restart lxd.service
 
 echo -e "\x1B[32mPre-install finished successfully!\x1B[0m"
 echo -e "\x1B[32mAdd the following path to your PATH environment variable in order for scripts to work: ~/.config/UntitledLinuxGamingManager/scripts/\x1B[0m"

@@ -6,7 +6,6 @@ namespace UGM::Managers::GUI
     void render(UGM::GUI::Window& mainWindow);
 
     void renderAboutUs(UGM::GUI::Window& mainWindow, bool& bOpen);
-    void renderInfo(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderNew(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderRestart(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderPoweroff(UGM::GUI::Window& mainWindow, bool& bOpen);

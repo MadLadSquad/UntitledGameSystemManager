@@ -130,5 +130,8 @@ namespace UGM::Core::Utilities
         bool bValid = true;
     };
 
+    // An ugly ass global variable to store the current process id
+    inline pid_t currentpid = -1;
+
     void execandwait(char* const* command);
 }
