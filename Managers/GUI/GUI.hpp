@@ -12,6 +12,8 @@ namespace UGM::Managers::GUI
     void renderPoweron(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderExit(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderDirectories(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen);
+    void renderExec(UGM::GUI::Window& mainWindow, bool& bOpen);
 
     void renderPin(UGM::GUI::Window& mainWindow, bool& bOpen);
 
@@ -25,5 +27,10 @@ namespace UGM::Managers::GUI
     // Ugly globals here
     inline bool bShowNew = false;
     inline bool bShowPin = false;
+    inline bool bShowDelete = false;
+    inline bool bShowPoweron = false;
+    inline bool bShowPoweroff = false;
+    inline bool bShowRestart = false;
+
     inline std::string* selectedContainerG = nullptr;
 }

@@ -195,6 +195,17 @@ pid_t& UGM::Core::Utilities::ScriptRunner::getPID()
     return pid;
 }
 
+void UGM::Core::Utilities::ScriptRunner::destroyForReuse()
+{
+    stringBuffer.clear();
+    lineBuffer.clear();
+    bCanUpdate = false;
+    bValid = true;
+    pid = -1;
+    pipefd[0] = -1;
+    pipefd[1] = -1;
+}
+
 void UGM::Core::Utilities::execandwait(char* const* command)
 {
     auto pid = fork();

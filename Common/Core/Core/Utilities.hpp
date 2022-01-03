@@ -120,9 +120,11 @@ namespace UGM::Core::Utilities
         // Returns if the process is valid
         [[maybe_unused]] [[nodiscard]] bool valid() const;
         [[maybe_unused]] [[nodiscard]] pid_t& getPID();
+
+        void destroyForReuse();
     private:
         std::vector<std::string> lineBuffer; // The buffer of lined messages used for displaying text line by line
-        pid_t pid = 0; // The process ID of the child process
+        pid_t pid = -1; // The process ID of the child process
         int pipefd[2]; // The unix pipe file descriptors
 
         std::string stringBuffer; // The temporary string buffer that is used on every update call

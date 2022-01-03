@@ -281,6 +281,34 @@ void UGM::Managers::CLI::deleteContainer(char* name)
 {
     char* const args[] = { (char*)"lxc", (char*)"delete", name, nullptr };
     UGM::Core::Utilities::execandwait(args);
+    YAML::Node out;
+    auto* passwd = getpwuid(geteuid());
+    std::string file = std::string("/home/") + passwd->pw_name + "/.config/UntitledLinuxGameManager/config/layout.yaml";
+    std::string buf;
+    std::string buffer;
+
+    std::ifstream inf(file);
+    bool bErase = false;
+    while (std::getline(inf, buf))
+    {
+        if (buf.find(std::string("- container: ") + name) != std::string::npos)
+        {
+            bErase = true;
+            continue;
+        }
+
+        if (bErase)
+        {
+            if (buf.find("- container: ") != std::string::npos)
+                bErase = false;
+        }
+        else
+            buffer += buf + '\n';
+    }
+
+    std::ofstream fout(file);
+    fout << buffer << std::endl;
+    fout.close();
 }
 
 void UGM::Managers::CLI::unpin(char* containerName, char* program)

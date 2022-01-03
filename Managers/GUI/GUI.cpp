@@ -8,9 +8,6 @@
 void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
 {
     static bool bShowAboutUs = false;
-    static bool bShowRestart = false;
-    static bool bShowPoweroff = false;
-    static bool bShowPoweron = false;
     static bool bShowExit = false;
     static bool bShowDirectories = false;
 
@@ -32,15 +29,12 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
 
         if (ImGui::BeginMenu("Edit"))
         {
-            if (ImGui::MenuItem("Poweroff", "all"))
+            if (ImGui::MenuItem("Power off"))
                 bShowPoweroff = true;
-
-            if (ImGui::MenuItem("Poweron", "all"))
+            if (ImGui::MenuItem("Power on"))
                 bShowPoweron = true;
-
-            if (ImGui::MenuItem("Restart", "all"))
+            if (ImGui::MenuItem("Restart"))
                 bShowRestart = true;
-
             if (ImGui::MenuItem("New pin"))
                 bShowPin = true;
             ImGui::EndMenu();
@@ -72,6 +66,8 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
         renderDirectories(mainWindow, bShowDirectories);
     if (bShowPin)
         renderPin(mainWindow, bShowPin);
+    if (bShowDelete)
+        renderDelete(mainWindow, bShowDelete);
 }
 
 void UGM::Managers::GUI::renderAboutUs(UGM::GUI::Window& mainWindow, bool& bOpen)
@@ -152,6 +148,19 @@ std::string* UGM::Managers::GUI::renderSidebar(UGM::GUI::Window& mainWindow)
                     if (a["container"] && a["pins"])
                         containersList.push_back(a["container"].as<std::string>());
         }
+        if (ImGui::MenuItem("- Delete"))
+            bShowDelete = true;
+        if (ImGui::BeginMenu("* Power"))
+        {
+            if (ImGui::MenuItem("* Power on"))
+                bShowPoweron = true;
+            if (ImGui::MenuItem("* Power off"))
+                bShowPoweroff = true;
+            if (ImGui::MenuItem("* Restart"))
+                bShowRestart = true;
+            ImGui::EndMenu();
+        }
+
         ImGui::EndMenuBar();
     }
 
@@ -262,17 +271,33 @@ void UGM::Managers::GUI::renderRestart(UGM::GUI::Window& mainWindow, bool& bOpen
 {
     if (!ImGui::IsPopupOpen("Restart Warning"))
         ImGui::OpenPopup("Restart Warning");
-    if (ImGui::BeginPopupModal("Restart Warning", &bOpen))
+    if (ImGui::BeginPopupModal("Restart Warning"))
     {
-        ImGui::TextWrapped("This will restart all the containers currently stopped! This may take a couple of minutes!");
+        static bool bStarted = false;
+        static UGM::Core::Utilities::ScriptRunner runner;
 
-        if (ImGui::Button("Cancel##poweroff"))
-            bOpen = false;
-        ImGui::SameLine();
-        if (ImGui::Button("Restart##restart"))
+        ImGui::TextWrapped("This will restart the currently selected container! This may take a couple of minutes!");
+
+        if (!bStarted)
         {
-            bOpen = false;
-            mainWindow.closeWindow();
+            if (ImGui::Button("Cancel##restart"))
+                bOpen = false;
+            ImGui::SameLine();
+            if (ImGui::Button("Restart##restart"))
+            {
+                char* const args[] = { (char*)"lxc", (char*)"restart", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                runner.init(args);
+
+                bStarted = true;
+            }
+        }
+        else
+        {
+            if (UGM::Core::Utilities::currentpid == -1)
+            {
+                runner.destroyForReuse();
+                bOpen = false;
+            }
         }
         ImGui::EndPopup();
     }
@@ -280,19 +305,35 @@ void UGM::Managers::GUI::renderRestart(UGM::GUI::Window& mainWindow, bool& bOpen
 
 void UGM::Managers::GUI::renderPoweroff(UGM::GUI::Window& mainWindow, bool& bOpen)
 {
-    if (!ImGui::IsPopupOpen("Poweroff Warning"))
-        ImGui::OpenPopup("Poweroff Warning");
-    if (ImGui::BeginPopupModal("Poweroff Warning", &bOpen))
+    if (!ImGui::IsPopupOpen("Power off Warning"))
+        ImGui::OpenPopup("Power off Warning");
+    if (ImGui::BeginPopupModal("Power off Warning"))
     {
-        ImGui::TextWrapped("This will power off all the containers currently stopped! This may take a couple of minutes!");
+        static bool bStarted = false;
+        static UGM::Core::Utilities::ScriptRunner runner;
 
-        if (ImGui::Button("Cancel##poweroff"))
-            bOpen = false;
-        ImGui::SameLine();
-        if (ImGui::Button("Poweroff##poweroff"))
+        ImGui::TextWrapped("This will power off the currently selected container! This may take a couple of minutes!");
+
+        if (!bStarted)
         {
-            bOpen = false;
-            mainWindow.closeWindow();
+            if (ImGui::Button("Cancel##poweroff"))
+                bOpen = false;
+            ImGui::SameLine();
+            if (ImGui::Button("Power off##poweroff"))
+            {
+                char* const args[] = { (char*)"lxc", (char*)"stop", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                runner.init(args);
+
+                bStarted = true;
+            }
+        }
+        else
+        {
+            if (UGM::Core::Utilities::currentpid == -1)
+            {
+                runner.destroyForReuse();
+                bOpen = false;
+            }
         }
         ImGui::EndPopup();
     }
@@ -300,19 +341,35 @@ void UGM::Managers::GUI::renderPoweroff(UGM::GUI::Window& mainWindow, bool& bOpe
 
 void UGM::Managers::GUI::renderPoweron(UGM::GUI::Window& mainWindow, bool& bOpen)
 {
-    if (!ImGui::IsPopupOpen("Poweron Warning"))
-        ImGui::OpenPopup("Poweron Warning");
-    if (ImGui::BeginPopupModal("Poweron Warning", &bOpen))
+    if (!ImGui::IsPopupOpen("Power on Warning"))
+        ImGui::OpenPopup("Power on Warning");
+    if (ImGui::BeginPopupModal("Power on Warning"))
     {
-        ImGui::TextWrapped("This will power on all the containers currently stopped! This may take a couple of minutes!");
+        static bool bStarted = false;
+        static UGM::Core::Utilities::ScriptRunner runner;
 
-        if (ImGui::Button("Cancel##poweron"))
-            bOpen = false;
-        ImGui::SameLine();
-        if (ImGui::Button("Poweron##poweron"))
+        ImGui::TextWrapped("This will power on the currently selected container! This may take a couple of minutes!");
+
+        if (!bStarted)
         {
-            bOpen = false;
-            mainWindow.closeWindow();
+            if (ImGui::Button("Cancel##poweron"))
+                bOpen = false;
+            ImGui::SameLine();
+            if (ImGui::Button("Power on##poweron"))
+            {
+                char* const args[] = { (char*)"lxc", (char*)"start", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                runner.init(args);
+
+                bStarted = true;
+            }
+        }
+        else
+        {
+            if (UGM::Core::Utilities::currentpid == -1)
+            {
+                runner.destroyForReuse();
+                bOpen = false;
+            }
         }
         ImGui::EndPopup();
     }
@@ -407,7 +464,79 @@ void UGM::Managers::GUI::refreshPins(std::vector<std::pair<std::string, bool>>& 
     const YAML::Node& containers = out["containers"];
     if (containers)
         for (const YAML::Node& a : containers)
-            if (a["container"] && a["pins"] && a["container"].as<std::string>() == *selectedContainerG)
+            if (selectedContainerG != nullptr && a["container"] && a["pins"] && a["container"].as<std::string>() == *selectedContainerG)
                 for (const YAML::Node& f : a["pins"])
                     pins.emplace_back( f.as<std::string>(), false );
+}
+
+void UGM::Managers::GUI::renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen)
+{
+    if (!ImGui::IsPopupOpen("Delete"))
+        ImGui::OpenPopup("Delete");
+    if (ImGui::BeginPopupModal("Delete"))
+    {
+        static bool bStartedDeleting = false;
+        static UGM::Core::Utilities::ScriptRunner runner;
+
+        if (selectedContainerG != nullptr)
+        {
+            ImGui::PushStyleColor(ImGuiCol_Text, {1.0f, 0.0f, 0.0f, 1.0f});
+            ImGui::TextWrapped("You're trying to delete %s! Once you press \"Delete\" this action cannot be reversed!", selectedContainerG->c_str());
+            ImGui::PopStyleColor();
+        }
+        else
+            ImGui::TextWrapped("You haven't selected a container!");
+
+        if (bStartedDeleting)
+            ImGui::TextWrapped("Container deletion started, this popup should automatically close when its operation is complete!");
+        if (!bStartedDeleting && ImGui::Button("Exit##delete"))
+            bOpen = false;
+        if (!bStartedDeleting && selectedContainerG != nullptr)
+        {
+            ImGui::SameLine();
+            if (ImGui::Button("Delete##cont") && !selectedContainerG->empty())
+            {
+                char* const args[] = { (char*)"lxc", (char*)"delete", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                runner.init(args);
+                bStartedDeleting = true;
+            }
+        }
+
+        if (bStartedDeleting && UGM::Core::Utilities::currentpid == -1)
+        {
+            bOpen = false;
+            bStartedDeleting = false;
+            runner.destroyForReuse();
+            auto* passwd = getpwuid(geteuid());
+            std::string file = std::string("/home/") + passwd->pw_name + "/.config/UntitledLinuxGameManager/config/layout.yaml";
+            std::string buf;
+            std::string buffer;
+
+            std::ifstream inf(file);
+            bool bErase = false;
+            while (std::getline(inf, buf))
+            {
+                if (buf.find(std::string("- container: ") + *selectedContainerG) != std::string::npos)
+                {
+                    bErase = true;
+                    continue;
+                }
+
+                if (bErase)
+                {
+                    if (buf.find("- container: ") != std::string::npos)
+                        bErase = false;
+                }
+                else
+                    buffer += buf + '\n';
+            }
+
+            std::ofstream fout(file);
+            fout << buffer << std::endl;
+            fout.close();
+            selectedContainerG = nullptr;
+        }
+
+        ImGui::EndPopup();
+    }
 }
