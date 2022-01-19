@@ -214,7 +214,7 @@ void UGM::Installer::GUI::slide2(std::string& user, UGM::GUI::Window& mainWindow
     ImGui::InputText("##ContainerName", &containerName);
 
     ImGui::PushStyleColor(ImGuiCol_Text, { 1.0f, 0.0f, 0.0f, 1.0f });
-    ImGui::TextWrapped("The setup may take longer than 30 minutes, make sure that you have a stable internet connection and that the LXD daemon is running without problems!");
+    ImGui::TextWrapped("The setup may take longer than 30 minutes, make sure that you have a stable internet connection and that the LXD daemon is running without problems! The installer may not respond for around 1-2 minutes!");
     ImGui::PopStyleColor();
 
     ImGui::Text("Start setup");
@@ -241,7 +241,10 @@ void UGM::Installer::GUI::slide2(std::string& user, UGM::GUI::Window& mainWindow
                 if (user.empty() || user == "root")
                     user = std::string(getpwuid(geteuid())->pw_name);
                 std::string file = std::string("/home/") + user + "/.config/UntitledLinuxGameManager/scripts/ugm-cli-install.sh";
-                char* const args[] = { const_cast<char*>(file.c_str()), (char*)"--name", const_cast<char*>(containerName.c_str()), (char*)"--driver", driverType, nullptr };
+                std::string execStr = file + " --name " + containerName + " --driver " + driverType;
+                char* const launch[] = { (char*)"lxc", (char*)"launch", (char*)"images:archlinux", const_cast<char*>(containerName.c_str()), nullptr };
+                UGM::Core::Utilities::execandwait(launch);
+                char* const args[] = { (char*)"bash", (char*)"-c", const_cast<char*>(execStr.c_str()), nullptr };
 
                 runner.init(args);
                 runner.updateBufferSize();

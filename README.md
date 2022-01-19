@@ -104,13 +104,14 @@ export PATH=~/.config/UntitledLinuxGamingManager/scripts/:$PATH
   ```
 18. And you're now ready to install!
 ### CLI install
-To install through the cli we have a handy script that you can run
+To install through the cli we have a handy script that you can run, otherwise do every step of the script if you have any specific configuration
 1. If you have done all of that setup in a single terminal instance, it's recommended that you restart your terminal instance and start fresh
-4. Next, run the following script with `user $ ./ugm-cli-install.sh`
-5. You will be asked to put in your container's name, type it in and press `Enter` when you're ready to go to the next step
-6. Next, you're going to need to select a graphics driver for your GPU, `N` for NVidia, `M` for Mesa(Intel/AMD)
-7. Pressing enter will start installing all the necessary packages and features your gaming container needs
-8. By the end of the installation your container should have the following software installed
+2. Run `user $ lxc launch images:archlinux <system-name-here>`, this will create a container, remember its name as it is needed for the next step
+3. Next, run the following script with `user $ ./ugm-cli-install.sh`
+4. You will be asked to put in your container's name, type it in and press `Enter` when you're ready to go to the next step
+5. Next, you're going to need to select a graphics driver for your GPU, `N` for NVidia, `M` for Mesa(Intel/AMD)
+6. Pressing enter will start installing all the necessary packages and features your gaming container needs
+7. By the end of the installation your container should have the following software installed
   - Firefox(for managing links that come from the container)
   - Steam
   - Wine

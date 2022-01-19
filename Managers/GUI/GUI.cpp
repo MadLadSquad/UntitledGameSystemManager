@@ -16,7 +16,7 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("New Container"))
-                bShowNew = true;
+                global.bShowNew = true;
 
             if (ImGui::MenuItem("Show directories"))
                 bShowDirectories = true;
@@ -30,13 +30,13 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
         if (ImGui::BeginMenu("Edit"))
         {
             if (ImGui::MenuItem("Power off"))
-                bShowPoweroff = true;
+                global.bShowPoweroff = true;
             if (ImGui::MenuItem("Power on"))
-                bShowPoweron = true;
+                global.bShowPoweron = true;
             if (ImGui::MenuItem("Restart"))
-                bShowRestart = true;
+                global.bShowRestart = true;
             if (ImGui::MenuItem("New pin"))
-                bShowPin = true;
+                global.bShowPin = true;
             ImGui::EndMenu();
         }
 
@@ -52,22 +52,22 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
 
     if (bShowAboutUs)
         renderAboutUs(mainWindow, bShowAboutUs);
-    if (bShowNew)
-        renderNew(mainWindow, bShowNew);
-    if (bShowRestart)
-        renderRestart(mainWindow, bShowRestart);
-    if (bShowPoweroff)
-        renderPoweroff(mainWindow, bShowPoweroff);
-    if (bShowPoweron)
-        renderPoweron(mainWindow, bShowPoweron);
+    if (global.bShowNew)
+        renderNew(mainWindow, global.bShowNew);
+    if (global.bShowRestart)
+        renderRestart(mainWindow, global.bShowRestart);
+    if (global.bShowPoweroff)
+        renderPoweroff(mainWindow, global.bShowPoweroff);
+    if (global.bShowPoweron)
+        renderPoweron(mainWindow, global.bShowPoweron);
     if (bShowExit)
         renderExit(mainWindow, bShowExit);
     if (bShowDirectories)
         renderDirectories(mainWindow, bShowDirectories);
-    if (bShowPin)
-        renderPin(mainWindow, bShowPin);
-    if (bShowDelete)
-        renderDelete(mainWindow, bShowDelete);
+    if (global.bShowPin)
+        renderPin(mainWindow, global.bShowPin);
+    if (global.bShowDelete)
+        renderDelete(mainWindow, global.bShowDelete);
 }
 
 void UGM::Managers::GUI::renderAboutUs(UGM::GUI::Window& mainWindow, bool& bOpen)
@@ -125,7 +125,7 @@ std::string* UGM::Managers::GUI::renderSidebar(UGM::GUI::Window& mainWindow)
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::MenuItem("+ New"))
-            bShowNew = true;
+            global.bShowNew = true;
         if (ImGui::MenuItem("* Refresh"))
         {
             containersList.clear();
@@ -149,15 +149,15 @@ std::string* UGM::Managers::GUI::renderSidebar(UGM::GUI::Window& mainWindow)
                         containersList.push_back(a["container"].as<std::string>());
         }
         if (ImGui::MenuItem("- Delete"))
-            bShowDelete = true;
+            global.bShowDelete = true;
         if (ImGui::BeginMenu("* Power"))
         {
             if (ImGui::MenuItem("* Power on"))
-                bShowPoweron = true;
+                global.bShowPoweron = true;
             if (ImGui::MenuItem("* Power off"))
-                bShowPoweroff = true;
+                global.bShowPoweroff = true;
             if (ImGui::MenuItem("* Restart"))
-                bShowRestart = true;
+                global.bShowRestart = true;
             ImGui::EndMenu();
         }
 
@@ -196,6 +196,7 @@ void UGM::Managers::GUI::renderMainView(UGM::GUI::Window& mainWindow, std::strin
 {
     // a vector that keeps a pair of the name of the pinned application and a bool of weather it is selected
     static std::vector<std::pair<std::string, bool>> pins;
+
     if (bReset)
         refreshPins(pins);
     else
@@ -206,7 +207,7 @@ void UGM::Managers::GUI::renderMainView(UGM::GUI::Window& mainWindow, std::strin
             if (ImGui::BeginMenuBar())
             {
                 if (ImGui::MenuItem("+ New Pin"))
-                    bShowPin = true;
+                    global.bShowPin = true;
                 if (ImGui::MenuItem("- Delete Pin"))
                 {
                     for (auto& p : pins)
@@ -230,7 +231,14 @@ void UGM::Managers::GUI::renderMainView(UGM::GUI::Window& mainWindow, std::strin
                 ImGui::SameLine();
                 ImGui::Text("%s", ff.first.c_str());
                 ImGui::NextColumn();
-                ImGui::ArrowButton(("##ButtonPlay" + std::to_string(i)).c_str(), ImGuiDir_Right);
+                if (ImGui::ArrowButton(("##ButtonPlay" + std::to_string(i)).c_str(), ImGuiDir_Right))
+                {
+                    // construct a really large string to run our command
+                    std::string cmd = (std::string("lxc exec ") + *selectedContainer + " -- bash -c \"su ubuntu -c '" + std::string(ff.first) + "'\" &> /tmp/" + ff.first + ".log & disown");
+                    // Ugly ass const cast right here
+                    char* const args[] = { (char*)"bash", (char*)"-c", const_cast<char*>(cmd.c_str()), nullptr };
+                    UGM::Core::Utilities::execandwait(args);
+                }
                 ImGui::Columns(1, nullptr, false);
                 i++;
             }
@@ -243,8 +251,8 @@ void UGM::Managers::GUI::renderWindows(UGM::GUI::Window& mainWindow)
 {
     // Will render the sidebar, and pass its selected container to the main view
     // The whole selected container passing here is like having a weirder type of singleton lmao
-    selectedContainerG = renderSidebar(mainWindow);
-    renderMainView(mainWindow, selectedContainerG);
+    global.selectedContainerG = renderSidebar(mainWindow);
+    renderMainView(mainWindow, global.selectedContainerG);
 }
 
 void UGM::Managers::GUI::renderNew(UGM::GUI::Window& mainWindow, bool& bOpen)
@@ -285,7 +293,7 @@ void UGM::Managers::GUI::renderRestart(UGM::GUI::Window& mainWindow, bool& bOpen
             ImGui::SameLine();
             if (ImGui::Button("Restart##restart"))
             {
-                char* const args[] = { (char*)"lxc", (char*)"restart", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                char* const args[] = { (char*)"lxc", (char*)"restart", const_cast<char*>(global.selectedContainerG->c_str()), nullptr };
                 runner.init(args);
 
                 bStarted = true;
@@ -321,7 +329,7 @@ void UGM::Managers::GUI::renderPoweroff(UGM::GUI::Window& mainWindow, bool& bOpe
             ImGui::SameLine();
             if (ImGui::Button("Power off##poweroff"))
             {
-                char* const args[] = { (char*)"lxc", (char*)"stop", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                char* const args[] = { (char*)"lxc", (char*)"stop", const_cast<char*>(global.selectedContainerG->c_str()), nullptr };
                 runner.init(args);
 
                 bStarted = true;
@@ -355,9 +363,9 @@ void UGM::Managers::GUI::renderPoweron(UGM::GUI::Window& mainWindow, bool& bOpen
             if (ImGui::Button("Cancel##poweron"))
                 bOpen = false;
             ImGui::SameLine();
-            if (ImGui::Button("Power on##poweron"))
+            if (ImGui::Button("Power on##poweron") && global.selectedContainerG != nullptr)
             {
-                char* const args[] = { (char*)"lxc", (char*)"start", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                char* const args[] = { (char*)"lxc", (char*)"start", const_cast<char*>(global.selectedContainerG->c_str()), nullptr };
                 runner.init(args);
 
                 bStarted = true;
@@ -437,9 +445,9 @@ void UGM::Managers::GUI::renderPin(UGM::GUI::Window& mainWindow, bool& bOpen)
         if (ImGui::Button("Exit##pin"))
             bOpen = false;
         ImGui::SameLine();
-        if (ImGui::Button("Pin##pin") && selectedContainerG != nullptr)
+        if (ImGui::Button("Pin##pin") && global.selectedContainerG != nullptr)
         {
-            pin(const_cast<char*>(selectedContainerG->c_str()), const_cast<char*>(pinname.c_str()));
+            pin(const_cast<char*>(global.selectedContainerG->c_str()), const_cast<char*>(pinname.c_str()));
             bOpen = false;
         }
         ImGui::EndPopup();
@@ -464,7 +472,7 @@ void UGM::Managers::GUI::refreshPins(std::vector<std::pair<std::string, bool>>& 
     const YAML::Node& containers = out["containers"];
     if (containers)
         for (const YAML::Node& a : containers)
-            if (selectedContainerG != nullptr && a["container"] && a["pins"] && a["container"].as<std::string>() == *selectedContainerG)
+            if (global.selectedContainerG != nullptr && a["container"] && a["pins"] && a["container"].as<std::string>() == *global.selectedContainerG)
                 for (const YAML::Node& f : a["pins"])
                     pins.emplace_back( f.as<std::string>(), false );
 }
@@ -478,10 +486,10 @@ void UGM::Managers::GUI::renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen)
         static bool bStartedDeleting = false;
         static UGM::Core::Utilities::ScriptRunner runner;
 
-        if (selectedContainerG != nullptr)
+        if (global.selectedContainerG != nullptr)
         {
             ImGui::PushStyleColor(ImGuiCol_Text, {1.0f, 0.0f, 0.0f, 1.0f});
-            ImGui::TextWrapped("You're trying to delete %s! Once you press \"Delete\" this action cannot be reversed!", selectedContainerG->c_str());
+            ImGui::TextWrapped("You're trying to delete %s! Once you press \"Delete\" this action cannot be reversed!", global.selectedContainerG->c_str());
             ImGui::PopStyleColor();
         }
         else
@@ -491,12 +499,12 @@ void UGM::Managers::GUI::renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen)
             ImGui::TextWrapped("Container deletion started, this popup should automatically close when its operation is complete!");
         if (!bStartedDeleting && ImGui::Button("Exit##delete"))
             bOpen = false;
-        if (!bStartedDeleting && selectedContainerG != nullptr)
+        if (!bStartedDeleting && global.selectedContainerG != nullptr)
         {
             ImGui::SameLine();
-            if (ImGui::Button("Delete##cont") && !selectedContainerG->empty())
+            if (ImGui::Button("Delete##cont") && !global.selectedContainerG->empty())
             {
-                char* const args[] = { (char*)"lxc", (char*)"delete", const_cast<char*>(selectedContainerG->c_str()), nullptr };
+                char* const args[] = { (char*)"lxc", (char*)"delete", const_cast<char*>(global.selectedContainerG->c_str()), nullptr };
                 runner.init(args);
                 bStartedDeleting = true;
             }
@@ -516,7 +524,7 @@ void UGM::Managers::GUI::renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen)
             bool bErase = false;
             while (std::getline(inf, buf))
             {
-                if (buf.find(std::string("- container: ") + *selectedContainerG) != std::string::npos)
+                if (buf.find(std::string("- container: ") + *global.selectedContainerG) != std::string::npos)
                 {
                     bErase = true;
                     continue;
@@ -534,7 +542,7 @@ void UGM::Managers::GUI::renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen)
             std::ofstream fout(file);
             fout << buffer << std::endl;
             fout.close();
-            selectedContainerG = nullptr;
+            global.selectedContainerG = nullptr;
         }
 
         ImGui::EndPopup();

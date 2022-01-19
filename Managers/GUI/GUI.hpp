@@ -13,7 +13,6 @@ namespace UGM::Managers::GUI
     void renderExit(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderDirectories(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen);
-    void renderExec(UGM::GUI::Window& mainWindow, bool& bOpen);
 
     void renderPin(UGM::GUI::Window& mainWindow, bool& bOpen);
 
@@ -25,12 +24,15 @@ namespace UGM::Managers::GUI
     void refreshPins(std::vector<std::pair<std::string, bool>>& pins);
 
     // Ugly globals here
-    inline bool bShowNew = false;
-    inline bool bShowPin = false;
-    inline bool bShowDelete = false;
-    inline bool bShowPoweron = false;
-    inline bool bShowPoweroff = false;
-    inline bool bShowRestart = false;
-
-    inline std::string* selectedContainerG = nullptr;
+    struct Globals
+    {
+        bool bShowNew = false;
+        bool bShowPin = false;
+        bool bShowDelete = false;
+        bool bShowPoweron = false;
+        bool bShowPoweroff = false;
+        bool bShowRestart = false;
+        std::string* selectedContainerG = nullptr;
+    };
+    inline Globals global;
 }

@@ -7,21 +7,6 @@
 #include <unistd.h>
 #include <Core/Defines.hpp>
 
-void UGM::Managers::GUI::restart(bool bAll, char* name)
-{
-
-}
-
-void UGM::Managers::GUI::poweroff(bool bAll, char* name)
-{
-
-}
-
-void UGM::Managers::GUI::poweron(bool bAll, char* name)
-{
-
-}
-
 void UGM::Managers::GUI::newContainer()
 {
     // Who cares if the program stops while the wizard is running, it's even better since we don't have to worry about
