@@ -21,12 +21,14 @@ void UGM::GUI::ImGuiUtils::shutdown()
     ImGui::DestroyContext();
 }
 
-void UGM::GUI::ImGuiUtils::init(GLFWwindow* glfwwindow)
+void UGM::GUI::ImGuiUtils::init(GLFWwindow* glfwwindow, const std::string& ini)
 {
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
     io.ConfigViewportsNoTaskBarIcon = true;
+
+    ImGui::LoadIniSettingsFromMemory(ini.c_str());
     ImGui::StyleColorsDark();
     ImGui::StyleColorsClassic();
     ImGuiStyle& style = ImGui::GetStyle();
