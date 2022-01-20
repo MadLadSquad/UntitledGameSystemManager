@@ -4,6 +4,8 @@ echo -e "\x1B[32mCompiling with ${cpus} compile jobs! \x1B[0m"
 echo -e "\x1B[32mInstalling the GUI\x1B[0m"
 echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
 
+./copy-scripts.sh
+
 cd Installers/GUI/ || exit
 mkdir build
 cd build || exit

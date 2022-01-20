@@ -16,6 +16,7 @@ void UGM::GUI::ImGuiUtils::beginFrame()
 
 void UGM::GUI::ImGuiUtils::shutdown()
 {
+    ImGui::SaveIniSettingsToMemory();
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
@@ -26,6 +27,7 @@ void UGM::GUI::ImGuiUtils::init(GLFWwindow* glfwwindow, const std::string& ini)
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO(); (void)io;
     io.ConfigFlags |= ImGuiConfigFlags_DockingEnable | ImGuiConfigFlags_ViewportsEnable;
+    io.WantSaveIniSettings = false;
     io.ConfigViewportsNoTaskBarIcon = true;
 
     ImGui::LoadIniSettingsFromMemory(ini.c_str());

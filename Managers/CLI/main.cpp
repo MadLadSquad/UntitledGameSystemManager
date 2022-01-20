@@ -54,6 +54,10 @@ int main(int argc, char** argv)
             else
                 logger.consoleLog("Invalid input!", UVK_LOG_TYPE_ERROR);
         }
+        else if (UGM::Core::Utilities::toLower(argv[1]) == "--update" || UGM::Core::Utilities::toLower(argv[1]) == "update" || UGM::Core::Utilities::toLower(argv[1]) == "u")
+        {
+
+        }
         return 0;
     }
     else if (argc == 4)

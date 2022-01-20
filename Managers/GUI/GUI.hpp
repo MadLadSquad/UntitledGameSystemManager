@@ -13,7 +13,7 @@ namespace UGM::Managers::GUI
     void renderExit(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderDirectories(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen);
-
+    void renderUpdate(UGM::GUI::Window& mainWindow, bool& bOpen);
     void renderPin(UGM::GUI::Window& mainWindow, bool& bOpen);
 
     std::string* renderSidebar(UGM::GUI::Window& mainWindow);
@@ -32,6 +32,7 @@ namespace UGM::Managers::GUI
         bool bShowPoweron = false;
         bool bShowPoweroff = false;
         bool bShowRestart = false;
+        bool bShowUpdate = false;
         std::string* selectedContainerG = nullptr;
     };
     inline Globals global;

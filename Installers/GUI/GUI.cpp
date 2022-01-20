@@ -190,7 +190,15 @@ void UGM::Installer::GUI::slide2(std::string& user, UGM::GUI::Window& mainWindow
         return;
     }
 
-    ImGui::TextWrapped("Welcome to the container creation wizard, here you can setup your new container!");
+    constexpr char* command = (char*)"lxc launch images:archlinux ";
+    ImGui::TextWrapped("Welcome to the container creation wizard, here you can setup your new container.");
+
+    ImGui::PushStyleColor(ImGuiCol_Text, { 1.0f, 0.0f, 0.0f, 1.0f });
+    ImGui::TextWrapped("In a terminal place the following command and append your container's name to the end, then run it and return to the installer when you're done!");
+    ImGui::PopStyleColor();
+
+    ImGui::InputText("##inputLN", command, sizeof(command));
+
     ImGui::Text("Choose your GPU device type");
     ImGui::SameLine();
     if (ImGui::BeginCombo("##ComboDrivers", comboText.c_str()))
@@ -242,8 +250,6 @@ void UGM::Installer::GUI::slide2(std::string& user, UGM::GUI::Window& mainWindow
                     user = std::string(getpwuid(geteuid())->pw_name);
                 std::string file = std::string("/home/") + user + "/.config/UntitledLinuxGameManager/scripts/ugm-cli-install.sh";
                 std::string execStr = file + " --name " + containerName + " --driver " + driverType;
-                char* const launch[] = { (char*)"lxc", (char*)"launch", (char*)"images:archlinux", const_cast<char*>(containerName.c_str()), nullptr };
-                UGM::Core::Utilities::execandwait(launch);
                 char* const args[] = { (char*)"bash", (char*)"-c", const_cast<char*>(execStr.c_str()), nullptr };
 
                 runner.init(args);

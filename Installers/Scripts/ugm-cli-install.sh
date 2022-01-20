@@ -14,7 +14,7 @@ else
   read -rp "Enter your container's name: " containerName
 
   while true; do
-      echo -e "What video drivers do you use want to use Mesa(AMD/Intel) or NVidia?"
+      echo -e "What video drivers do you want to use Mesa(AMD/Intel) or NVidia?"
       read -rp "M(mesa)/N(NVidia): " yn
       case $yn in
           [Mm]* ) pro=false;break;;
@@ -37,11 +37,8 @@ echo -e "\x1B[32mInstalling drivers!\x1B[0m"
 echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
 
 if [ "${pro}" = false ]; then
-  # TODO: Add support for mesa
-	# Add the mesa ppa and install the drivers
-	lxc exec "${containerName}" -- bash -c "add-apt-repository --yes ppa:kisak/kisak-mesa"
-	lxc exec "${containerName}" -- bash -c "apt update -y && apt upgrade -y"
-	lxc exec "${containerName}" -- bash -c "apt install libgl1-mesa-dri:i386 mesa-vulkan-drivers mesa-vulkan-drivers:i386 -y"
+  # TODO: Test this!
+	lxc exec "${containerName}" -- bash -c "pacman -S --noconfirm mesa lib32-mesa"
 else
 	# get the nvidia driver version from glxinfo and then construct a new string with the version
 	nversiontmp=$(glxinfo | grep "OpenGL version string: 4.6.0 NVIDIA ")
@@ -115,7 +112,8 @@ lxc restart "${containerName}"
 lxc config set "${containerName}" environment.PROTON_NO_ESYNC 1
 lxc config set "${containerName}" environment.PULSE_SERVER unix:/pulse-native
 lxc config set "${containerName}" environment.DISPLAY :0
-lxc config device add "${containerName}" PASocket1 proxy bind=container connect=unix:/run/user/1000/pulse/native listen=unix:/pulse-native uid=1000 gid=1000 mode=0777 security.uid=1000 security.gid=1000
+# The pulse socket is stored under the XDG_RUNTIME_DIR environment variable, if your system doesn't have it then you're pretty much fucked fr fr
+lxc config device add "${containerName}" PASocket1 proxy bind=container "connect=unix:${XDG_RUNTIME_DIR}/pulse/native" listen=unix:/pulse-native uid=1000 gid=1000 mode=0777 security.uid=1000 security.gid=1000
 lxc config device add "${containerName}" mygpu gpu
 lxc config device add "${containerName}" X0 proxy bind=container connect=unix:/tmp/.X11-unix/X0 listen=unix:/tmp/.X11-unix/X0 uid=1000 gid=1000 mode=0777 security.uid=1000 security.gid=1000
 

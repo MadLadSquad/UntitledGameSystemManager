@@ -37,6 +37,8 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
                 global.bShowRestart = true;
             if (ImGui::MenuItem("New pin"))
                 global.bShowPin = true;
+            if (ImGui::MenuItem("Update"))
+                global.bShowUpdate = true;
             ImGui::EndMenu();
         }
 
@@ -68,6 +70,8 @@ void UGM::Managers::GUI::render(UGM::GUI::Window& mainWindow)
         renderPin(mainWindow, global.bShowPin);
     if (global.bShowDelete)
         renderDelete(mainWindow, global.bShowDelete);
+    if (global.bShowUpdate)
+        renderUpdate(mainWindow, global.bShowUpdate);
 }
 
 void UGM::Managers::GUI::renderAboutUs(UGM::GUI::Window& mainWindow, bool& bOpen)
@@ -221,6 +225,8 @@ void UGM::Managers::GUI::renderMainView(UGM::GUI::Window& mainWindow, std::strin
                 if (ImGui::MenuItem("+ Generate Script"))
                     for (auto& p : pins)
                         genscript(const_cast<char*>(selectedContainer->c_str()), const_cast<char*>(p.first.c_str()));
+                if (ImGui::MenuItem("* Update"))
+                    global.bShowUpdate = true;
                 ImGui::EndMenuBar();
             }
             size_t i = 0;
@@ -543,6 +549,76 @@ void UGM::Managers::GUI::renderDelete(UGM::GUI::Window& mainWindow, bool& bOpen)
             fout << buffer << std::endl;
             fout.close();
             global.selectedContainerG = nullptr;
+        }
+
+        ImGui::EndPopup();
+    }
+}
+
+void UGM::Managers::GUI::renderUpdate(UGM::GUI::Window& mainWindow, bool& bOpen)
+{
+    static UGM::Core::Utilities::ScriptRunner runner;
+    static bool bDoDriverUpdate = false;
+    static std::string comboVal;
+    static char drvtype[2] = "M";
+    static bool bStartedUpdate = false;
+    static UGM::Core::Utilities::ScriptRunner scriptRunner;
+    if (!ImGui::IsPopupOpen("Update##System"))
+        ImGui::OpenPopup("Update##System");
+    if (ImGui::BeginPopupModal("Update##System"))
+    {
+        ImGui::Text("Do you want to update your GPU drivers?");
+        ImGui::SameLine();
+        ImGui::Checkbox("##drvupdate", &bDoDriverUpdate);
+
+        ImGui::Text("Select your GPU driver type");
+        ImGui::SameLine();
+        if (ImGui::BeginCombo("##DriverTP", comboVal.c_str()))
+        {
+            if (ImGui::MenuItem("NVidia##2"))
+            {
+                comboVal = "NVidia";
+                drvtype[0] = 'N';
+            }
+
+            if (ImGui::MenuItem("Mesa(AMD/Intel)##2"))
+            {
+                comboVal = "Mesa";
+                drvtype[0] = 'M';
+            }
+            ImGui::EndCombo();
+        }
+
+        if (!bStartedUpdate)
+        {
+            if (ImGui::Button("Exit##update"))
+                bOpen = false;
+            ImGui::SameLine();
+            if (ImGui::Button("Start##update"))
+            {
+                std::string path = std::string("/home/") + getpwuid(geteuid())->pw_name + "/.config/UntitledLinuxGameManager/scripts/ugm-cli-update.sh";
+                if (bDoDriverUpdate)
+                {
+                    char* const args[] = { const_cast<char*>(path.c_str()), (char*)"--name", const_cast<char*>(global.selectedContainerG->c_str()), (char*)"--driver", drvtype, (char*)"--gpu", nullptr };
+                    runner.init(args);
+                }
+                else
+                {
+                    char* const args[] = { const_cast<char*>(path.c_str()), (char*)"--name", const_cast<char*>(global.selectedContainerG->c_str()), (char*)"--driver", drvtype, nullptr };
+                    runner.init(args);
+                }
+                bStartedUpdate = true;
+            }
+        }
+        else
+        {
+            if (UGM::Core::Utilities::currentpid == -1)
+            {
+                runner.destroyForReuse();
+                bOpen = false;
+                bStartedUpdate = false;
+                bDoDriverUpdate = false;
+            }
         }
 
         ImGui::EndPopup();
