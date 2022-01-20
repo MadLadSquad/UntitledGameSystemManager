@@ -30,6 +30,8 @@ Commands:
     --restart/restart <container-name> - restarts the container
     --restart/restart --all/all - restarts all containers
 
+    --update/update/u <container-name> </n/-n/-nv/--nv/--nvidia/nvidia (For NVidia users)>/<M/m/-m/--mesa/mesa (For Intel or AMD users)> <gpu/--gpu/g/-g (for updating the gpu drivers)>
+
     --list/list/-l/-L - lists all containers and their pinned applications
     --genscript/genscript/-g/-G <container-name> <program> - will generate a program start script for easy access
     --pin/pin/-p/-P <container-name> <program> - will pin a program for easy access
@@ -361,4 +363,19 @@ exit_for2:
     std::ofstream fout(file);
     fout << out << std::endl;
     fout.close();
+}
+
+void UGM::Managers::CLI::update(char* containerName, char* drv, bool bGPU)
+{
+    std::string file = std::string("/home/") + getpwuid(geteuid())->pw_name + "/.config/UntitledLinuxGameManager/scripts/ugm-cli-update.sh";
+    if (bGPU)
+    {
+        char* const args[] = { const_cast<char*>(file.c_str()), (char*)"--name", containerName, (char*)"--driver", drv, (char*)"--gpu", nullptr };
+        UGM::Core::Utilities::execandwait(args);
+    }
+    else
+    {
+        char* const args[] = { const_cast<char*>(file.c_str()), (char*)"--name", containerName, (char*)"--driver", drv, nullptr };
+        UGM::Core::Utilities::execandwait(args);
+    }
 }

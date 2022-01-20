@@ -81,6 +81,35 @@ int main(int argc, char** argv)
             UGM::Managers::CLI::deleteContainer(argv[2]);
         else if (UGM::Core::Utilities::toLower(argv[1]) == "unpin" || UGM::Core::Utilities::toLower(argv[1]) == "--unpin")
             UGM::Managers::CLI::unpin(argv[2], argv[3]);
+        else if (UGM::Core::Utilities::toLower(argv[1]) == "--update" || UGM::Core::Utilities::toLower(argv[1]) == "update" || UGM::Core::Utilities::toLower(argv[1]) == "u" || UGM::Core::Utilities::toLower(argv[1]) == "-u")
+        {
+            char drvArr[2] = "m";
+            if (UGM::Core::Utilities::toLower(argv[3]) == "nvidia" || UGM::Core::Utilities::toLower(argv[3]) == "--nvidia" || UGM::Core::Utilities::toLower(argv[3]) == "nv" || UGM::Core::Utilities::toLower(argv[3]) == "-n" || UGM::Core::Utilities::toLower(argv[3]) == "n" || UGM::Core::Utilities::toLower(argv[3]) == "--nv" || UGM::Core::Utilities::toLower(argv[3]) == "-nv")
+                drvArr[0] = 'n';
+            else if (UGM::Core::Utilities::toLower(argv[3]) == "mesa" || UGM::Core::Utilities::toLower(argv[3]) == "--mesa" || UGM::Core::Utilities::toLower(argv[3]) == "-m" || UGM::Core::Utilities::toLower(argv[3]) == "m")
+                drvArr[0] = 'm';
+
+            UGM::Managers::CLI::update(argv[2], argv[3], false);
+        }
+        return 0;
+    }
+    else if (argc == 5)
+    {
+        if (UGM::Core::Utilities::toLower(argv[1]) == "--update" || UGM::Core::Utilities::toLower(argv[1]) == "update" || UGM::Core::Utilities::toLower(argv[1]) == "u" || UGM::Core::Utilities::toLower(argv[1]) == "-u")
+        {
+            char drvArr[2] = "m";
+            if (UGM::Core::Utilities::toLower(argv[3]) == "nvidia" || UGM::Core::Utilities::toLower(argv[3]) == "--nvidia" || UGM::Core::Utilities::toLower(argv[3]) == "nv" || UGM::Core::Utilities::toLower(argv[3]) == "-n" || UGM::Core::Utilities::toLower(argv[3]) == "n" || UGM::Core::Utilities::toLower(argv[3]) == "--nv" || UGM::Core::Utilities::toLower(argv[3]) == "-nv")
+                drvArr[0] = 'n';
+            else if (UGM::Core::Utilities::toLower(argv[3]) == "mesa" || UGM::Core::Utilities::toLower(argv[3]) == "--mesa" || UGM::Core::Utilities::toLower(argv[3]) == "-m" || UGM::Core::Utilities::toLower(argv[3]) == "m")
+                drvArr[0] = 'm';
+
+            if (!(UGM::Core::Utilities::toLower(argv[4]) == "--gpu" || UGM::Core::Utilities::toLower(argv[4]) == "gpu" || UGM::Core::Utilities::toLower(argv[4]) == "-g" || UGM::Core::Utilities::toLower(argv[4]) == "g"))
+            {
+                logger.consoleLog("4th argument is invalid! It should be one of the following: --gpu, gpu, g, -g", UVK_LOG_TYPE_ERROR);
+                return 0;
+            }
+            UGM::Managers::CLI::update(argv[2], argv[3], true);
+        }
         return 0;
     }
 }

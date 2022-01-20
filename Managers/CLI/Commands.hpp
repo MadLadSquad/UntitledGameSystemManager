@@ -19,4 +19,6 @@ namespace UGM::Managers::CLI
     void list();
     void pin(char* containerName, char* program);
     void unpin(char* containerName, char* program);
+
+    void update(char* containerName, char* drv, bool bGPU);
 }
