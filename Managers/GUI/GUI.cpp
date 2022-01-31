@@ -164,6 +164,8 @@ std::string* UGM::Managers::GUI::renderSidebar(UGM::GUI::Window& mainWindow)
                 global.bShowRestart = true;
             ImGui::EndMenu();
         }
+        if (ImGui::MenuItem("* Update"))
+            global.bShowUpdate = true;
 
         ImGui::EndMenuBar();
     }
@@ -225,8 +227,6 @@ void UGM::Managers::GUI::renderMainView(UGM::GUI::Window& mainWindow, std::strin
                 if (ImGui::MenuItem("+ Generate Script"))
                     for (auto& p : pins)
                         genscript(const_cast<char*>(selectedContainer->c_str()), const_cast<char*>(p.first.c_str()));
-                if (ImGui::MenuItem("* Update"))
-                    global.bShowUpdate = true;
                 ImGui::EndMenuBar();
             }
             size_t i = 0;
