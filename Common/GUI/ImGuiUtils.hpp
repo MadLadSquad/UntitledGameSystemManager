@@ -1,5 +1,6 @@
 #pragma once
 #include <functional>
+#include <iostream>
 
 struct ImVec4;
 struct GLFWwindow;
