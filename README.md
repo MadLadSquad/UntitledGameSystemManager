@@ -13,6 +13,7 @@ Using a container users can:
 The manager requires the following to be installed on your system:
 - X
 - PulseAudio
+- glxinfo(for nvidia users)
 - An AMD/Intel/Nvidia GPU with supported drivers
 - The cli install scripts require bash, since for now they include bash isms and don't fully conform
 ## Install
@@ -34,12 +35,14 @@ First make sure you have the dependencies listed above!
 Next, before we start with the automatic installation some manual work needs to be done.
 1. Install lxd and lxc
   - Gentoo: `root # emerge lxd`
+  - Arch: `root # pacman -S lxd`
   - Debian/Ubuntu: `root # apt install lxd`
 2. Run the following script as `user $ ./copy-scripts.sh`, this will create folders and copy the needed scrips and resources
 3. The following setup can be automated by running the following script `root # ./ugm-cli-prepare-install.sh`. Steps 3 trough 10 are for manual install, so if you're installing using the script skip to step 12 after you run the script!
 4. Add the lxd daemon to start on startup
   - OpenRC: `root # rc-update add lxd default`
   - SystemD: `root # systemctl enable lxd.service`
+  - runit: `root # ln -s /etc/sv/lxd /var/service`
 5. Make sure that the `/etc/security/limits.conf` file has the following contents
   ```
   *       soft    nofile  1048576
@@ -57,6 +60,7 @@ Next, before we start with the automatic installation some manual work needs to 
 7. Start lxd
   - OpenRC: `root # /etc/init.d/lxd start`
   - SystemD: `root # systemctl start lxd.service`
+  - runit: `root # sv start lxd`
 8. Add your non-root user to the lxd group `root # usermod -a -G lxd <your-username>`
 9. Initialize lxd to look like the following
   ```
@@ -119,6 +123,9 @@ To install through the cli we have a handy script that you can run, otherwise do
   - Winetricks
   - Protontricks
 9. The installation is going to be slow, so leave the script to automatically handle installation, while all the packages download
+10. Troubleshooting
+  1. Don't have audio? The PA socket migth be wrong.
+    1. Find where your `pulse-native` socket
 ## Managers
 ### Compilation
 You can run a the `user $ ./buildall.sh` script to build all installers and managers otherwise
