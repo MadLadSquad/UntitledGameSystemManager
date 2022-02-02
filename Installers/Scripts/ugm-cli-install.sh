@@ -23,6 +23,12 @@ else
       esac
   done
 fi
+
+# Check if the container exists, that one space after the container name insertion is for checking if it is the full container name
+lxc list | grep "${containerName} " &> /dev/null || (echo -e "\x1B[31mError: Container does not exist, run the following command to create it and rerun the script: \"lxc launch images:archlinux ${containerName}\"\x1B[0m" && exit)
+which glxinfo &> /dev/null || (echo -e "\x1B[31mError: glxinfo not found! The glxinfo program is needed in order to install your GPU drivers!\x1B[0m" && exit)
+
+
 echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
 echo -e "\x1B[32mStarting container installation!\x1B[0m"
 echo -e "\x1B[32m---------------------------------------------------------------------------\x1B[0m"
@@ -49,7 +55,7 @@ else
   for ((;;)); do
     stat1=$(curl -Is "https://archive.archlinux.org/packages/n/nvidia-utils/nvidia-utils-${nversion}-${up1}-x86_64.pkg.tar.zst" | head -n 1)
 
-    if echo "${stat1}" | grep "200"; then
+    if echo "${stat1}" | grep "200" &> /dev/null; then
       ((up1+=1))
     else
       ((up1-=1))
@@ -61,7 +67,7 @@ else
   up2=1
   for ((;;)); do
     stat2=$(curl -Is "https://archive.archlinux.org/packages/l/lib32-nvidia-utils/lib32-nvidia-utils-${nversion}-${up2}-x86_64.pkg.tar.zst" | head -n 1)
-    if echo "${stat2}" | grep "200"; then
+    if echo "${stat2}" | grep "200" &> /dev/null; then
       ((up2+=1))
     else
       ((up2-=1))
@@ -92,7 +98,10 @@ lxc start "${containerName}"
 lxc exec "${containerName}" -- bash -c "sed -i 's/; enable-shm = yes/enable-shm = no/g' /etc/pulse/client.conf"
 lxc exec "${containerName}" -- bash -c "sed -i 's/autospawn = no/autospawn = yes/g' /etc/pulse/client.conf"
 
-(grep "containers:" ~/.config/UntitledLinuxGameManager/config/layout.yaml &> /dev/null && echo "\
+grep "\
+  - container: $containerName
+      pins:
+" ~/.config/UntitledLinuxGameManager/config/layout.yaml &> /dev/null || (grep "containers:" ~/.config/UntitledLinuxGameManager/config/layout.yaml &> /dev/null && echo "\
   - container: $containerName
     pins:
       - steam

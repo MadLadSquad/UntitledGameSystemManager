@@ -37,6 +37,7 @@ fi
 lxc exec "${containerName}" -- bash -c "pacman -Syyu --noconfirm"
 # get the nvidia driver version from glxinfo and then construct a new string with the version
 if gpu && pro; then
+  which glxinfo &> /dev/null || (echo -e "\x1B[31mError: glxinfo not found! The glxinfo program is needed in order to update your GPU drivers!\x1B[0m" && exit)
   nversiontmp=$(glxinfo | grep "OpenGL version string: 4.6.0 NVIDIA ")
   nversion=${nversiontmp: -6}
 
