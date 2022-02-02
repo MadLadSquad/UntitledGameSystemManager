@@ -6,8 +6,7 @@ int main()
 {
     UGM::GUI::Window window;
     window.init("Untitled Linux Game Manager GUI", nullptr, UGM::Managers::GUI::render,  UGM::Managers::GUI::renderWindows);
-    UGM::GUI::ImGuiUtils::init(window.data(), R"(
-[Window][DockSpace Demo]
+    UGM::GUI::ImGuiUtils::init(window.data(), R"([Window][DockSpace Demo]
 Pos=0,19
 Size=800,581
 Collapsed=0
@@ -18,7 +17,7 @@ Size=400,400
 Collapsed=0
 
 [Window][Exit warning]
-Pos=176,338
+Pos=179,338
 Size=505,122
 Collapsed=0
 
@@ -33,14 +32,14 @@ Size=705,130
 Collapsed=0
 
 [Window][Main]
-Pos=279,19
-Size=521,581
+Pos=346,19
+Size=454,581
 Collapsed=0
 DockId=0x00000002,0
 
 [Window][Sidebar]
 Pos=0,19
-Size=277,581
+Size=344,581
 Collapsed=0
 DockId=0x00000001,0
 
@@ -80,9 +79,11 @@ Size=484,174
 Collapsed=0
 
 [Docking][Data]
-DockSpace   ID=0x3BC79352 Window=0x4647B76E Pos=3120,49 Size=800,581 Split=X
-  DockNode  ID=0x00000001 Parent=0x3BC79352 SizeRef=277,565 HiddenTabBar=1 Selected=0x495EF1C2
-  DockNode  ID=0x00000002 Parent=0x3BC79352 SizeRef=521,565 CentralNode=1 HiddenTabBar=1 Selected=0x1F1A625A
+DockSpace   ID=0x3BC79352 Window=0x4647B76E Pos=1360,49 Size=800,581 Split=X
+  DockNode  ID=0x00000001 Parent=0x3BC79352 SizeRef=344,565 HiddenTabBar=1 Selected=0x495EF1C2
+  DockNode  ID=0x00000002 Parent=0x3BC79352 SizeRef=454,565 CentralNode=1 HiddenTabBar=1 Selected=0x1F1A625A
+
+
 )");
     while (!window.getWindowClose())
         window.tick();
