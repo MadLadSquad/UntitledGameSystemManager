@@ -46,7 +46,7 @@ if gpu && pro; then
   for ((;;)); do
     stat1=$(curl -Is "https://archive.archlinux.org/packages/n/nvidia-utils/nvidia-utils-${nversion}-${up1}-x86_64.pkg.tar.zst" | head -n 1)
 
-    if echo "${stat1}" | grep "200"; then
+    if echo "${stat1}" | grep "200" &> /dev/null; then
       ((up1+=1))
     else
       ((up1-=1))
@@ -58,7 +58,7 @@ if gpu && pro; then
   up2=1
   for ((;;)); do
     stat2=$(curl -Is "https://archive.archlinux.org/packages/l/lib32-nvidia-utils/lib32-nvidia-utils-${nversion}-${up2}-x86_64.pkg.tar.zst" | head -n 1)
-    if echo "${stat2}" | grep "200"; then
+    if echo "${stat2}" | grep "200" &> /dev/null; then
       ((up2+=1))
     else
       ((up2-=1))
