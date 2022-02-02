@@ -13,7 +13,7 @@ Using a container users can:
 The manager requires the following to be installed on your system:
 - X
 - PulseAudio
-- glxinfo(for nvidia users)
+- glxinfo
 - An AMD/Intel/Nvidia GPU with supported drivers
 - The cli install scripts require bash, since for now they include bash isms and don't fully conform
 ## Install
