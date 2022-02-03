@@ -121,9 +121,39 @@ lxc restart "${containerName}"
 lxc config set "${containerName}" environment.PROTON_NO_ESYNC 1
 lxc config set "${containerName}" environment.PULSE_SERVER unix:/pulse-native
 lxc config set "${containerName}" environment.DISPLAY :0
+
+if [ -z "${XDG_RUNTIME_DIR}" ]; then
+  location="${XDG_RUNTIME_DIR}"
+elif [ -z "${PULSE_SERVER}" ]; then
+  # The PULSE_SERVER env variable starts with a "unix:" directive before the actual path
+  location=${PULSE_SERVER:5}
+else
+  if [ -f "/var/run/user/1000/pulse/native" ]; then
+	  location="/var/run/user/1000/pulse/native"
+  elif [ -f "/run/user/1000/pulse/native" ]; then
+    location="/run/user/1000/pulse/native"
+  elif [ -f "/pulse-native" ]; then
+    location="/pulse-native"
+  elif [ -f "${HOME}/pulse-native" ]; then
+    location="${HOME}/pulse-native"
+  elif [ -f "${HOME}/.config/pulse/native" ]; then
+    location="${HOME}/.config/pulse/native"
+  elif [ -f "${HOME}/.pulse/native" ]; then
+    location="${HOME}/.pulse/native"
+  else
+    pulsewarn=true
+  fi
+fi
+
+
 # The pulse socket is stored under the XDG_RUNTIME_DIR environment variable, if your system doesn't have it then you're pretty much fucked fr fr
-lxc config device add "${containerName}" PASocket1 proxy bind=container "connect=unix:${XDG_RUNTIME_DIR}/pulse/native" listen=unix:/pulse-native uid=1000 gid=1000 mode=0777 security.uid=1000 security.gid=1000
+lxc config device add "${containerName}" PASocket1 proxy bind=container "connect=unix:${location}/pulse/native" listen=unix:/pulse-native uid=1000 gid=1000 mode=0777 security.uid=1000 security.gid=1000
 lxc config device add "${containerName}" mygpu gpu
 lxc config device add "${containerName}" X0 proxy bind=container connect=unix:/tmp/.X11-unix/X0 listen=unix:/tmp/.X11-unix/X0 uid=1000 gid=1000 mode=0777 security.uid=1000 security.gid=1000
 
 echo -e "\x1B[32mContainer installation finished! You might experience network/audio problems, reboot and it should be fixed!\x1B[0m"
+if "${pulsewarn}"; then
+  echo -e "\x1B[31mError: pulseaudio socket not found, find the socket, called \"pulse-native\" or \"native\" if under a directory called \"pulse\" and run the following commands!"
+  echo -e "    lxc config device add ${containerName} PASocket1"
+  echo -e "    lxc config device add ${containerName} PASocket1 proxy bind=container connect=unix:<location to the socket here> listen=unix:/pulse-native uid=1000 gid=1000 mode=0777 security.uid=1000 security.gid=1000"
+fi
