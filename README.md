@@ -13,7 +13,7 @@ Using a container users can:
 The manager requires the following to be installed on your system:
 - X
 - PulseAudio
-- glxinfo(for nvidia users)
+- glxinfo
 - An AMD/Intel/Nvidia GPU with supported drivers
 - The cli install scripts require bash, since for now they include bash isms and don't fully conform
 ## Install
@@ -123,9 +123,7 @@ To install through the cli we have a handy script that you can run, otherwise do
   - Winetricks
   - Protontricks
 9. The installation is going to be slow, so leave the script to automatically handle installation, while all the packages download
-10. Troubleshooting
-  1. Don't have audio? The PA socket migth be wrong.
-    1. Find where your `pulse-native` socket
+10. Troubleshooting - visit the [wiki](https://github.com/MadLadSquad/UntitledLinuxGameManager/wiki)
 ## Managers
 ### Compilation
 You can run a the `user $ ./buildall.sh` script to build all installers and managers otherwise
