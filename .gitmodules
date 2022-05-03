@@ -4,9 +4,6 @@
 [submodule "ThirdParty/glfw"]
 	path = ThirdParty/glfw
 	url = https://github.com/MadLadSquad/glfw.git
-[submodule "ThirdParty/logger"]
-	path = ThirdParty/logger
-	url = https://github.com/MadLadSquad/UntitledLog.git
 [submodule "ThirdParty/glew"]
 	path = ThirdParty/glew
 	url = https://github.com/MadLadSquad/glew-cmake.git
