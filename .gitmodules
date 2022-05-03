@@ -10,3 +10,6 @@
 [submodule "ThirdParty/yaml-cpp"]
 	path = ThirdParty/yaml-cpp
 	url = https://github.com/MadLadSquad/yaml-cpp.git
+[submodule "ThirdParty/logger"]
+	path = ThirdParty/logger
+	url = https://github.com/MadLadSquad/UntitledLog.git
