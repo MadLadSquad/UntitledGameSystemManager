@@ -1,4 +1,5 @@
 # UntitledLinuxGameManager
+## Major announcement: After a big 6 months of no development the application is planned for a complete rewrite with the LXC C API and the new UntitledDesktop framework! When the rewrite is ready it will be pushed as tag 1.0 any issues present will be fixed in the new release!
 A linux gaming system manager
 ## About
 UntitledLinuxGameManager is a cli/gui program to help with managing a linux gaming system.
