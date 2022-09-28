@@ -25,4 +25,4 @@ jobs:
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Install
         shell: bash
-        run: ./buildall.sh
+        run: ./ci.sh

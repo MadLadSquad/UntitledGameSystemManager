@@ -1,1 +1,0 @@
-Installers/Scripts/ugm-cli-install.sh
