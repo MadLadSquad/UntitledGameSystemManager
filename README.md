@@ -1,4 +1,9 @@
 # UntitledLinuxGameManager
+[![CI](https://github.com/MadLadSquad/UntitledLinuxGameManager/actions/workflows/ci.yml/badge.svg)](https://github.com/MadLadSquad/UntitledLinuxGameManager/actions/workflows/ci.yml)
+[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+[![trello](https://img.shields.io/badge/Trello-UDE-blue])](https://trello.com/b/HmfuRY2K/untitleddesktop)
+[![Discord](https://img.shields.io/discord/717037253292982315.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/4wgH8ZE)
+
 ## Major announcement: After a big 6 months of no development the application is planned for a complete rewrite with the LXC C API and the new UntitledDesktop framework! When the rewrite is ready it will be pushed as tag 1.0 any issues present will be fixed in the new release!
 A linux gaming system manager
 ## About
