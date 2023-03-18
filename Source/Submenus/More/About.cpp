@@ -2,7 +2,7 @@
 
 UntitledLinuxGameManager::About::About()
 {
-    state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
 void UntitledLinuxGameManager::About::begin()
