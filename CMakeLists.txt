@@ -125,7 +125,12 @@ else()
 endif()
 
 if (USE_SPINNER_MODULE)
-    file(GLOB_RECURSE UGUI_SPINNER_HEAD "Framework/Modules/Spinners/*.h")
+    file(GLOB_RECURSE UGUI_SPINNER_HEAD "Framework/Modules/Spinners/*.h"
+            "Framework/ThirdParty/imgui/backends/everything/imgui.cpp"
+            "Framework/ThirdParty/imgui/backends/everything/imgui_draw.cpp"
+            "Framework/ThirdParty/imgui/backends/everything/imgui_tables.cpp"
+            "Framework/ThirdParty/imgui/backends/everything/imgui_widgets.cpp"
+            "Framework/ThirdParty/imgui/misc/freetype/imgui_freetype.cpp")
 else()
     file(GLOB_RECURSE UGUI_SPINNER_HEAD " ")
 endif()
