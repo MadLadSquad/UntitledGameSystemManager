@@ -19,9 +19,10 @@ UntitledLinuxGameManager::Instance::Instance()
             &update,
             &exitWidget,
             &newContainer,
-            &showDirectories,
+            &help,
             &about,
         },
+        .globalData = (void*)this,
     };
 }
 

@@ -16,6 +16,8 @@ namespace UntitledLinuxGameManager
 
         virtual void onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io) override;
     private:
+        friend class MainBar;
+
         Pin pin{};
         Poweroff poweroff{};
         Poweron poweron{};
@@ -23,7 +25,7 @@ namespace UntitledLinuxGameManager
         Update update{};
         Exit exitWidget{};
         NewContainer newContainer{};
-        ShowDirectories showDirectories{};
+        Help help{};
         About about{};
 
         MainBar mainBar{};

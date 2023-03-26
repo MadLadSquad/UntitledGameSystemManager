@@ -3,14 +3,14 @@
 
 namespace UntitledLinuxGameManager
 {
-    class UIMGUI_PUBLIC_API ShowDirectories : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API Help : public UImGui::WindowComponent
     {
     public:
-        ShowDirectories();
+        Help();
         virtual void begin() override;
         virtual void tick(float deltaTime) override;
         virtual void end() override;
-        virtual ~ShowDirectories() override;
+        virtual ~Help() override;
     private:
 
     };

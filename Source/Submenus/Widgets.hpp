@@ -7,6 +7,6 @@
 
 #include "File/Exit.hpp"
 #include "File/NewContainer.hpp"
-#include "File/ShowDirectories.hpp"
 
 #include "More/About.hpp"
+#include "More/Help.hpp"
