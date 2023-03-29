@@ -22,8 +22,8 @@ cd UntitledImGuiFramework/UVKBuildTool/build || exit
 cd ../../../
 
 cd LXDBindings || exit
-go get .
-go build -o libUGM_LXD_InternalFuncs.so -buildmode=c-shared .
+go get . || exit
+go build -o libUGM_LXD_InternalFuncs.so -buildmode=c-shared . || exit
 cd .. || exit
 
 # Build the project
