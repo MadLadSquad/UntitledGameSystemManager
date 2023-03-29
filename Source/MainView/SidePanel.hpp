@@ -12,7 +12,6 @@ namespace UntitledLinuxGameManager
         virtual void end() override;
         virtual ~SidePanel() override;
     private:
-
     };
 }
 

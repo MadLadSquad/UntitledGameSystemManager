@@ -1,6 +1,5 @@
 #include "Help.hpp"
-#include <unistd.h>
-#include <pwd.h>
+#include "Instance.hpp"
 
 UntitledLinuxGameManager::Help::Help()
 {
@@ -20,9 +19,11 @@ void UntitledLinuxGameManager::Help::tick(float deltaTime)
         ImGui::OpenPopup("Info");
     if (ImGui::BeginPopupModal("Info", &state))
     {
-        static std::string configDir = std::string("/home") + getpwuid(geteuid())->pw_name + "/.config/UntitledLinuxGameManager/config/";
-        static std::string scriptsDir = std::string("/home") + getpwuid(geteuid())->pw_name + "/.config/UntitledLinuxGameManager/scripts/";
-        static std::string resourcesDir = std::string("/home") + getpwuid(geteuid())->pw_name + "/.config/UntitledLinuxGameManager/resources/";
+        auto* inst = (Instance*)UImGui::Instance::getGlobal();
+
+        static std::string configDir = inst->configDir + "config/";
+        static std::string scriptsDir = inst->configDir + "scripts/";
+        static std::string resourcesDir = inst->configDir + "resources/";
 
         ImGui::Text("Config directories");
 

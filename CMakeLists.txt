@@ -83,10 +83,10 @@ include_directories("Source/" "Framework/ThirdParty/yaml-cpp/include/yaml-cpp" "
         "Framework/ThirdParty/imgui/misc/" "Framework/ThirdParty/glfw/include" "Framework/ThirdParty/glew/include"
         "Framework/ThirdParty/imgui/backends/everything" "Framework/ThirdParty/imgui/" "Framework/Core/"
         "Framework/Renderer/" "Framework/ThirdParty/logger/src/" "Framework/ThirdParty/source-libraries/"
-        "Framework/ThirdParty/yaml-cpp/include" "Framework/Modules")
+        "Framework/ThirdParty/yaml-cpp/include" "Framework/Modules" ".")
 
 
-link_directories("ThirdParty/glew/lib" UVKBuildTool/build)
+link_directories("ThirdParty/glew/lib" "UVKBuildTool/build" "LXDBindings/")
 
 file(GLOB_RECURSE UGUI_SRC "Framework/Core/*.cpp" "Framework/Renderer/*.cpp"
         "Framework/ThirdParty/imgui/backends/everything/*.cpp" "Framework/ThirdParty/imgui/misc/cpp/*.cpp"
@@ -101,7 +101,8 @@ file(GLOB_RECURSE UGUI_HEAD "Framework/Core/*.hpp" "Framework/Renderer/*.hpp"
         "Framework/ThirdParty/logger/*.h" "Framework/ThirdParty/source-libraries/*.h"
         "Framework/ThirdParty/source-libraries/*.hpp" "Framework/Modules/Audio/src/*.hpp"
         "Framework/Modules/Locale/src/*.hpp" "Source/*.hpp" "Framework/Modules/Undo/src/*.hpp"
-        "Framework/Modules/Manager/*.hpp" "Framework/Modules/OS/*.h" "Framework/Modules/OS/*.hpp")
+        "Framework/Modules/Manager/*.hpp" "Framework/Modules/OS/*.h" "Framework/Modules/OS/*.hpp"
+        "LXDBindings/libUGM_LXD_InternalFuncs.h")
 file(GLOB_RECURSE EXEC_SRC "")
 
 # ----------------------------------------------------------------------------------------------------------------------
@@ -262,7 +263,7 @@ if (WIN32)
     target_link_libraries(UntitledImGuiFramework glfw opengl32 libglew_static yaml-cpp freetype)
     target_link_libraries(UntitledLinuxGameManager UntitledImGuiFramework yaml-cpp)
 else()
-    target_link_libraries(UntitledImGuiFramework glfw GLEW OpenGL util pthread yaml-cpp dl freetype)
+    target_link_libraries(UntitledImGuiFramework glfw GLEW OpenGL util pthread yaml-cpp dl freetype UGM_LXD_InternalFuncs)
     target_link_libraries(UntitledLinuxGameManager UntitledImGuiFramework yaml-cpp dl util)
 
     if (USE_OS_MODULE)

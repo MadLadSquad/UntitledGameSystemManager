@@ -2,9 +2,19 @@
 #include <Framework.hpp>
 #include "MainView/Widgets.hpp"
 #include "Submenus/Widgets.hpp"
+#include <thread>
+#include "LXDBindings/libUGM_LXD_InternalFuncs.h"
 
 namespace UntitledLinuxGameManager
 {
+    struct Container
+    {
+        using Pin = std::pair<std::string, bool>;
+
+        std::string name;
+        std::vector<Pin> pins;
+    };
+
     class UIMGUI_PUBLIC_API Instance : public UImGui::Instance
     {
     public:
@@ -15,9 +25,21 @@ namespace UntitledLinuxGameManager
         virtual ~Instance() override;
 
         virtual void onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io) override;
+
+        void loadConfigData();
+
+        std::vector<Container> containers;
+        Container* selectedContainer = nullptr;
+
+        std::string configDir;
+
+        std::thread worker;
+        bool bWorkerActive = false;
+        bool bFinishedExecution = false;
     private:
         friend class MainBar;
         friend class MainView;
+        friend class SidePanel;
 
         Pin pin{};
         Poweroff poweroff{};
