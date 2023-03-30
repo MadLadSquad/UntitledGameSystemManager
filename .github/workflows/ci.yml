@@ -54,3 +54,12 @@ jobs:
         id: commit
         run: |
           (git add . && git commit -m "Update" && git push origin auto && echo "com=+" >> $GITHUB_OUTPUT) || echo "com=?" >> $GITHUB_OUTPUT
+      - name: Create PR
+        if: "steps.mod.outputs.out != '?' && steps.commit.outputs.com != '?'"
+        uses: JasonEtco/create-an-issue@v2 
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTION_ISSUE_SECRET }}
+        with:
+          filename: .github/auto-issue-template.md
+          update_existing: true
+          search_existing: open
