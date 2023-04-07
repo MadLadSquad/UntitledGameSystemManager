@@ -42,7 +42,7 @@ void UntitledLinuxGameManager::SidePanel::tick(float deltaTime)
             if (ImGui::MenuItem("+ New"))
                 inst->newContainer.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
             else if (ImGui::MenuItem("- Delete"))
-                ; // TODO: Delete container here
+                inst->del.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
             else if (ImGui::MenuItem("* Update"))
                 inst->update.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
             ImGui::EndMenu();

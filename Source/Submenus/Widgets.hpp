@@ -4,6 +4,7 @@
 #include "Edit/Poweroff.hpp"
 #include "Edit/Update.hpp"
 #include "Edit/Restart.hpp"
+#include "Edit/Delete.hpp"
 
 #include "File/Exit.hpp"
 #include "File/NewContainer.hpp"

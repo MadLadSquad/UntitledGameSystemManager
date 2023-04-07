@@ -40,7 +40,7 @@ void UntitledLinuxGameManager::Poweroff::tick(float deltaTime)
                     ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
                 });
             }
-
+            ImGui::SameLine();
             if (!inst->bWorkerActive && ImGui::Button("Close##info"))
                 state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
             ImGui::EndPopup();

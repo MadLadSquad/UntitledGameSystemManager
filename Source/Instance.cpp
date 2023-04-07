@@ -3,6 +3,7 @@
 #include <pwd.h>
 #include <yaml-cpp/yaml.h>
 #include "LXDBindings/libUGM_LXD_InternalFuncs.h"
+#include "Interfaces/RendererInterface.hpp"
 
 UntitledLinuxGameManager::Instance::Instance()
 {
@@ -25,8 +26,10 @@ UntitledLinuxGameManager::Instance::Instance()
             &newContainer,
             &help,
             &about,
+            &del
         },
         .globalData = (void*)this,
+        .bGlobalAllocatedOnHeap = false,
     };
 
     // Check for XDG_CONFIG_HOME
@@ -57,6 +60,8 @@ void UntitledLinuxGameManager::Instance::begin()
         Logger::log("Failed to establish connection to LXD. Error: ", UVKLog::UVK_LOG_TYPE_ERROR, LXDGetError());
         UImGui::Instance::shutdown();
     }
+
+    gpuType = UImGui::Renderer::getGPUName()[0] == 'N' ? 'N' : 'M';
 }
 
 void UntitledLinuxGameManager::Instance::tick(float deltaTime)

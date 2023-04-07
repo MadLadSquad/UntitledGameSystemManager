@@ -1,3 +1,23 @@
 name: "UntitledLinuxGameManager"
 version: "1.0.0.0"
 engine-version: "1.0.0.0"
+enabled-modules:
+  os: true
+  dbus: false
+  uexec: true
+  theming: true
+  notifications: false
+  polkit: false
+  ufont: false
+  audio: false
+  locale: true
+  network: false
+  undo-redo: false
+  video: false
+  plotting: false
+  knobs: false
+  spinners: false
+  toggles: false
+  text-utils: false
+  markdown: false
+  cli-parser: false

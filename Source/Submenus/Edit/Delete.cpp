@@ -1,38 +1,37 @@
-#include "Poweron.hpp"
+#include "Delete.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::Poweron::Poweron()
+UntitledLinuxGameManager::Delete::Delete()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Poweron::begin()
+void UntitledLinuxGameManager::Delete::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Poweron::tick(float deltaTime)
+void UntitledLinuxGameManager::Delete::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
-
     auto* inst = (Instance*)UImGui::Instance::getGlobal();
     if (inst->selectedContainer != nullptr)
     {
-        if (!ImGui::IsPopupOpen("Power on"))
-            ImGui::OpenPopup("Power on");
-        if (ImGui::BeginPopupModal("Power on", (bool*)nullptr))
+        if (!ImGui::IsPopupOpen("Delete"))
+            ImGui::OpenPopup("Delete");
+        if (ImGui::BeginPopupModal("Delete", (bool*)nullptr))
         {
-            ImGui::TextWrapped("This action will force the current container to power on! This CANNOT be reversed!");
+            ImGui::TextWrapped("This action WILL DELETE the currently selected container! This CANNOT be undone!");
 
-            if (!inst->bWorkerActive && ImGui::Button("Power on##button"))
+            if (!inst->bWorkerActive && ImGui::Button("Delete##button"))
             {
                 inst->bWorkerActive = true;
                 inst->worker = std::thread([&]() -> void
                 {
-                    if (LXDStartContainer(inst->selectedContainer->name.data()) != 0)
+                    if (LXDDeleteContainer(inst->selectedContainer->name.data()) != 0)
                     {
-                        Logger::log("Failed to power on the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
+                        Logger::log("Failed to delete the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
                                     inst->selectedContainer->name, " Error: ", LXDGetError());
                         UImGui::Instance::shutdown();
                     }
@@ -48,13 +47,13 @@ void UntitledLinuxGameManager::Poweron::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Poweron::end()
+void UntitledLinuxGameManager::Delete::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Poweron::~Poweron()
+UntitledLinuxGameManager::Delete::~Delete()
 {
 
 }

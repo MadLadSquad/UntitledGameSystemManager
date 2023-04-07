@@ -17,6 +17,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_subdirectory(Framework/ThirdParty/glfw)
 add_subdirectory(Framework/ThirdParty/glew)
+add_subdirectory(Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/ThirdParty/utfcpp)
 
 set(BUILD_SHARED_LIBS ON)
 add_subdirectory(Framework/ThirdParty/yaml-cpp)
@@ -73,6 +74,7 @@ option(USE_SPINNER_MODULE "Use the spinners module" OFF)
 option(USE_TOGGLES_MODULE "Use the toggles module" OFF)
 option(USE_TEXT_UTILS_MODULE "Use the text utils module" OFF)
 option(USE_MARKDOWN_MODULE "Use the markdown rendering module" OFF)
+option(USE_CLI_PARSER_MODULE "Use the CLI Parser module" OFF)
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ---------------------------------------------- Add files and directories ---------------------------------------------
@@ -83,7 +85,8 @@ include_directories("Source/" "Framework/ThirdParty/yaml-cpp/include/yaml-cpp" "
         "Framework/ThirdParty/imgui/misc/" "Framework/ThirdParty/glfw/include" "Framework/ThirdParty/glew/include"
         "Framework/ThirdParty/imgui/backends/everything" "Framework/ThirdParty/imgui/" "Framework/Core/"
         "Framework/Renderer/" "Framework/ThirdParty/logger/src/" "Framework/ThirdParty/source-libraries/"
-        "Framework/ThirdParty/yaml-cpp/include" "Framework/Modules" ".")
+        "Framework/ThirdParty/yaml-cpp/include" "Framework/Modules" "."
+        "Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/ThirdParty/")
 
 
 link_directories("ThirdParty/glew/lib" "UVKBuildTool/build" "LXDBindings/")
@@ -108,6 +111,16 @@ file(GLOB_RECURSE EXEC_SRC "")
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------- Modify files for modules ---------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
+
+if (USE_CLI_PARSER_MODULE)
+    file(GLOB_RECURSE UGUI_CLI_SRC "Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/C/*.cpp"
+            "Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/CLIParser.cpp")
+    file(GLOB_RECURSE UGUI_CLI_HEAD "Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/C/*.h"
+            "Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/CLIParser.hpp" "Framework/Modules/CLIParser/Common.h")
+else()
+    file(GLOB_RECURSE UGUI_CLI_SRC )
+    file(GLOB_RECURSE UGUI_CLI_HEAD )
+endif()
 
 if (USE_PLOTTING_MODULE)
     file(GLOB_RECURSE UGUI_IMPLOT_SRC "Framework/Modules/Plotting/*.cpp")
@@ -167,9 +180,9 @@ endif()
 
 add_library(UntitledImGuiFramework SHARED ${UGUI_SRC} ${UGUI_HEAD} Generated/BuildDef.hpp ${UGUI_IMPLOT_SRC}
         ${UGUI_IMPLOT_HEAD} ${UGUI_OS_SRC} ${UGUI_OS_HEAD} ${UGUI_TOGGLES_HEAD} ${UGUI_TOGGLES_SRC} ${UGUI_SPINNER_HEAD}
-        ${UGUI_KNOBS_HEAD} ${UGUI_KNOBS_SRC})
+        ${UGUI_KNOBS_HEAD} ${UGUI_KNOBS_SRC} ${UGUI_CLI_SRC} ${UGUI_CLI_HEAD})
 add_executable(UntitledLinuxGameManager Generated/main.cpp ${UGUI_HEAD} ${EXEC_SRC} Generated/BuildDef.hpp ${UGUI_IMPLOT_HEAD}
-        ${UGUI_OS_HEAD} ${UGUI_TOGGLES_HEAD} ${UGUI_SPINNER_HEAD} ${UGUI_KNOBS_HEAD})
+        ${UGUI_OS_HEAD} ${UGUI_TOGGLES_HEAD} ${UGUI_SPINNER_HEAD} ${UGUI_KNOBS_HEAD} ${UGUI_CLI_HEAD})
 
 # ----------------------------------------------------------------------------------------------------------------------
 # ----------------------------------------------- Set up linker properties ---------------------------------------------
@@ -181,6 +194,11 @@ set_target_properties(UntitledLinuxGameManager PROPERTIES LINKER_LANGUAGE CXX)
 # ----------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------- Set up module compiler definitions ---------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
+
+if (USE_CLI_PARSER_MODULE)
+    target_compile_definitions(UntitledImGuiFramework PRIVATE "UIMGUI_CLI_PARSER_MODULE_ENABLED" "UCLI_COMPILE_WITH_UTF_SUPPORT")
+    target_compile_definitions(UntitledLinuxGameManager PRIVATE "UIMGUI_CLI_PARSER_MODULE_ENABLED")
+endif()
 
 if (USE_AUDIO_MODULE)
     target_compile_definitions(UntitledImGuiFramework PRIVATE "UIMGUI_AUDIO_MODULE_ENABLED")

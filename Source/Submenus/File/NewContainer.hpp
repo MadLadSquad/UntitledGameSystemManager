@@ -12,7 +12,8 @@ namespace UntitledLinuxGameManager
         virtual void end() override;
         virtual ~NewContainer() override;
     private:
-
+        bool bStartExecuting = false;
+        std::string currentEvent;
     };
 }
 

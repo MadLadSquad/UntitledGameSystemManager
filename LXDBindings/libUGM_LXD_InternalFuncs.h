@@ -80,6 +80,8 @@ extern void LXDDestroyConnection();
 extern char LXDStartContainer(char* name);
 extern char LXDStopContainer(char* name);
 extern char LXDRestartContainer(char* name);
+extern char LXDNewContainer(char* name, char* alias);
+extern char LXDDeleteContainer(char* name);
 
 #ifdef __cplusplus
 }

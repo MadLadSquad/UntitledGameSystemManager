@@ -36,6 +36,8 @@ namespace UntitledLinuxGameManager
         std::thread worker;
         bool bWorkerActive = false;
         bool bFinishedExecution = false;
+
+        char gpuType = 'M';
     private:
         friend class MainBar;
         friend class MainView;
@@ -50,6 +52,7 @@ namespace UntitledLinuxGameManager
         NewContainer newContainer{};
         Help help{};
         About about{};
+        Delete del{};
 
         MainBar mainBar{};
         MainView mainView{};
