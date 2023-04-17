@@ -11,6 +11,9 @@ project(UntitledLinuxGameManager)
 
 set(CMAKE_CXX_STANDARD 20)
 
+set(UIMGUI_PLATFORM "DESKTOP" CACHE STRING "Can be set to DESKTOP when building for WIN32, Linux, Mac, etc. ANDROID for
+    Android and WEB for WASM")
+
 # ----------------------------------------------------------------------------------------------------------------------
 # ------------------------------------------------- Add subdirectories -------------------------------------------------
 # ----------------------------------------------------------------------------------------------------------------------
@@ -18,6 +21,7 @@ set(CMAKE_CXX_STANDARD 20)
 add_subdirectory(Framework/ThirdParty/glfw)
 add_subdirectory(Framework/ThirdParty/glew)
 add_subdirectory(Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/ThirdParty/utfcpp)
+add_subdirectory(Framework/ThirdParty/vulkan-headers)
 
 set(BUILD_SHARED_LIBS ON)
 add_subdirectory(Framework/ThirdParty/yaml-cpp)
@@ -81,25 +85,56 @@ option(USE_CLI_PARSER_MODULE "Use the CLI Parser module" OFF)
 # ----------------------------------------------------------------------------------------------------------------------
 
 include_directories("Source/" "Framework/ThirdParty/yaml-cpp/include/yaml-cpp" "Framework/"
-        "Framework/ThirdParty/imgui/backends/everything/" "Framework/ThirdParty/imgui/backends/Vulkan/"
+        "Framework/ThirdParty/imgui/core/" "Framework/ThirdParty/imgui/backends/"
         "Framework/ThirdParty/imgui/misc/" "Framework/ThirdParty/glfw/include" "Framework/ThirdParty/glew/include"
-        "Framework/ThirdParty/imgui/backends/everything" "Framework/ThirdParty/imgui/" "Framework/Core/"
-        "Framework/Renderer/" "Framework/ThirdParty/logger/src/" "Framework/ThirdParty/source-libraries/"
-        "Framework/ThirdParty/yaml-cpp/include" "Framework/Modules" "."
-        "Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/ThirdParty/")
+        "Framework/ThirdParty/imgui/" "Framework/Core/" "Framework/Renderer/" "Framework/ThirdParty/logger/src/"
+        "Framework/ThirdParty/source-libraries/" "Framework/ThirdParty/yaml-cpp/include" "Framework/Modules" "."
+        "Framework/Modules/CLIParser/ThirdParty/UntitledCLIParser/ThirdParty/"
+        "Framework/ThirdParty/vulkan-headers/include")
 
 
 link_directories("ThirdParty/glew/lib" "UVKBuildTool/build" "LXDBindings/")
 
-file(GLOB_RECURSE UGUI_SRC "Framework/Core/*.cpp" "Framework/Renderer/*.cpp"
-        "Framework/ThirdParty/imgui/backends/everything/*.cpp" "Framework/ThirdParty/imgui/misc/cpp/*.cpp"
+if (UIMGUI_PLATFORM STREQUAL "DESKTOP")
+    file(GLOB_RECURSE IMGUI_SRC "Framework/ThirdParty/imgui/backends/imgui_impl_glfw.cpp"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3.cpp"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
+
+    file(GLOB_RECURSE IMGUI_HEAD "Framework/ThirdParty/imgui/backends/imgui_impl_glfw.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_vulkan.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3_loader.h")
+elseif(UIMGUI_PLATFORM STREQUAL "ANDROID")
+    file(GLOB_RECURSE IMGUI_SRC "Framework/ThirdParty/imgui/backends/imgui_impl_android.cpp"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3.cpp"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_vulkan.cpp")
+
+    file(GLOB_RECURSE IMGUI_HEAD "Framework/ThirdParty/imgui/backends/imgui_impl_android.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_vulkan.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3_loader.h")
+elseif (UIMGUI_PLATFORM STREQUAL "WEB")
+    file(GLOB_RECURSE IMGUI_SRC "Framework/ThirdParty/imgui/backends/imgui_impl_glfw.cpp"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3.cpp"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_wgpu.cpp")
+
+    file(GLOB_RECURSE IMGUI_HEAD "Framework/ThirdParty/imgui/backends/imgui_impl_glfw.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_wgpu.h"
+            "Framework/ThirdParty/imgui/backends/imgui_impl_opengl3_loader.h")
+else()
+    message(FATAL_ERROR "The UIMGUI_PLATFORM variable is not set to a compatible value!")
+endif()
+
+file(GLOB_RECURSE UGUI_SRC "Framework/Core/*.cpp" "Framework/Renderer/*.cpp" ${IMGUI_SRC}
+        "Framework/ThirdParty/imgui/core/*.cpp" "Framework/ThirdParty/imgui/misc/cpp/*.cpp"
         "Framework/ThirdParty/imgui/misc/freetype/*.cpp"
         "Framework/ThirdParty/logger/*.cpp" "Framework/ThirdParty/source-libraries/*.cpp"
         "Framework/Modules/Audio/src/*.cpp" "Framework/Modules/Locale/src/*.cpp" "Source/*.cpp"
         "Framework/Modules/Undo/src/*.cpp" "Framework/Modules/Manager/*.cpp" "Framework/Modules/OS/*.cpp"
         "Framework/Modules/Modules.hpp")
-file(GLOB_RECURSE UGUI_HEAD "Framework/Core/*.hpp" "Framework/Renderer/*.hpp"
-        "Framework/ThirdParty/imgui/backends/everything/*.h" "Framework/ThirdParty/imgui/misc/cpp/*.h"
+file(GLOB_RECURSE UGUI_HEAD "Framework/Core/*.hpp" "Framework/Renderer/*.hpp" ${IMGUI_HEAD}
+        "Framework/ThirdParty/imgui/core/*.h" "Framework/ThirdParty/imgui/misc/cpp/*.h"
         "Framework/ThirdParty/imgui/misc/freetype/*.h"
         "Framework/ThirdParty/logger/*.h" "Framework/ThirdParty/source-libraries/*.h"
         "Framework/ThirdParty/source-libraries/*.hpp" "Framework/Modules/Audio/src/*.hpp"
@@ -140,10 +175,10 @@ endif()
 
 if (USE_SPINNER_MODULE)
     file(GLOB_RECURSE UGUI_SPINNER_HEAD "Framework/Modules/Spinners/*.h"
-            "Framework/ThirdParty/imgui/backends/everything/imgui.cpp"
-            "Framework/ThirdParty/imgui/backends/everything/imgui_draw.cpp"
-            "Framework/ThirdParty/imgui/backends/everything/imgui_tables.cpp"
-            "Framework/ThirdParty/imgui/backends/everything/imgui_widgets.cpp"
+            "Framework/ThirdParty/imgui/core/imgui.cpp"
+            "Framework/ThirdParty/imgui/core/imgui_draw.cpp"
+            "Framework/ThirdParty/imgui/core/imgui_tables.cpp"
+            "Framework/ThirdParty/imgui/core/imgui_widgets.cpp"
             "Framework/ThirdParty/imgui/misc/freetype/imgui_freetype.cpp")
 else()
     file(GLOB_RECURSE UGUI_SPINNER_HEAD " ")
@@ -278,10 +313,10 @@ target_compile_definitions(UntitledLinuxGameManager PRIVATE "UVK_LOG_EXPORT_FROM
 # ----------------------------------------------------------------------------------------------------------------------
 
 if (WIN32)
-    target_link_libraries(UntitledImGuiFramework glfw opengl32 libglew_static yaml-cpp freetype)
+    target_link_libraries(UntitledImGuiFramework glfw opengl32 libglew_static yaml-cpp freetype vulkan-1)
     target_link_libraries(UntitledLinuxGameManager UntitledImGuiFramework yaml-cpp)
 else()
-    target_link_libraries(UntitledImGuiFramework glfw GLEW OpenGL util pthread yaml-cpp dl freetype UGM_LXD_InternalFuncs)
+    target_link_libraries(UntitledImGuiFramework glfw GLEW OpenGL util pthread yaml-cpp dl freetype UGM_LXD_InternalFuncs vulkan)
     target_link_libraries(UntitledLinuxGameManager UntitledImGuiFramework yaml-cpp dl util)
 
     if (USE_OS_MODULE)
