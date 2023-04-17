@@ -12,12 +12,12 @@ enabled-modules:
   audio: false
   locale: true
   network: false
-  undo-redo: false
+  undo_redo: false
   video: false
   plotting: false
   knobs: false
   spinners: false
   toggles: false
-  text-utils: false
+  text_utils: false
   markdown: false
-  cli-parser: false
+  cli_parser: false
