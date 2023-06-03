@@ -1,4 +1,6 @@
 #include "MainView.hpp"
+
+#include <ranges>
 #include "Instance.hpp"
 #include "yaml-cpp/yaml.h"
 

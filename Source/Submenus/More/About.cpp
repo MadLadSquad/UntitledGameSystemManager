@@ -23,7 +23,7 @@ void UntitledLinuxGameManager::About::tick(float deltaTime)
     if (ImGui::BeginPopupModal("About us", &state))
     {
 
-        ImGui::TextWrapped("The UntitledLinuxGameManager, a gam system manager for Linux, developed and maintained by MadLad Squad");
+        ImGui::TextWrapped("The UntitledLinuxGameManager, a game system manager for Linux, developed and maintained by MadLad Squad");
         ImGui::TextWrapped("This project utilises lxc and lxd for creating and managing the containers, that are the core of this project!");
         ImGui::TextWrapped("More info about lxd and lxc: ");
         ImGui::SameLine();
