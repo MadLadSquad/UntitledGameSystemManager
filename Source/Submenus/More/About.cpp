@@ -1,11 +1,11 @@
 #include "About.hpp"
 
-UntitledLinuxGameManager::About::About()
+UntitledGameSystemManager::About::About()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::About::begin()
+void UntitledGameSystemManager::About::begin()
 {
     beginAutohandle();
     brandIcon.init("../Content/brand-icon.png");
@@ -15,7 +15,7 @@ void UntitledLinuxGameManager::About::begin()
     lxcIcon.loadImGui();
 }
 
-void UntitledLinuxGameManager::About::tick(float deltaTime)
+void UntitledGameSystemManager::About::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen("About us"))
@@ -23,7 +23,7 @@ void UntitledLinuxGameManager::About::tick(float deltaTime)
     if (ImGui::BeginPopupModal("About us", &state))
     {
 
-        ImGui::TextWrapped("The UntitledLinuxGameManager, a game system manager for Linux, developed and maintained by MadLad Squad");
+        ImGui::TextWrapped("The UntitledGameSystemManager, a game system manager for Linux, developed and maintained by MadLad Squad");
         ImGui::TextWrapped("This project utilises lxc and lxd for creating and managing the containers, that are the core of this project!");
         ImGui::TextWrapped("More info about lxd and lxc: ");
         ImGui::SameLine();
@@ -52,13 +52,13 @@ void UntitledLinuxGameManager::About::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::About::end()
+void UntitledGameSystemManager::About::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::About::~About()
+UntitledGameSystemManager::About::~About()
 {
 
 }

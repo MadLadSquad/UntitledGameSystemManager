@@ -1,29 +1,29 @@
 #include "Pin.hpp"
 
-UntitledLinuxGameManager::Pin::Pin()
+UntitledGameSystemManager::Pin::Pin()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Pin::begin()
+void UntitledGameSystemManager::Pin::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Pin::tick(float deltaTime)
+void UntitledGameSystemManager::Pin::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
 
 }
 
-void UntitledLinuxGameManager::Pin::end()
+void UntitledGameSystemManager::Pin::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Pin::~Pin()
+UntitledGameSystemManager::Pin::~Pin()
 {
 
 }

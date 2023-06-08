@@ -5,7 +5,7 @@
 #include "LXDBindings/libUGM_LXD_InternalFuncs.h"
 #include "Interfaces/RendererInterface.hpp"
 
-UntitledLinuxGameManager::Instance::Instance()
+UntitledGameSystemManager::Instance::Instance()
 {
     initInfo = UImGui::InitInfo
     {
@@ -46,10 +46,10 @@ UntitledLinuxGameManager::Instance::Instance()
     }
     else
         configDir += std::string(configHome) + "/";
-    configDir += "UntitledLinuxGameManager/";
+    configDir += "UntitledGameSystemManager/";
 }
 
-void UntitledLinuxGameManager::Instance::begin()
+void UntitledGameSystemManager::Instance::begin()
 {
     beginAutohandle();
     loadConfigData();
@@ -64,7 +64,7 @@ void UntitledLinuxGameManager::Instance::begin()
     gpuType = UImGui::Renderer::getGPUName()[0] == 'N' ? 'N' : 'M';
 }
 
-void UntitledLinuxGameManager::Instance::tick(float deltaTime)
+void UntitledGameSystemManager::Instance::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     if (bWorkerActive && bFinishedExecution && worker.joinable())
@@ -75,7 +75,7 @@ void UntitledLinuxGameManager::Instance::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Instance::end()
+void UntitledGameSystemManager::Instance::end()
 {
     endAutohandle();
     if (worker.joinable())
@@ -83,16 +83,16 @@ void UntitledLinuxGameManager::Instance::end()
     LXDDestroyConnection();
 }
 
-UntitledLinuxGameManager::Instance::~Instance()
+UntitledGameSystemManager::Instance::~Instance()
 {
 
 }
 
-void UntitledLinuxGameManager::Instance::onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io)
+void UntitledGameSystemManager::Instance::onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io)
 {
 }
 
-void UntitledLinuxGameManager::Instance::loadConfigData()
+void UntitledGameSystemManager::Instance::loadConfigData()
 {
     containers.clear();
 

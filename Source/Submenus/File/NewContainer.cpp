@@ -1,18 +1,18 @@
 #include "NewContainer.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::NewContainer::NewContainer()
+UntitledGameSystemManager::NewContainer::NewContainer()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::NewContainer::begin()
+void UntitledGameSystemManager::NewContainer::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::NewContainer::tick(float deltaTime)
+void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     auto* inst = (Instance*)UImGui::Instance::getGlobal();
@@ -84,12 +84,12 @@ void UntitledLinuxGameManager::NewContainer::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::NewContainer::end()
+void UntitledGameSystemManager::NewContainer::end()
 {
     endAutohandle();
 }
 
-UntitledLinuxGameManager::NewContainer::~NewContainer()
+UntitledGameSystemManager::NewContainer::~NewContainer()
 {
 
 }

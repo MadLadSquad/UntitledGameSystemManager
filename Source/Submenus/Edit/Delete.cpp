@@ -1,18 +1,18 @@
 #include "Delete.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::Delete::Delete()
+UntitledGameSystemManager::Delete::Delete()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Delete::begin()
+void UntitledGameSystemManager::Delete::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Delete::tick(float deltaTime)
+void UntitledGameSystemManager::Delete::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     auto* inst = (Instance*)UImGui::Instance::getGlobal();
@@ -47,13 +47,13 @@ void UntitledLinuxGameManager::Delete::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Delete::end()
+void UntitledGameSystemManager::Delete::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Delete::~Delete()
+UntitledGameSystemManager::Delete::~Delete()
 {
 
 }

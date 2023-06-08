@@ -1,29 +1,29 @@
 #include "Update.hpp"
 
-UntitledLinuxGameManager::Update::Update()
+UntitledGameSystemManager::Update::Update()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Update::begin()
+void UntitledGameSystemManager::Update::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Update::tick(float deltaTime)
+void UntitledGameSystemManager::Update::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
 
 }
 
-void UntitledLinuxGameManager::Update::end()
+void UntitledGameSystemManager::Update::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Update::~Update()
+UntitledGameSystemManager::Update::~Update()
 {
 
 }

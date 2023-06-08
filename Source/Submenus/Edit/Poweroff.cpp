@@ -1,18 +1,18 @@
 #include "Poweroff.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::Poweroff::Poweroff()
+UntitledGameSystemManager::Poweroff::Poweroff()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Poweroff::begin()
+void UntitledGameSystemManager::Poweroff::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Poweroff::tick(float deltaTime)
+void UntitledGameSystemManager::Poweroff::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
 
@@ -48,13 +48,13 @@ void UntitledLinuxGameManager::Poweroff::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Poweroff::end()
+void UntitledGameSystemManager::Poweroff::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Poweroff::~Poweroff()
+UntitledGameSystemManager::Poweroff::~Poweroff()
 {
 
 }

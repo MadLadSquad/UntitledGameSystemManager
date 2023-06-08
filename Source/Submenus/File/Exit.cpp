@@ -1,24 +1,24 @@
 #include "Exit.hpp"
 
-UntitledLinuxGameManager::Exit::Exit()
+UntitledGameSystemManager::Exit::Exit()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Exit::begin()
+void UntitledGameSystemManager::Exit::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Exit::tick(float deltaTime)
+void UntitledGameSystemManager::Exit::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen("Exit"))
         ImGui::OpenPopup("Exit");
     if (ImGui::BeginPopupModal("Exit", &state))
     {
-        ImGui::TextWrapped("Are you sure you want to exit the UntitledLinuxGameManager? All running containers will not be powered off!");
+        ImGui::TextWrapped("Are you sure you want to exit the UntitledGameSystemManager? All running containers will not be powered off!");
 
         if (ImGui::Button("Exit##exit"))
             UImGui::Instance::shutdown();
@@ -31,13 +31,13 @@ void UntitledLinuxGameManager::Exit::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Exit::end()
+void UntitledGameSystemManager::Exit::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Exit::~Exit()
+UntitledGameSystemManager::Exit::~Exit()
 {
 
 }

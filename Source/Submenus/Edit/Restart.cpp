@@ -1,18 +1,18 @@
 #include "Restart.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::Restart::Restart()
+UntitledGameSystemManager::Restart::Restart()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Restart::begin()
+void UntitledGameSystemManager::Restart::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Restart::tick(float deltaTime)
+void UntitledGameSystemManager::Restart::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     auto* inst = (Instance*)UImGui::Instance::getGlobal();
@@ -47,13 +47,13 @@ void UntitledLinuxGameManager::Restart::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Restart::end()
+void UntitledGameSystemManager::Restart::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Restart::~Restart()
+UntitledGameSystemManager::Restart::~Restart()
 {
 
 }

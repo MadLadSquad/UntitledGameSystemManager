@@ -1,7 +1,7 @@
 #pragma once
 #include "Framework.hpp"
 
-namespace UntitledLinuxGameManager
+namespace UntitledGameSystemManager
 {
     class UIMGUI_PUBLIC_API Delete : public UImGui::WindowComponent
     {

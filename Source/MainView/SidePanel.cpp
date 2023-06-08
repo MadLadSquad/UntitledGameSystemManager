@@ -1,18 +1,18 @@
 #include "SidePanel.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::SidePanel::SidePanel()
+UntitledGameSystemManager::SidePanel::SidePanel()
 {
 
 }
 
-void UntitledLinuxGameManager::SidePanel::begin()
+void UntitledGameSystemManager::SidePanel::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::SidePanel::tick(float deltaTime)
+void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
 
@@ -73,13 +73,13 @@ void UntitledLinuxGameManager::SidePanel::tick(float deltaTime)
     ImGui::End();
 }
 
-void UntitledLinuxGameManager::SidePanel::end()
+void UntitledGameSystemManager::SidePanel::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::SidePanel::~SidePanel()
+UntitledGameSystemManager::SidePanel::~SidePanel()
 {
 
 }

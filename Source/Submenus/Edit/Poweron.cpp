@@ -1,18 +1,18 @@
 #include "Poweron.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::Poweron::Poweron()
+UntitledGameSystemManager::Poweron::Poweron()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Poweron::begin()
+void UntitledGameSystemManager::Poweron::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Poweron::tick(float deltaTime)
+void UntitledGameSystemManager::Poweron::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
 
@@ -48,13 +48,13 @@ void UntitledLinuxGameManager::Poweron::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Poweron::end()
+void UntitledGameSystemManager::Poweron::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Poweron::~Poweron()
+UntitledGameSystemManager::Poweron::~Poweron()
 {
 
 }

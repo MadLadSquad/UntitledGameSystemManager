@@ -1,18 +1,18 @@
 #include "Help.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::Help::Help()
+UntitledGameSystemManager::Help::Help()
 {
     state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledLinuxGameManager::Help::begin()
+void UntitledGameSystemManager::Help::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::Help::tick(float deltaTime)
+void UntitledGameSystemManager::Help::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen("Info"))
@@ -46,13 +46,13 @@ void UntitledLinuxGameManager::Help::tick(float deltaTime)
     }
 }
 
-void UntitledLinuxGameManager::Help::end()
+void UntitledGameSystemManager::Help::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::Help::~Help()
+UntitledGameSystemManager::Help::~Help()
 {
 
 }

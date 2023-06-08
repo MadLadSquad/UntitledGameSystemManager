@@ -4,18 +4,18 @@
 #include "Instance.hpp"
 #include "yaml-cpp/yaml.h"
 
-UntitledLinuxGameManager::MainView::MainView()
+UntitledGameSystemManager::MainView::MainView()
 {
 
 }
 
-void UntitledLinuxGameManager::MainView::begin()
+void UntitledGameSystemManager::MainView::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::MainView::tick(float deltaTime)
+void UntitledGameSystemManager::MainView::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
 
@@ -85,13 +85,13 @@ void UntitledLinuxGameManager::MainView::tick(float deltaTime)
     ImGui::End();
 }
 
-void UntitledLinuxGameManager::MainView::end()
+void UntitledGameSystemManager::MainView::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::MainView::~MainView()
+UntitledGameSystemManager::MainView::~MainView()
 {
 
 }

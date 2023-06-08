@@ -30,4 +30,4 @@ cd .. || exit
 mkdir build || exit
 cd build || exit
 cmake ..
-MSBuild.exe UntitledLinuxGameManager.sln -property:Configuration=Release -property:Platform=x64 -property:maxCpuCount="${cpus}" || make -j "${cpus}" || exit
+MSBuild.exe UntitledGameSystemManager.sln -property:Configuration=Release -property:Platform=x64 -property:maxCpuCount="${cpus}" || make -j "${cpus}" || exit

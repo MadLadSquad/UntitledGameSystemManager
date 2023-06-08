@@ -5,7 +5,7 @@
 #include <thread>
 #include "LXDBindings/libUGM_LXD_InternalFuncs.h"
 
-namespace UntitledLinuxGameManager
+namespace UntitledGameSystemManager
 {
     struct Container
     {

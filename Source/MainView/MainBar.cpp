@@ -1,18 +1,18 @@
 #include "MainBar.hpp"
 #include "Instance.hpp"
 
-UntitledLinuxGameManager::MainBar::MainBar()
+UntitledGameSystemManager::MainBar::MainBar()
 {
 
 }
 
-void UntitledLinuxGameManager::MainBar::begin()
+void UntitledGameSystemManager::MainBar::begin()
 {
     beginAutohandle();
 
 }
 
-void UntitledLinuxGameManager::MainBar::tick(float deltaTime)
+void UntitledGameSystemManager::MainBar::tick(float deltaTime)
 {
     tickAutohandle(deltaTime);
     if (ImGui::BeginMainMenuBar())
@@ -56,13 +56,13 @@ void UntitledLinuxGameManager::MainBar::tick(float deltaTime)
 
 }
 
-void UntitledLinuxGameManager::MainBar::end()
+void UntitledGameSystemManager::MainBar::end()
 {
     endAutohandle();
 
 }
 
-UntitledLinuxGameManager::MainBar::~MainBar()
+UntitledGameSystemManager::MainBar::~MainBar()
 {
 
 }
