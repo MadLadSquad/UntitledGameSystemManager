@@ -5,7 +5,11 @@
 [![Discord](https://img.shields.io/discord/717037253292982315.svg?label=&logo=discord&logoColor=ffffff&color=7389D8&labelColor=6A7EC2)](https://discord.gg/4wgH8ZE)
  
 ## Major announcement: After a big 6 months of no development the application is planned for a complete rewrite with the LXC C API and the new UntitledDesktop framework! When the rewrite is ready it will be pushed as tag 1.0 any issues present will be fixed in the new release!
-A linux gaming system manager
+
+![image](https://github.com/MadLadSquad/UntitledLinuxGameManager/assets/40400590/2f9847ee-cd81-4840-98a7-f1d85a97abe5)
+
+A conteinerised system manager utility for gaming systems.
+
 ## About
 UntitledLinuxGameManager is a cli/gui program to help with managing a linux gaming system.
 
