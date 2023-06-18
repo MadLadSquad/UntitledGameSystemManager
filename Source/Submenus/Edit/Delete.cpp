@@ -3,7 +3,7 @@
 
 UntitledGameSystemManager::Delete::Delete()
 {
-    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+    state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
 void UntitledGameSystemManager::Delete::begin()
@@ -35,13 +35,13 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                                     inst->selectedContainer->name, " Error: ", LXDGetError());
                         UImGui::Instance::shutdown();
                     }
-                    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+                    state = UIMGUI_COMPONENT_STATE_PAUSED;
                     ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
                 });
             }
             ImGui::SameLine();
             if (!inst->bWorkerActive && ImGui::Button("Close##info"))
-                state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+                state = UIMGUI_COMPONENT_STATE_PAUSED;
             ImGui::EndPopup();
         }
     }

@@ -2,7 +2,7 @@
 
 UntitledGameSystemManager::Update::Update()
 {
-    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+    state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
 void UntitledGameSystemManager::Update::begin()

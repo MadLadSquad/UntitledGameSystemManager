@@ -27,7 +27,7 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::MenuItem("+ New Pin"))
-                inst->pin.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+                inst->pin.state = UIMGUI_COMPONENT_STATE_RUNNING;
             else if (ImGui::MenuItem("- Delete Pin"))
             {
                 auto& pins = inst->selectedContainer->pins;

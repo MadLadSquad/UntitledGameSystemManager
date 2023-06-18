@@ -3,7 +3,7 @@
 
 UntitledGameSystemManager::Help::Help()
 {
-    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+    state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
 void UntitledGameSystemManager::Help::begin()
@@ -41,7 +41,7 @@ void UntitledGameSystemManager::Help::tick(float deltaTime)
 
 
         if (ImGui::Button("Close##info"))
-            state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+            state = UIMGUI_COMPONENT_STATE_PAUSED;
         ImGui::EndPopup();
     }
 }

@@ -2,7 +2,7 @@
 
 UntitledGameSystemManager::Pin::Pin()
 {
-    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+    state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
 void UntitledGameSystemManager::Pin::begin()

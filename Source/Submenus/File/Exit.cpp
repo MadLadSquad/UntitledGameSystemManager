@@ -2,7 +2,7 @@
 
 UntitledGameSystemManager::Exit::Exit()
 {
-    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+    state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
 void UntitledGameSystemManager::Exit::begin()
@@ -25,7 +25,7 @@ void UntitledGameSystemManager::Exit::tick(float deltaTime)
 
         ImGui::SameLine();
         if (ImGui::Button("Cancel##exit"))
-            state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+            state = UIMGUI_COMPONENT_STATE_PAUSED;
 
         ImGui::EndPopup();
     }

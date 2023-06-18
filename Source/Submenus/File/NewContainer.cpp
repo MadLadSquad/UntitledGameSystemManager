@@ -3,7 +3,7 @@
 
 UntitledGameSystemManager::NewContainer::NewContainer()
 {
-    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+    state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
 void UntitledGameSystemManager::NewContainer::begin()
@@ -71,7 +71,7 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                         UImGui::Instance::shutdown();
                     }
 
-                    state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+                    state = UIMGUI_COMPONENT_STATE_PAUSED;
                     ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
                 });
             }
@@ -79,7 +79,7 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                 ImGui::SameLine();
         }
         if (!inst->bWorkerActive && !bStartExecuting && ImGui::Button("Close##info"))
-            state = UImGui::UIMGUI_COMPONENT_STATE_PAUSED;
+            state = UIMGUI_COMPONENT_STATE_PAUSED;
         ImGui::EndPopup();
     }
 }

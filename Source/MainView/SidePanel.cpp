@@ -30,21 +30,21 @@ void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
         if (ImGui::BeginMenu("* Power"))
         {
             if (ImGui::MenuItem("* Power on") && inst->selectedContainer != nullptr)
-                inst->poweron.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+                inst->poweron.state = UIMGUI_COMPONENT_STATE_RUNNING;
             else if (ImGui::MenuItem("* Power off"))
-                inst->poweroff.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+                inst->poweroff.state = UIMGUI_COMPONENT_STATE_RUNNING;
             else if (ImGui::MenuItem("* Restart"))
-                inst->restart.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+                inst->restart.state = UIMGUI_COMPONENT_STATE_RUNNING;
             ImGui::EndMenu();
         }
         if (ImGui::BeginMenu("* More"))
         {
             if (ImGui::MenuItem("+ New"))
-                inst->newContainer.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+                inst->newContainer.state = UIMGUI_COMPONENT_STATE_RUNNING;
             else if (ImGui::MenuItem("- Delete"))
-                inst->del.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+                inst->del.state = UIMGUI_COMPONENT_STATE_RUNNING;
             else if (ImGui::MenuItem("* Update"))
-                inst->update.state = UImGui::UIMGUI_COMPONENT_STATE_RUNNING;
+                inst->update.state = UIMGUI_COMPONENT_STATE_RUNNING;
             ImGui::EndMenu();
         }
         ImGui::EndMenuBar();
