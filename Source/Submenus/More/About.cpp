@@ -8,10 +8,10 @@ UntitledGameSystemManager::About::About()
 void UntitledGameSystemManager::About::begin()
 {
     beginAutohandle();
-    brandIcon.init("../Content/brand-icon.png");
+    brandIcon.init(UIMGUI_CONTENT_DIR"brand-icon.png");
     brandIcon.loadImGui();
 
-    lxcIcon.init("../Content/linux-containers-icon.png");
+    lxcIcon.init(UIMGUI_CONTENT_DIR"linux-containers-icon.png");
     lxcIcon.loadImGui();
 }
 
