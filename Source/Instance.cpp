@@ -113,7 +113,7 @@ void UntitledGameSystemManager::Instance::loadConfigData()
         {
             if (a["container"] && a["pins"])
             {
-                containers.push_back({});
+                containers.emplace_back();
                 for (auto& f : a["pins"].as<std::vector<std::string>>())
                     containers.back().pins.emplace_back( f, false );
                 containers.back().name = a["container"].as<std::string>();
