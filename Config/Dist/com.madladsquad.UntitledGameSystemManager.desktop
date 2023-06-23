@@ -1,0 +1,12 @@
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Untitled Game System Manager
+GenericName=GameManager
+Comment=A manager for containerised gaming system using LXD
+Icon=untitled-game-system-manager
+TryExec=UntitledGameSystemManager
+Exec=UntitledGameSystemManager
+Categories=Game;Utility;System;
+Terminal=false
+StartupNotify=false

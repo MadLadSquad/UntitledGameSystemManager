@@ -19,3 +19,17 @@ enabled-modules:
   toggles: false
   text_utils: false
   cli_parser: false
+additional-installs:
+  unix:
+    - file: LXDBindings/libUGM_LXD_InternalFuncs.so
+      directory: lib/
+      macro-name: UGM_LXD_BINDINGS_DIR
+      is-directory: false
+    - file: Config/Dist/com.madladsquad.UntitledGameSystemManager.desktop
+      directory: share/applications
+      macro-name: UGM_DESKTOP_FILE_DIR
+      is-directory: false
+    - file: Content/untitled-game-system-manager.png
+      directory: share/icons
+      macro-name: UGM_ICON_DIR
+      is-directory: false

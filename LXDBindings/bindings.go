@@ -232,7 +232,7 @@ func LXDNewContainer(name *C.char, alias *C.char) C.char {
 		},
 		"PASocket1": {
 			"bind":         "container",
-			"connect":      "unix:" + pulseDir, // TODO: Replace with actual path
+			"connect":      "unix:" + pulseDir,
 			"gid":          "1000",
 			"listen":       "unix:/pulse-native",
 			"mode":         "0777",
