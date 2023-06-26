@@ -1,5 +1,6 @@
 #pragma once
 #include <Framework.hpp>
+#include <Generated/Config.hpp>
 
 namespace UntitledGameSystemManager
 {
