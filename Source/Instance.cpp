@@ -30,6 +30,7 @@ UntitledGameSystemManager::Instance::Instance()
         },
         .globalData = (void*)this,
         .bGlobalAllocatedOnHeap = false,
+        UIMGUI_INIT_INFO_DEFAULT_DIRS,
     };
 
     // Check for XDG_CONFIG_HOME

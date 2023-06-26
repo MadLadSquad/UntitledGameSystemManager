@@ -1,5 +1,6 @@
 #pragma once
 #include <Framework.hpp>
+#include <Generated/Config.hpp>
 #include "MainView/Widgets.hpp"
 #include "Submenus/Widgets.hpp"
 #include <thread>
