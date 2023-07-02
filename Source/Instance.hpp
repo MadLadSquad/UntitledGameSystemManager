@@ -16,6 +16,14 @@ namespace UntitledGameSystemManager
         std::vector<Pin> pins;
     };
 
+    struct RunWorkers
+    {
+        std::thread thread;
+        UImGui::FString name;
+        bool bWorkerActive = false;
+        bool bFinishedExecution = false;
+    };
+
     class UIMGUI_PUBLIC_API Instance : public UImGui::Instance
     {
     public:
@@ -32,7 +40,7 @@ namespace UntitledGameSystemManager
         std::vector<Container> containers;
         Container* selectedContainer = nullptr;
 
-        std::string configDir;
+        UImGui::FString configDir;
 
         std::thread worker;
         bool bWorkerActive = false;

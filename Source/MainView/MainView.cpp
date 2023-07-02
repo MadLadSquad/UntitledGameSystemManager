@@ -2,7 +2,6 @@
 
 #include <ranges>
 #include "Instance.hpp"
-#include "yaml-cpp/yaml.h"
 
 UntitledGameSystemManager::MainView::MainView()
 {
@@ -39,6 +38,39 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                     else
                         ++it;
                 }
+
+                YAML::Node o;
+                try
+                {
+                    o = YAML::LoadFile(inst->configDir + "config/layout.yaml");
+                }
+                catch (YAML::BadFile&)
+                {
+                    Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, inst->configDir, "config/layout.yaml");
+                    std::terminate();
+                }
+                auto cont = o["containers"];
+                if (cont)
+                {
+                    for (YAML::Node a : cont)
+                    {
+                        if (a["container"] && a["pins"] && a["container"].as<UImGui::FString>() == inst->selectedContainer->name)
+                        {
+                            YAML::Node tmp;
+                            for (auto& f : pins)
+                                tmp.push_back(f.first);
+                            if (tmp.IsNull())
+                                tmp.push_back("steam");
+                            
+                            a["pins"] = tmp;
+                            break;
+                        }
+                    }
+                }
+                o["containers"] = cont;
+
+                std::ofstream file(inst->configDir + "config/layout.yaml");
+                file << o;
             }
             else if (ImGui::MenuItem("* Refresh"))
                 inst->loadConfigData();
@@ -67,11 +99,8 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
 
                     ImGui::TableNextColumn();
 
-                    if (ImGui::ArrowButton("##buttonPlay", ImGuiDir_Right))
-                    {
-                        std::cout << pin.first << std::endl;
-                        // TODO: Play the pin
-                    }
+                    if (ImGui::Button("Run##buttonPlay"))
+                        LXDExec(inst->selectedContainer->name.data(), ("su{{b}}ubuntu{{b}}-c{{b}}" + pin.first + " & disown").data(), false);
 
                     ImGui::TableNextColumn();
                     ImGui::PopID();

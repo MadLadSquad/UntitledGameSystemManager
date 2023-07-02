@@ -2,13 +2,14 @@ package main
 
 import (
 	"C"
-	"fmt"
 	lxd "github.com/lxc/lxd/client"
 	"github.com/lxc/lxd/lxc/config"
 	"github.com/lxc/lxd/shared/api"
 	"github.com/lxc/lxd/shared/version"
+	"io"
 	"os"
 	"strconv"
+	"strings"
 	_ "sync"
 	_ "unsafe"
 )
@@ -18,7 +19,7 @@ type internalPulseSocketAppendType uint
 const (
 	InternalPulseSocketAppendTypeNone        internalPulseSocketAppendType = 1 << 0
 	InternalPulseSocketAppendTypeHome        internalPulseSocketAppendType = 1 << 1
-	InternalPulseSocketAppendTypeHomeAndNone internalPulseSocketAppendType = InternalPulseSocketAppendTypeNone | InternalPulseSocketAppendTypeHome
+	InternalPulseSocketAppendTypeHomeAndNone                               = InternalPulseSocketAppendTypeNone | InternalPulseSocketAppendTypeHome
 )
 
 var (
@@ -34,6 +35,40 @@ var (
 		"/run/pulse/native":     InternalPulseSocketAppendTypeNone,
 	}
 )
+
+func handleWait(operation lxd.Operation) {
+	err = operation.Wait()
+	if err != nil {
+		errorG = err.Error()
+	}
+}
+
+func handleWaitRemote(operation lxd.RemoteOperation) {
+	err = operation.Wait()
+	if err != nil {
+		errorG = err.Error()
+	}
+}
+
+func getContainerHandle(name *C.char) (api.Container, int) {
+	containers, err := LXDGetContainers()
+	if err != nil {
+		errorG = err.Error()
+		// -1 Couldn't fetch containers
+		return api.Container{}, -1
+	}
+
+	str := C.GoString(name)
+
+	for _, container := range containers {
+		if container.Name == str {
+			return container, 0
+		}
+	}
+
+	// -2 Couldn't find container
+	return api.Container{}, -2
+}
 
 //export LXDGetError
 func LXDGetError() *C.char {
@@ -61,83 +96,64 @@ func LXDGetContainers() ([]api.Container, error) {
 
 //export LXDStartContainer
 func LXDStartContainer(name *C.char) C.char {
-	containers, err := LXDGetContainers()
-	if err != nil {
-		errorG = err.Error()
+	str := C.GoString(name)
+
+	container, e := getContainerHandle(name)
+	if e < 0 {
+		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
 		return -1
 	}
 
-	str := C.GoString(name)
-
-	for _, container := range containers {
-		if container.Name == str {
-			if !container.IsActive() {
-				op, err := c.UpdateContainerState(
-					str, api.ContainerStatePut{Action: "start", Timeout: -1}, "")
-				if err != nil {
-					errorG = err.Error()
-					return -1
-				}
-				op.Wait()
-			}
-			break
+	if !container.IsActive() {
+		op, err := c.UpdateContainerState(
+			str, api.ContainerStatePut{Action: "start", Timeout: -1}, "")
+		if err != nil {
+			errorG = err.Error()
+			return -1
 		}
+		handleWait(op)
 	}
-
 	return 0
 }
 
 //export LXDStopContainer
 func LXDStopContainer(name *C.char) C.char {
-	containers, err := LXDGetContainers()
-	if err != nil {
-		errorG = err.Error()
+	str := C.GoString(name)
+	container, e := getContainerHandle(name)
+	if e < 0 {
+		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
 		return -1
 	}
 
-	str := C.GoString(name)
-
-	for _, container := range containers {
-		if container.Name == str {
-			if container.IsActive() {
-				op, err := c.UpdateContainerState(
-					str, api.ContainerStatePut{Action: "stop", Timeout: -1}, "")
-				if err != nil {
-					errorG = err.Error()
-					return -1
-				}
-				op.Wait()
-			}
-			break
+	if container.IsActive() {
+		op, err := c.UpdateContainerState(
+			str, api.ContainerStatePut{Action: "stop", Timeout: -1}, "")
+		if err != nil {
+			errorG = err.Error()
+			return -1
 		}
+		handleWait(op)
 	}
-
 	return 0
 }
 
 //export LXDRestartContainer
 func LXDRestartContainer(name *C.char) C.char {
-	containers, err := LXDGetContainers()
-	if err != nil {
-		errorG = err.Error()
+	str := C.GoString(name)
+	container, e := getContainerHandle(name)
+	if e < 0 {
+		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
 		return -1
 	}
 
-	str := C.GoString(name)
-
-	for _, container := range containers {
-		if container.Name == str {
-			if container.IsActive() {
-				op, err := c.UpdateContainerState(
-					str, api.ContainerStatePut{Action: "restart", Timeout: -1}, "")
-				if err != nil {
-					errorG = err.Error()
-					return -1
-				}
-				op.Wait()
-			}
-			break
+	if container.IsActive() {
+		op, err := c.UpdateContainerState(
+			str, api.ContainerStatePut{Action: "restart", Timeout: -1}, "")
+		if err != nil {
+			errorG = err.Error()
+			return -1
 		}
+		handleWait(op)
 	}
 
 	return 0
@@ -202,7 +218,7 @@ func LXDNewContainer(name *C.char, alias *C.char) C.char {
 	if err != nil {
 		return -1
 	}
-	op.Wait()
+	handleWaitRemote(op)
 
 	pulseDir := getPulseSocketLocation()
 
@@ -259,50 +275,116 @@ func LXDNewContainer(name *C.char, alias *C.char) C.char {
 		errorG = err.Error()
 		return -1
 	}
-	nop.Wait()
+	handleWait(nop)
 
 	return LXDStartContainer(name)
 }
 
 //export LXDDeleteContainer
 func LXDDeleteContainer(name *C.char) C.char {
-	containers, err := LXDGetContainers()
+	str := C.GoString(name)
+	container, e := getContainerHandle(name)
+	if e < 0 {
+		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
+		return -1
+	}
+
+	// If active stop container
+	if container.IsActive() {
+		op, err := c.UpdateContainerState(
+			str, api.ContainerStatePut{Action: "stop", Timeout: -1}, "")
+		if err != nil {
+			errorG = err.Error()
+			return -1
+		}
+		handleWait(op)
+	}
+
+	op, err := c.DeleteContainer(str)
 	if err != nil {
 		errorG = err.Error()
 		return -1
 	}
 
+	handleWait(op)
+
+	return 0
+}
+
+//export LXDExec
+func LXDExec(name *C.char, command *C.char, bWait C.char) C.char {
 	str := C.GoString(name)
+	container, e := getContainerHandle(name)
+	if e < 0 {
+		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
+		return -1
+	}
 
-	for _, container := range containers {
-		if container.Name == str {
-			// If active stop container
-			if container.IsActive() {
-				op, err := c.UpdateContainerState(
-					str, api.ContainerStatePut{Action: "stop", Timeout: -1}, "")
-				if err != nil {
-					errorG = err.Error()
-					return -1
-				}
-				op.Wait()
-			}
+	// If active stop container
+	if !container.IsActive() {
+		errorG = "Couldn't exec on container that is not active!"
+		return -1
+	}
 
-			op, err := c.DeleteContainer(str)
-			if err != nil {
-				errorG = err.Error()
-				return -1
-			}
+	cmd := C.GoString(command)
+	cmds := strings.Split(cmd, "{{b}}")
 
-			op.Wait()
-			break
-		}
+	op, err := c.ExecContainer(str, api.ContainerExecPost{
+		//op, err = c.ExecContainer(str, api.ContainerExecPost{
+		Command:     cmds,
+		WaitForWS:   true,
+		Interactive: false,
+		Environment: map[string]string{},
+		Width:       256,
+		Height:      256,
+	}, &lxd.ContainerExecArgs{})
+	if err != nil {
+		errorG = err.Error()
+		return -1
+	}
+	if bWait != 0 {
+		handleWait(op)
 	}
 
 	return 0
 }
 
+//export LXDPushFile
+func LXDPushFile(name *C.char, path *C.char, file *C.char) C.char {
+	str := C.GoString(name)
+	fl := C.GoString(file)
+
+	if err != nil {
+		errorG = "Couldn't read file data. File: " + C.GoString(path)
+		return -1
+	}
+
+	f, err := os.Open(fl)
+	if err != nil {
+		errorG = err.Error()
+		return -1
+	}
+
+	reader := io.ReadSeeker(f)
+
+	err = c.CreateInstanceFile(str, C.GoString(path), lxd.InstanceFileArgs{
+		Content:   reader,
+		UID:       0,    // Root
+		GID:       0,    // Root
+		Mode:      0775, // -rw-r--r--
+		Type:      "file",
+		WriteMode: "overwrite",
+	})
+	if err != nil {
+		errorG = err.Error()
+		return -1
+	}
+	return 0
+}
+
 func main() {
-	//LXDCreateConnection()
-	//LXDNewContainer(C.CString("tttttttt"), C.CString("archlinux"))
-	fmt.Println(getPulseSocketLocation())
+	LXDCreateConnection()
+
+	LXDPushFile(C.CString("void-test"), C.CString("/root/real.txt"), C.CString("/home/i-use-gentoo-btw/test.txt"))
+	LXDDestroyConnection()
 }

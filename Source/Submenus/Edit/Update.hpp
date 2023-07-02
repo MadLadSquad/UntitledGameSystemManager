@@ -12,7 +12,9 @@ namespace UntitledGameSystemManager
         virtual void end() override;
         virtual ~Update() override;
     private:
-
+        bool bStartExecuting = false;
+        UImGui::FString currentEvent;
+        std::mutex mutex;
     };
 }
 

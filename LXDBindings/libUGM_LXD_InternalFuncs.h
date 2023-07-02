@@ -82,6 +82,8 @@ extern char LXDStopContainer(char* name);
 extern char LXDRestartContainer(char* name);
 extern char LXDNewContainer(char* name, char* alias);
 extern char LXDDeleteContainer(char* name);
+extern char LXDExec(char* name, char* command, char bWait);
+extern char LXDPushFile(char* name, char* path, char* file);
 
 #ifdef __cplusplus
 }

@@ -96,6 +96,7 @@ void UntitledGameSystemManager::Instance::onEventConfigureStyle(ImGuiStyle& styl
 void UntitledGameSystemManager::Instance::loadConfigData()
 {
     containers.clear();
+    selectedContainer = nullptr;
 
     YAML::Node out;
     try

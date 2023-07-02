@@ -14,6 +14,8 @@ namespace UntitledGameSystemManager
     private:
         bool bStartExecuting = false;
         std::string currentEvent;
+
+        std::mutex mutex;
     };
 }
 

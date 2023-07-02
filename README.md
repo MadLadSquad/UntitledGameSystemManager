@@ -6,7 +6,7 @@
 
 ![image](https://github.com/MadLadSquad/UntitledGameSystemManager/assets/40400590/2f9847ee-cd81-4840-98a7-f1d85a97abe5)
 
-A conteinerised system manager utility for gaming systems.
+A containerised system manager utility for gaming systems.
 
 ## About
 UntitledGameSystemManager is a cli/gui program to help with managing a Linux containerised gaming system.
@@ -27,7 +27,7 @@ The manager requires the following to be installed on your system:
 - The cli install scripts require bash, since for now they include bash isms and don't fully conform
 
 ## Install
-You can find a guide [here](https://github.com/MadLadSquad/UntitledGameSystemManager/wiki/Installing)
+Installation is detailed on the wiki [here](https://github.com/MadLadSquad/UntitledGameSystemManager/wiki/).
 
 ## Showcase
 The standalone GUI manager window:
