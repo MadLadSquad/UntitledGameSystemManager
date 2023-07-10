@@ -61,7 +61,7 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                                 tmp.push_back(f.first);
                             if (tmp.IsNull())
                                 tmp.push_back("steam");
-                            
+
                             a["pins"] = tmp;
                             break;
                         }
