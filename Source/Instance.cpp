@@ -33,21 +33,10 @@ UntitledGameSystemManager::Instance::Instance()
         UIMGUI_INIT_INFO_DEFAULT_DIRS,
     };
 
-    // Check for XDG_CONFIG_HOME
-    const char* configHome = std::getenv("XDG_CONFIG_HOME");
-    if (configHome == nullptr)
-    {
-        // No XDG_CONFIG_HOME? No problem! Simply use HOME
-        configHome = std::getenv("HOME");
-        if (configHome == nullptr) // NO HOME!?!??!?!??!?!?! Use what we can ig
-            configDir = std::string("/home/") + getpwuid(geteuid())->pw_name;
-        else
-            configDir = std::string(configHome);
-        configDir += "/.config/";
-    }
-    else
-        configDir += std::string(configHome) + "/";
-    configDir += "UntitledGameSystemManager/";
+    auto configHome = UXDG::XDG_CONFIG_HOME();
+    if (configHome.empty())
+        configHome = UXDG::HOME() + "/.config";
+    configDir += configHome + "/UntitledGameSystemManager/";
 }
 
 void UntitledGameSystemManager::Instance::begin()

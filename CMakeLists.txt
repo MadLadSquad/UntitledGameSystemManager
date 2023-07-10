@@ -109,7 +109,7 @@ if (USE_OS_MODULE)
     option(ENABLE_UFONT_UTILS "Compiles in cross-platform utilities for dealing with system fonts" OFF)
 
     if (NOT WIN32)
-        option(ENABLE_XDG_BASEDIR "Compile in the UntitledXDGBasedir library for a XDG Basedir implementation" OFF)
+        option(ENABLE_XDG_BASEDIR "Compile in the UntitledXDGBasedir library for a XDG Basedir implementation" ON)
     endif()
 
     if (ENABLE_DBUS_UTILS)
