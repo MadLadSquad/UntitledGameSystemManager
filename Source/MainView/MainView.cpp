@@ -79,7 +79,7 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                 auto& pins = inst->selectedContainer->pins;
                 for (auto& a : pins)
                     if (a.second)
-                        ; // TODO: Generate script for pins here, this includes desktop files, preferably with icons included
+                        ;//Pin::generateScript(a.first);
             }
 
             ImGui::EndMenuBar();

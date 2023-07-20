@@ -46,7 +46,7 @@ namespace UntitledGameSystemManager
         bool bWorkerActive = false;
         bool bFinishedExecution = false;
 
-        char gpuType = 'M';
+        UImGui::FString gpuType = "M";
     private:
         friend class MainBar;
         friend class MainView;

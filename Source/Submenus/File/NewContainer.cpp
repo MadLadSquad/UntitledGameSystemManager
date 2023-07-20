@@ -28,12 +28,10 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
         }
 
         static std::string name;
-        static std::string gpupreview;
-        static char gpuTypeArgument;
 
         if (bStartExecuting)
         {
-            ImGui::TextWrapped("Started creating a new container");
+            ImGui::TextWrapped("Started creating a new container. Output is written to the terminal.");
             ImGui::TextWrapped("Current step: %s", currentEvent.c_str());
         }
         else
@@ -41,25 +39,7 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
             ImGui::Text("Container name: ");
             ImGui::SameLine();
             ImGui::InputText("##containernameinputbox", &name);
-
-            ImGui::Text("GPU Vendor: ");
-            ImGui::SameLine();
-            if (ImGui::BeginCombo("##selectgpu", gpupreview.c_str()))
-            {
-                if (ImGui::MenuItem("NVidia"))
-                {
-                    gpupreview = "NVidia";
-                    gpuTypeArgument = 'N';
-                }
-                else if (ImGui::MenuItem("AMD"))
-                {
-                    gpupreview = "AMD";
-                    gpuTypeArgument = 'M';
-                }
-                ImGui::EndCombo();
-            }
         }
-
 
         if (!inst->bWorkerActive && !bStartExecuting && !name.empty())
         {
@@ -72,23 +52,29 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                     // then append, otherwise we get a logic error exception thrown.
                     UImGui::FString dir = inst->configDir;
                     UImGui::FString conf = dir;
+                    UImGui::FString type;
+                    //UImGui::FString type = inst->gpuType;
 
                     dir += "scripts/ugm-cli-install.sh";
 
                     bStartExecuting = true;
 
                     UImGui::FString version;
+                    //type;
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Creating a new container!";
                         version = UImGui::Renderer::getDriverVersion();
+                        type = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
+                        //type = inst->gpuType;
                     }
                     if (LXDNewContainer(name.data(), (char*)"archlinux") != 0)
                     {
                         Logger::log("Failed to create the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
                                     name, " Error: ", LXDGetError());
                         UImGui::Instance::shutdown();
+                        return;
                     }
 
                     {
@@ -101,12 +87,13 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                                     "Error: ", LXDGetError());
                         UImGui::Instance::shutdown();
                     }
-
+                    LXDExec(name.data(), (char*)"bash{{b}}-c{{b}}ping -c 5 google.com || ping -c 5 google.com", true);
+                    LXDRestartContainer(name.data());
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Running installation script, may take more than 20 minutes!";
                     }
-                    if (LXDExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + version + " &> /root/out.txt").data(), true) != 0)
+                    if (LXDExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + type + " " + version).data(), true) != 0)
                     {
                         Logger::log("Failed to execute installation script of the following container: ", UVK_LOG_TYPE_ERROR, name,
                                     "Error: ", LXDGetError());

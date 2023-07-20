@@ -36,7 +36,14 @@ UntitledGameSystemManager::Instance::Instance()
     auto configHome = UXDG::XDG_CONFIG_HOME();
     if (configHome.empty())
         configHome = UXDG::HOME() + "/.config";
+
     configDir += configHome + "/UntitledGameSystemManager/";
+    if (!std::filesystem::exists(configDir))
+        std::filesystem::create_directories(configDir);
+
+    if (std::filesystem::exists(configDir + "scripts/"))
+        std::filesystem::remove_all(configDir + "scripts/");
+    std::filesystem::copy(UIMGUI_CONFIG_DIR"Dist", std::filesystem::path(configDir)/"scripts/");
 }
 
 void UntitledGameSystemManager::Instance::begin()
@@ -51,7 +58,7 @@ void UntitledGameSystemManager::Instance::begin()
         UImGui::Instance::shutdown();
     }
 
-    gpuType = UImGui::Renderer::getGPUName()[0] == 'N' ? 'N' : 'M';
+    gpuType = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
 }
 
 void UntitledGameSystemManager::Instance::tick(float deltaTime)

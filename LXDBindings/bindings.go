@@ -2,10 +2,11 @@ package main
 
 import (
 	"C"
-	lxd "github.com/lxc/lxd/client"
-	"github.com/lxc/lxd/lxc/config"
-	"github.com/lxc/lxd/shared/api"
-	"github.com/lxc/lxd/shared/version"
+	"fmt"
+	lxd "github.com/canonical/lxd/client"
+	"github.com/canonical/lxd/lxc/config"
+	"github.com/canonical/lxd/shared/api"
+	"github.com/canonical/lxd/shared/version"
 	"io"
 	"os"
 	"strconv"
@@ -36,11 +37,13 @@ var (
 	}
 )
 
-func handleWait(operation lxd.Operation) {
+func handleWait(operation lxd.Operation) C.char {
 	err = operation.Wait()
 	if err != nil {
 		errorG = err.Error()
+		return -1
 	}
+	return 0
 }
 
 func handleWaitRemote(operation lxd.RemoteOperation) {
@@ -330,20 +333,23 @@ func LXDExec(name *C.char, command *C.char, bWait C.char) C.char {
 	cmds := strings.Split(cmd, "{{b}}")
 
 	op, err := c.ExecContainer(str, api.ContainerExecPost{
-		//op, err = c.ExecContainer(str, api.ContainerExecPost{
 		Command:     cmds,
 		WaitForWS:   true,
 		Interactive: false,
 		Environment: map[string]string{},
-		Width:       256,
-		Height:      256,
-	}, &lxd.ContainerExecArgs{})
+		Width:       800,
+		Height:      600,
+	}, &lxd.ContainerExecArgs{
+		Stdin:  os.Stdin,
+		Stdout: os.Stdout,
+		Stderr: os.Stderr,
+	})
 	if err != nil {
 		errorG = err.Error()
 		return -1
 	}
 	if bWait != 0 {
-		handleWait(op)
+		return handleWait(op)
 	}
 
 	return 0
@@ -384,7 +390,9 @@ func LXDPushFile(name *C.char, path *C.char, file *C.char) C.char {
 
 func main() {
 	LXDCreateConnection()
+	fmt.Println(LXDExec(C.CString("real9"), C.CString("bash{{b}}-c{{b}}/bin/pwd > /tmp/out.txt"), 1))
 
-	LXDPushFile(C.CString("void-test"), C.CString("/root/real.txt"), C.CString("/home/i-use-gentoo-btw/test.txt"))
+	//fmt.Println(LXDNewContainer(C.CString("real"), C.CString("archlinux")))
+	//LXDPushFile(C.CString("void-test"), C.CString("/root/real.txt"), C.CString("/home/i-use-gentoo-btw/test.txt"))
 	LXDDestroyConnection()
 }

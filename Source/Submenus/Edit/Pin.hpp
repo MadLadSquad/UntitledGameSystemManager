@@ -11,6 +11,8 @@ namespace UntitledGameSystemManager
         virtual void tick(float deltaTime) override;
         virtual void end() override;
         virtual ~Pin() override;
+
+        static void generateScript(const std::string& str, const std::string& command) noexcept;
     private:
 
     };
