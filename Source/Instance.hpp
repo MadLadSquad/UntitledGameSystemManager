@@ -45,8 +45,6 @@ namespace UntitledGameSystemManager
         std::thread worker;
         bool bWorkerActive = false;
         bool bFinishedExecution = false;
-
-        UImGui::FString gpuType = "M";
     private:
         friend class MainBar;
         friend class MainView;
@@ -56,6 +54,7 @@ namespace UntitledGameSystemManager
         Poweroff poweroff{};
         Poweron poweron{};
         Restart restart{};
+        ScriptGen scriptGen{};
         Update update{};
         Exit exitWidget{};
         NewContainer newContainer{};

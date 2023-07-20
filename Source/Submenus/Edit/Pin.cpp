@@ -83,12 +83,3 @@ UntitledGameSystemManager::Pin::~Pin()
 {
 
 }
-
-void UntitledGameSystemManager::Pin::generateScript(const std::string& str, const std::string& command) noexcept
-{
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
-    std::ofstream out(inst->selectedContainer->name + "-" + str);
-    out << "#!/bin/bash" << std::endl << "lxc exec " << inst->selectedContainer->name << " -- bash -c '" << command << "'" << std::endl;
-
-}
-

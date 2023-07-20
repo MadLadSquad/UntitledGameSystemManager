@@ -2,7 +2,6 @@ package main
 
 import (
 	"C"
-	"fmt"
 	lxd "github.com/canonical/lxd/client"
 	"github.com/canonical/lxd/lxc/config"
 	"github.com/canonical/lxd/shared/api"
@@ -389,10 +388,4 @@ func LXDPushFile(name *C.char, path *C.char, file *C.char) C.char {
 }
 
 func main() {
-	LXDCreateConnection()
-	fmt.Println(LXDExec(C.CString("real9"), C.CString("bash{{b}}-c{{b}}/bin/pwd > /tmp/out.txt"), 1))
-
-	//fmt.Println(LXDNewContainer(C.CString("real"), C.CString("archlinux")))
-	//LXDPushFile(C.CString("void-test"), C.CString("/root/real.txt"), C.CString("/home/i-use-gentoo-btw/test.txt"))
-	LXDDestroyConnection()
 }

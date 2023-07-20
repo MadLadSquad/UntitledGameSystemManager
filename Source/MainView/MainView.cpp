@@ -79,7 +79,7 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                 auto& pins = inst->selectedContainer->pins;
                 for (auto& a : pins)
                     if (a.second)
-                        ;//Pin::generateScript(a.first);
+                        inst->scriptGen.state = UIMGUI_COMPONENT_STATE_RUNNING;
             }
 
             ImGui::EndMenuBar();

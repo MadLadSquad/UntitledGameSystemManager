@@ -26,7 +26,8 @@ UntitledGameSystemManager::Instance::Instance()
             &newContainer,
             &help,
             &about,
-            &del
+            &del,
+            &scriptGen
         },
         .globalData = (void*)this,
         .bGlobalAllocatedOnHeap = false,
@@ -57,8 +58,6 @@ void UntitledGameSystemManager::Instance::begin()
         Logger::log("Failed to establish connection to LXD. Error: ", UVKLog::UVK_LOG_TYPE_ERROR, LXDGetError());
         UImGui::Instance::shutdown();
     }
-
-    gpuType = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
 }
 
 void UntitledGameSystemManager::Instance::tick(float deltaTime)
