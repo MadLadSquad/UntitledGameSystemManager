@@ -27,16 +27,60 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
             if (!inst->bWorkerActive && ImGui::Button("Delete##button"))
             {
                 inst->bWorkerActive = true;
-                inst->worker = std::thread([&]() -> void
+                inst->worker = std::thread([inst, this]() -> void
                 {
-                    if (LXDDeleteContainer(inst->selectedContainer->name.data()) != 0)
+                    std::string name;
+                    std::string configDir;
+                    {
+                        const std::lock_guard<std::mutex> lock(mutex);
+                        name = inst->selectedContainer->name;
+                        configDir = inst->configDir;
+                    }
+
+                    if (LXDDeleteContainer(name.data()) != 0)
                     {
                         Logger::log("Failed to delete the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    inst->selectedContainer->name, " Error: ", LXDGetError());
+                                    name, " Error: ", LXDGetError());
                         UImGui::Instance::shutdown();
                     }
+                    const std::lock_guard<std::mutex> lock(mutex);
+                    YAML::Node o;
+                    try
+                    {
+                        o = YAML::LoadFile(configDir + "config/layout.yaml");
+                    }
+                    catch (YAML::BadFile&)
+                    {
+                        Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
+                        std::terminate();
+                    }
+                    YAML::Node cont = o["containers"];
+                    if (cont)
+                    {
+                        std::vector<YAML::Node> containers;
+                        for (const YAML::Node& a : cont)
+                        {
+                            if (a["container"] && a["pins"])
+                            {
+                                auto r = a["container"].as<std::string>();
+                                if (name == r)
+                                    continue;
+                            }
+
+                            containers.push_back(a);
+                        }
+                        o["containers"] = containers;
+                    }
+
+                    std::ofstream file(configDir + "config/layout.yaml");
+                    file << o;
+                    file.close();
+
                     state = UIMGUI_COMPONENT_STATE_PAUSED;
                     ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
+
+                    inst->loadConfigData();
+                    inst->selectedContainer = nullptr;
                 });
             }
             ImGui::SameLine();

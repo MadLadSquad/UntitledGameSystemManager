@@ -12,7 +12,7 @@ namespace UntitledGameSystemManager
         virtual void end() override;
         virtual ~Delete() override;
     private:
-
+        std::mutex mutex;
     };
 }
 
