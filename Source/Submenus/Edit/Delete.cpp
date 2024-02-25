@@ -37,12 +37,8 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                         configDir = inst->configDir;
                     }
 
-                    if (IncusDeleteContainer(name.data()) != 0)
-                    {
-                        Logger::log("Failed to delete the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    name, " Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusDeleteContainer, name.data(), "delete");
+
                     const std::lock_guard<std::mutex> lock(mutex);
                     YAML::Node o;
                     try

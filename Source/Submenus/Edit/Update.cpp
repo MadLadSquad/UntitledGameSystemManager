@@ -63,44 +63,25 @@ void UntitledGameSystemManager::Update::tick(float deltaTime)
 
                         name = container->name;
                     }
-                    if (IncusStartContainer(name.data()) != 0)
-                    {
-                        Logger::log("Failed to start the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusStartContainer, name.data(), "start");
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Copying update script to container!";
                     }
-                    if (IncusPushFile(name.data(), (char*)"/root/ugm-cli-update.sh", dir.data()) != 0)
-                    {
-                        Logger::log("Failed to copy file to the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusPushFile, name.data(), "copy file", (char*)"/root/ugm-cli-update.sh", dir.data());
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Copying update script to container!";
                     }
-                    if (IncusExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-update.sh " + type + " " + version + "  &> /root/out.txt").data(), true) != 0)
-                    {Logger::log("Failed to copy file to the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusExec, name.data(), "execute command", ("bash{{b}}-c{{b}}/root/ugm-cli-update.sh " + type + " " + version + "  &> /root/out.txt").data(), true);
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Restarting container, finalising installation!";
                     }
-                    if (IncusRestartContainer(name.data()) != 0)
-                    {
-                        Logger::log("Failed to restart the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusRestartContainer, name.data(), "restart")
 
                     state = UIMGUI_COMPONENT_STATE_PAUSED;
                     ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;

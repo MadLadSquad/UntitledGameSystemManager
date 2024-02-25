@@ -6,6 +6,21 @@
 #include <thread>
 #include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 
+#define INCUS_RUN(x, y, z, ...)                                                                     \
+    if (x(y __VA_OPT__(,) __VA_ARGS__) != 0)                                                        \
+    {                                                                                               \
+        Logger::log("Failed to " z " the following container: ", UVKLog::UVK_LOG_TYPE_ERROR, y,     \
+                    " Error: ", IncusGetError());                                                   \
+        UImGui::Instance::shutdown();                                                               \
+    }
+
+
+#define INCUS_RUN_AND_CLOSE(x, y) inst->bWorkerActive = true;                                           \
+    inst->worker = std::thread([&]() -> void { INCUS_RUN(x, inst->selectedContainer->name.data(), y);   \
+    state = UIMGUI_COMPONENT_STATE_PAUSED;                                                              \
+    ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;                              \
+});
+
 namespace UntitledGameSystemManager
 {
     struct Container

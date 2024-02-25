@@ -27,18 +27,7 @@ void UntitledGameSystemManager::Poweron::tick(float deltaTime)
 
             if (!inst->bWorkerActive && ImGui::Button("Power on##button"))
             {
-                inst->bWorkerActive = true;
-                inst->worker = std::thread([&]() -> void
-                {
-                    if (IncusStartContainer(inst->selectedContainer->name.data()) != 0)
-                    {
-                        Logger::log("Failed to power on the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    inst->selectedContainer->name, " Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
-                    state = UIMGUI_COMPONENT_STATE_PAUSED;
-                    ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
-                });
+                INCUS_RUN_AND_CLOSE(IncusStartContainer, "power on");
             }
             ImGui::SameLine();
             if (!inst->bWorkerActive && ImGui::Button("Close##info"))

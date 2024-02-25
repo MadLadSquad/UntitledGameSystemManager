@@ -53,63 +53,38 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                     UImGui::FString dir = inst->configDir;
                     UImGui::FString conf = dir;
                     UImGui::FString type;
-                    //UImGui::FString type = inst->gpuType;
 
                     dir += "scripts/ugm-cli-install.sh";
-
                     bStartExecuting = true;
-
                     UImGui::FString version;
-                    //type;
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Creating a new container!";
                         version = UImGui::Renderer::getDriverVersion();
                         type = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
-                        //type = inst->gpuType;
                     }
-                    if (IncusNewContainer(name.data(), (char*)"archlinux") != 0)
-                    {
-                        Logger::log("Failed to create the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    name, " Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                        return;
-                    }
+                    INCUS_RUN(IncusNewContainer, name.data(), "create", (char*)"archlinux");
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Uploading installation script to container!";
                     }
-                    if (IncusPushFile(name.data(), (char*)"/root/ugm-cli-install.sh", dir.data()) != 0)
-                    {
-                        Logger::log("Failed to copy file to the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusPushFile, name.data(), "copy file", (char*)"/root/ugm-cli-install.sh", dir.data());
                     IncusExec(name.data(), (char*)"bash{{b}}-c{{b}}ping -c 5 google.com || ping -c 5 google.com", true);
                     IncusRestartContainer(name.data());
+
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Running installation script, may take more than 20 minutes!";
                     }
-                    if (IncusExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + type + " " + version).data(), true) != 0)
-                    {
-                        Logger::log("Failed to execute installation script of the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusExec, name.data(), "execute installation script", ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + type + " " + version).data(), true);
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Restarting container, finalising installation!";
                     }
-                    if (IncusRestartContainer(name.data()) != 0)
-                    {
-                        Logger::log("Failed to restart the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", IncusGetError());
-                        UImGui::Instance::shutdown();
-                    }
+                    INCUS_RUN(IncusRestartContainer, name.data(), "restart");
 
                     YAML::Node out;
                     out["container"] = name;
