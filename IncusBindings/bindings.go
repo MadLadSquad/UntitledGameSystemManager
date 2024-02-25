@@ -4,7 +4,6 @@ import (
 	"C"
 	incus "github.com/lxc/incus/client"
 	"github.com/lxc/incus/shared/api"
-
 	"io"
 	"os"
 	"strconv"
@@ -71,18 +70,17 @@ func getContainerHandle(name *C.char) (api.Instance, int) {
 	return api.Instance{}, -2
 }
 
-func updateContainerState(name *C.char, action string) C.char {
+func updateContainerState(name *C.char, action string, force bool, runOnActive bool) C.char {
 	str := C.GoString(name)
-
 	container, e := getContainerHandle(name)
 	if e < 0 {
 		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
 		return -1
 	}
 
-	if !container.IsActive() {
+	if runOnActive == container.IsActive() {
 		op, err := c.UpdateInstanceState(
-			str, api.InstanceStatePut{Action: action, Timeout: -1}, "")
+			str, api.InstanceStatePut{Action: action, Timeout: -1, Force: force}, "")
 		if err != nil {
 			errorG = err.Error()
 			return -1
@@ -118,17 +116,17 @@ func IncusGetContainers() ([]api.Instance, error) {
 
 //export IncusStartContainer
 func IncusStartContainer(name *C.char) C.char {
-	return updateContainerState(name, "start")
+	return updateContainerState(name, "start", false, false)
 }
 
 //export IncusStopContainer
 func IncusStopContainer(name *C.char) C.char {
-	return updateContainerState(name, "stop")
+	return updateContainerState(name, "stop", true, true)
 }
 
 //export IncusRestartContainer
 func IncusRestartContainer(name *C.char) C.char {
-	return updateContainerState(name, "restart")
+	return updateContainerState(name, "restart", true, true)
 }
 
 func getPulseSocketLocation() string {
