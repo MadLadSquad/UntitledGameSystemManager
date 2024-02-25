@@ -69,10 +69,10 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                         type = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
                         //type = inst->gpuType;
                     }
-                    if (LXDNewContainer(name.data(), (char*)"archlinux") != 0)
+                    if (IncusNewContainer(name.data(), (char*)"archlinux") != 0)
                     {
                         Logger::log("Failed to create the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    name, " Error: ", LXDGetError());
+                                    name, " Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                         return;
                     }
@@ -81,22 +81,22 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Uploading installation script to container!";
                     }
-                    if (LXDPushFile(name.data(), (char*)"/root/ugm-cli-install.sh", dir.data()) != 0)
+                    if (IncusPushFile(name.data(), (char*)"/root/ugm-cli-install.sh", dir.data()) != 0)
                     {
                         Logger::log("Failed to copy file to the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", LXDGetError());
+                                    "Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
-                    LXDExec(name.data(), (char*)"bash{{b}}-c{{b}}ping -c 5 google.com || ping -c 5 google.com", true);
-                    LXDRestartContainer(name.data());
+                    IncusExec(name.data(), (char*)"bash{{b}}-c{{b}}ping -c 5 google.com || ping -c 5 google.com", true);
+                    IncusRestartContainer(name.data());
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Running installation script, may take more than 20 minutes!";
                     }
-                    if (LXDExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + type + " " + version).data(), true) != 0)
+                    if (IncusExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + type + " " + version).data(), true) != 0)
                     {
                         Logger::log("Failed to execute installation script of the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", LXDGetError());
+                                    "Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
 
@@ -104,10 +104,10 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Restarting container, finalising installation!";
                     }
-                    if (LXDRestartContainer(name.data()) != 0)
+                    if (IncusRestartContainer(name.data()) != 0)
                     {
                         Logger::log("Failed to restart the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", LXDGetError());
+                                    "Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
 

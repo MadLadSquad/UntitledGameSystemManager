@@ -100,7 +100,7 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                     ImGui::TableNextColumn();
 
                     if (ImGui::Button("Run##buttonPlay"))
-                        LXDExec(inst->selectedContainer->name.data(), ("su{{b}}ubuntu{{b}}-c{{b}}" + pin.first + " & disown").data(), false);
+                        IncusExec(inst->selectedContainer->name.data(), ("su{{b}}ubuntu{{b}}-c{{b}}" + pin.first + " & disown").data(), false);
 
                     ImGui::TableNextColumn();
                     ImGui::PopID();

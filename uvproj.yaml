@@ -22,9 +22,9 @@ enabled-modules:
   cli_parser: false
 additional-installs:
   unix:
-    - file: LXDBindings/libUGM_LXD_InternalFuncs.so
+    - file: IncusBindings/libUGM_Incus_InternalFuncs.so
       directory: lib/
-      macro-name: UGM_LXD_BINDINGS_DIR
+      macro-name: UGM_INCUS_BINDINGS_DIR
       is-directory: false
     - file: Config/Dist/com.madladsquad.UntitledGameSystemManager.desktop
       directory: share/applications

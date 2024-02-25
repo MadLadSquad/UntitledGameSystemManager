@@ -37,10 +37,10 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                         configDir = inst->configDir;
                     }
 
-                    if (LXDDeleteContainer(name.data()) != 0)
+                    if (IncusDeleteContainer(name.data()) != 0)
                     {
                         Logger::log("Failed to delete the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    name, " Error: ", LXDGetError());
+                                    name, " Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
                     const std::lock_guard<std::mutex> lock(mutex);

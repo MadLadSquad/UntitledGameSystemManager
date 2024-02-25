@@ -4,7 +4,7 @@
 #include "MainView/Widgets.hpp"
 #include "Submenus/Widgets.hpp"
 #include <thread>
-#include "LXDBindings/libUGM_LXD_InternalFuncs.h"
+#include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 
 namespace UntitledGameSystemManager
 {

@@ -2,10 +2,9 @@ package main
 
 import (
 	"C"
-	lxd "github.com/canonical/lxd/client"
-	"github.com/canonical/lxd/lxc/config"
-	"github.com/canonical/lxd/shared/api"
-	"github.com/canonical/lxd/shared/version"
+	incus "github.com/lxc/incus/client"
+	"github.com/lxc/incus/shared/api"
+
 	"io"
 	"os"
 	"strconv"
@@ -23,7 +22,7 @@ const (
 )
 
 var (
-	c                     lxd.InstanceServer
+	c                     incus.InstanceServer
 	errorG                string
 	err                   error
 	hardcodedPulseSockets = map[string]internalPulseSocketAppendType{
@@ -36,7 +35,7 @@ var (
 	}
 )
 
-func handleWait(operation lxd.Operation) C.char {
+func handleWait(operation incus.Operation) C.char {
 	err = operation.Wait()
 	if err != nil {
 		errorG = err.Error()
@@ -45,19 +44,19 @@ func handleWait(operation lxd.Operation) C.char {
 	return 0
 }
 
-func handleWaitRemote(operation lxd.RemoteOperation) {
+func handleWaitRemote(operation incus.RemoteOperation) {
 	err = operation.Wait()
 	if err != nil {
 		errorG = err.Error()
 	}
 }
 
-func getContainerHandle(name *C.char) (api.Container, int) {
-	containers, err := LXDGetContainers()
+func getContainerHandle(name *C.char) (api.Instance, int) {
+	containers, err := IncusGetContainers()
 	if err != nil {
 		errorG = err.Error()
 		// -1 Couldn't fetch containers
-		return api.Container{}, -1
+		return api.Instance{}, -1
 	}
 
 	str := C.GoString(name)
@@ -69,35 +68,10 @@ func getContainerHandle(name *C.char) (api.Container, int) {
 	}
 
 	// -2 Couldn't find container
-	return api.Container{}, -2
+	return api.Instance{}, -2
 }
 
-//export LXDGetError
-func LXDGetError() *C.char {
-	return C.CString(errorG)
-}
-
-//export LXDCreateConnection
-func LXDCreateConnection() C.char {
-	c, err = lxd.ConnectLXDUnix("", nil)
-	if err != nil {
-		errorG = err.Error()
-		return -1
-	}
-	return 0
-}
-
-//export LXDDestroyConnection
-func LXDDestroyConnection() {
-	c.Disconnect()
-}
-
-func LXDGetContainers() ([]api.Container, error) {
-	return c.GetContainers()
-}
-
-//export LXDStartContainer
-func LXDStartContainer(name *C.char) C.char {
+func updateContainerState(name *C.char, action string) C.char {
 	str := C.GoString(name)
 
 	container, e := getContainerHandle(name)
@@ -107,8 +81,8 @@ func LXDStartContainer(name *C.char) C.char {
 	}
 
 	if !container.IsActive() {
-		op, err := c.UpdateContainerState(
-			str, api.ContainerStatePut{Action: "start", Timeout: -1}, "")
+		op, err := c.UpdateInstanceState(
+			str, api.InstanceStatePut{Action: action, Timeout: -1}, "")
 		if err != nil {
 			errorG = err.Error()
 			return -1
@@ -118,47 +92,43 @@ func LXDStartContainer(name *C.char) C.char {
 	return 0
 }
 
-//export LXDStopContainer
-func LXDStopContainer(name *C.char) C.char {
-	str := C.GoString(name)
-	container, e := getContainerHandle(name)
-	if e < 0 {
-		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
-		return -1
-	}
+//export IncusGetError
+func IncusGetError() *C.char {
+	return C.CString(errorG)
+}
 
-	if container.IsActive() {
-		op, err := c.UpdateContainerState(
-			str, api.ContainerStatePut{Action: "stop", Timeout: -1}, "")
-		if err != nil {
-			errorG = err.Error()
-			return -1
-		}
-		handleWait(op)
+//export IncusCreateConnection
+func IncusCreateConnection() C.char {
+	c, err = incus.ConnectIncusUnix("", nil)
+	if err != nil {
+		errorG = err.Error()
+		return -1
 	}
 	return 0
 }
 
-//export LXDRestartContainer
-func LXDRestartContainer(name *C.char) C.char {
-	str := C.GoString(name)
-	container, e := getContainerHandle(name)
-	if e < 0 {
-		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
-		return -1
-	}
+//export IncusDestroyConnection
+func IncusDestroyConnection() {
+	c.Disconnect()
+}
 
-	if container.IsActive() {
-		op, err := c.UpdateContainerState(
-			str, api.ContainerStatePut{Action: "restart", Timeout: -1}, "")
-		if err != nil {
-			errorG = err.Error()
-			return -1
-		}
-		handleWait(op)
-	}
+func IncusGetContainers() ([]api.Instance, error) {
+	return c.GetInstances(api.InstanceTypeContainer)
+}
 
-	return 0
+//export IncusStartContainer
+func IncusStartContainer(name *C.char) C.char {
+	return updateContainerState(name, "start")
+}
+
+//export IncusStopContainer
+func IncusStopContainer(name *C.char) C.char {
+	return updateContainerState(name, "stop")
+}
+
+//export IncusRestartContainer
+func IncusRestartContainer(name *C.char) C.char {
+	return updateContainerState(name, "restart")
 }
 
 func getPulseSocketLocation() string {
@@ -198,12 +168,9 @@ func getPulseSocketLocation() string {
 	return ""
 }
 
-//export LXDNewContainer
-func LXDNewContainer(name *C.char, alias *C.char) C.char {
-	defaultConfig := config.NewConfig("", true)
-	defaultConfig.UserAgent = version.UserAgent
-
-	d, err := lxd.ConnectSimpleStreams("https://images.linuxcontainers.org", nil)
+//export IncusNewContainer
+func IncusNewContainer(name *C.char, alias *C.char) C.char {
+	d, err := incus.ConnectSimpleStreams("https://images.linuxcontainers.org", nil)
 	if err != nil {
 		return -1
 	}
@@ -229,9 +196,10 @@ func LXDNewContainer(name *C.char, alias *C.char) C.char {
 		return -1
 	}
 
-	req := api.ContainersPost{
+	req := api.InstancesPost{
 		Name: C.GoString(name),
-		Source: api.ContainerSource{
+		Type: api.InstanceTypeContainer,
+		Source: api.InstanceSource{
 			Type:        "image",
 			Fingerprint: image.Fingerprint,
 		},
@@ -272,37 +240,24 @@ func LXDNewContainer(name *C.char, alias *C.char) C.char {
 		},
 	}
 
-	nop, err := c.CreateContainer(req)
+	nop, err := c.CreateInstance(req)
 	if err != nil {
 		errorG = err.Error()
 		return -1
 	}
 	handleWait(nop)
 
-	return LXDStartContainer(name)
+	return IncusStartContainer(name)
 }
 
-//export LXDDeleteContainer
-func LXDDeleteContainer(name *C.char) C.char {
+//export IncusDeleteContainer
+func IncusDeleteContainer(name *C.char) C.char {
 	str := C.GoString(name)
-	container, e := getContainerHandle(name)
-	if e < 0 {
-		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
+	if IncusStopContainer(name) == -1 {
 		return -1
 	}
 
-	// If active stop container
-	if container.IsActive() {
-		op, err := c.UpdateContainerState(
-			str, api.ContainerStatePut{Action: "stop", Timeout: -1}, "")
-		if err != nil {
-			errorG = err.Error()
-			return -1
-		}
-		handleWait(op)
-	}
-
-	op, err := c.DeleteContainer(str)
+	op, err := c.DeleteInstance(str)
 	if err != nil {
 		errorG = err.Error()
 		return -1
@@ -313,8 +268,8 @@ func LXDDeleteContainer(name *C.char) C.char {
 	return 0
 }
 
-//export LXDExec
-func LXDExec(name *C.char, command *C.char, bWait C.char) C.char {
+//export IncusExec
+func IncusExec(name *C.char, command *C.char, bWait C.char) C.char {
 	str := C.GoString(name)
 	container, e := getContainerHandle(name)
 	if e < 0 {
@@ -331,14 +286,14 @@ func LXDExec(name *C.char, command *C.char, bWait C.char) C.char {
 	cmd := C.GoString(command)
 	cmds := strings.Split(cmd, "{{b}}")
 
-	op, err := c.ExecContainer(str, api.ContainerExecPost{
+	op, err := c.ExecInstance(str, api.InstanceExecPost{
 		Command:     cmds,
 		WaitForWS:   true,
 		Interactive: false,
 		Environment: map[string]string{},
 		Width:       800,
 		Height:      600,
-	}, &lxd.ContainerExecArgs{
+	}, &incus.InstanceExecArgs{
 		Stdin:  os.Stdin,
 		Stdout: os.Stdout,
 		Stderr: os.Stderr,
@@ -354,8 +309,8 @@ func LXDExec(name *C.char, command *C.char, bWait C.char) C.char {
 	return 0
 }
 
-//export LXDPushFile
-func LXDPushFile(name *C.char, path *C.char, file *C.char) C.char {
+//export IncusPushFile
+func IncusPushFile(name *C.char, path *C.char, file *C.char) C.char {
 	str := C.GoString(name)
 	fl := C.GoString(file)
 
@@ -372,7 +327,7 @@ func LXDPushFile(name *C.char, path *C.char, file *C.char) C.char {
 
 	reader := io.ReadSeeker(f)
 
-	err = c.CreateInstanceFile(str, C.GoString(path), lxd.InstanceFileArgs{
+	err = c.CreateInstanceFile(str, C.GoString(path), incus.InstanceFileArgs{
 		Content:   reader,
 		UID:       0,    // Root
 		GID:       0,    // Root

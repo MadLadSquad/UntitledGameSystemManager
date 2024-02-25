@@ -251,7 +251,7 @@ include_directories("Source/" "Framework/" "Framework/ThirdParty/imgui/core/" "F
         "Framework/ThirdParty/vulkan-headers/include" ${GLFW_INCLUDE_DIRS} ${GLEW_INCLUDE_DIRS} ${FREETYPE_INCLUDE_DIRS}
         ${LM_INCLUDE_DIRS})
 
-link_directories("ThirdParty/glew/lib" "UVKBuildTool/build" "Framework/ThirdParty/vulkan" "LXDBindings/")
+link_directories("ThirdParty/glew/lib" "UVKBuildTool/build" "Framework/ThirdParty/vulkan" "IncusBindings/")
 
 if (UIMGUI_PLATFORM STREQUAL "DESKTOP")
     file(GLOB_RECURSE IMGUI_SRC "Framework/ThirdParty/imgui/backends/imgui_impl_glfw.cpp"
@@ -297,7 +297,7 @@ file(GLOB_RECURSE UGUI_HEAD "Framework/Core/*.hpp" "Framework/Renderer/*.hpp" ${
         "Framework/Modules/OS/src/*.h" "Framework/Modules/OS/src/*.hpp")
 
 file(GLOB_RECURSE UGUI_APP_SRC "Source/*.cpp")
-file(GLOB_RECURSE UGUI_APP_HEAD "Source/*.hpp" "Generated/Config.hpp" "LXDBindings/libUGM_LXD_InternalFuncs.h")
+file(GLOB_RECURSE UGUI_APP_HEAD "Source/*.hpp" "Generated/Config.hpp" "IncusBindings/libUGM_Incus_InternalFuncs.h")
 
 file(GLOB_RECURSE EXEC_SRC "")
 
@@ -487,7 +487,7 @@ else()
     target_link_libraries(UntitledImGuiFramework ${GLFW_LIBRARIES_T} ${GLEW_LIBRARIES_T} ${OPENGL_LIBRARIES_T}
             ${YAML_CPP_LIBRARIES_T} ${FREETYPE_LIBRARIES} ${VULKAN_LIBRARIES_T} ${X11_LIBRARIES} util pthread dl)
     target_link_libraries(UntitledGameSystemManagerLib UntitledImGuiFramework util pthread dl ${YAML_CPP_LIBRARIES_T}
-            UGM_LXD_InternalFuncs)
+            UGM_Incus_InternalFuncs)
     target_link_libraries(UntitledGameSystemManager UntitledImGuiFramework UntitledGameSystemManagerLib
             ${YAML_CPP_LIBRARIES_T} dl util)
 

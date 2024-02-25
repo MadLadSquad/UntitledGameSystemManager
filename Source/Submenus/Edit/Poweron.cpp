@@ -30,10 +30,10 @@ void UntitledGameSystemManager::Poweron::tick(float deltaTime)
                 inst->bWorkerActive = true;
                 inst->worker = std::thread([&]() -> void
                 {
-                    if (LXDStartContainer(inst->selectedContainer->name.data()) != 0)
+                    if (IncusStartContainer(inst->selectedContainer->name.data()) != 0)
                     {
                         Logger::log("Failed to power on the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    inst->selectedContainer->name, " Error: ", LXDGetError());
+                                    inst->selectedContainer->name, " Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
                     state = UIMGUI_COMPONENT_STATE_PAUSED;

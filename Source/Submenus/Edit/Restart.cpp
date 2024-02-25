@@ -29,10 +29,10 @@ void UntitledGameSystemManager::Restart::tick(float deltaTime)
                 inst->bWorkerActive = true;
                 inst->worker = std::thread([&]() -> void
                 {
-                    if (LXDRestartContainer(inst->selectedContainer->name.data()) != 0)
+                    if (IncusRestartContainer(inst->selectedContainer->name.data()) != 0)
                     {
                         Logger::log("Failed to restart the following container: ", UVKLog::UVK_LOG_TYPE_ERROR,
-                                    inst->selectedContainer->name, " Error: ", LXDGetError());
+                                    inst->selectedContainer->name, " Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
                     state = UIMGUI_COMPONENT_STATE_PAUSED;

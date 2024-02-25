@@ -63,10 +63,10 @@ void UntitledGameSystemManager::Update::tick(float deltaTime)
 
                         name = container->name;
                     }
-                    if (LXDStartContainer(name.data()) != 0)
+                    if (IncusStartContainer(name.data()) != 0)
                     {
                         Logger::log("Failed to start the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", LXDGetError());
+                                    "Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
 
@@ -74,10 +74,10 @@ void UntitledGameSystemManager::Update::tick(float deltaTime)
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Copying update script to container!";
                     }
-                    if (LXDPushFile(name.data(), (char*)"/root/ugm-cli-update.sh", dir.data()) != 0)
+                    if (IncusPushFile(name.data(), (char*)"/root/ugm-cli-update.sh", dir.data()) != 0)
                     {
                         Logger::log("Failed to copy file to the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", LXDGetError());
+                                    "Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
 
@@ -85,9 +85,9 @@ void UntitledGameSystemManager::Update::tick(float deltaTime)
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Copying update script to container!";
                     }
-                    if (LXDExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-update.sh " + type + " " + version + "  &> /root/out.txt").data(), true) != 0)
+                    if (IncusExec(name.data(), ("bash{{b}}-c{{b}}/root/ugm-cli-update.sh " + type + " " + version + "  &> /root/out.txt").data(), true) != 0)
                     {Logger::log("Failed to copy file to the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", LXDGetError());
+                                    "Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
 
@@ -95,10 +95,10 @@ void UntitledGameSystemManager::Update::tick(float deltaTime)
                         const std::lock_guard<std::mutex> lock(mutex);
                         currentEvent = "Restarting container, finalising installation!";
                     }
-                    if (LXDRestartContainer(name.data()) != 0)
+                    if (IncusRestartContainer(name.data()) != 0)
                     {
                         Logger::log("Failed to restart the following container: ", UVK_LOG_TYPE_ERROR, name,
-                                    "Error: ", LXDGetError());
+                                    "Error: ", IncusGetError());
                         UImGui::Instance::shutdown();
                     }
 

@@ -2,7 +2,7 @@
 #include <unistd.h>
 #include <pwd.h>
 #include <yaml-cpp/yaml.h>
-#include "LXDBindings/libUGM_LXD_InternalFuncs.h"
+#include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 #include "Interfaces/RendererInterface.hpp"
 
 UntitledGameSystemManager::Instance::Instance()
@@ -52,10 +52,10 @@ void UntitledGameSystemManager::Instance::begin()
     beginAutohandle();
     loadConfigData();
 
-    // Connect to LXD
-    if (LXDCreateConnection() != 0)
+    // Connect to Incus
+    if (IncusCreateConnection() != 0)
     {
-        Logger::log("Failed to establish connection to LXD. Error: ", UVKLog::UVK_LOG_TYPE_ERROR, LXDGetError());
+        Logger::log("Failed to establish connection to Incus. Error: ", UVKLog::UVK_LOG_TYPE_ERROR, IncusGetError());
         UImGui::Instance::shutdown();
     }
 }
@@ -76,7 +76,7 @@ void UntitledGameSystemManager::Instance::end()
     endAutohandle();
     if (worker.joinable())
         worker.join();
-    LXDDestroyConnection();
+    IncusDestroyConnection();
 }
 
 UntitledGameSystemManager::Instance::~Instance()

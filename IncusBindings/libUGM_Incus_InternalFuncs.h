@@ -74,16 +74,16 @@ typedef struct { void *data; GoInt len; GoInt cap; } GoSlice;
 extern "C" {
 #endif
 
-extern char* LXDGetError();
-extern char LXDCreateConnection();
-extern void LXDDestroyConnection();
-extern char LXDStartContainer(char* name);
-extern char LXDStopContainer(char* name);
-extern char LXDRestartContainer(char* name);
-extern char LXDNewContainer(char* name, char* alias);
-extern char LXDDeleteContainer(char* name);
-extern char LXDExec(char* name, char* command, char bWait);
-extern char LXDPushFile(char* name, char* path, char* file);
+extern char* IncusGetError();
+extern char IncusCreateConnection();
+extern void IncusDestroyConnection();
+extern char IncusStartContainer(char* name);
+extern char IncusStopContainer(char* name);
+extern char IncusRestartContainer(char* name);
+extern char IncusNewContainer(char* name, char* alias);
+extern char IncusDeleteContainer(char* name);
+extern char IncusExec(char* name, char* command, char bWait);
+extern char IncusPushFile(char* name, char* path, char* file);
 
 #ifdef __cplusplus
 }
