@@ -6,6 +6,9 @@
 
 ![image](https://github.com/MadLadSquad/UntitledGameSystemManager/assets/40400590/2f9847ee-cd81-4840-98a7-f1d85a97abe5)
 
+> [!CAUTION]
+> BREAKING CHANGES IN v2: For users of `v1.X.X.X` use the following guide to transition to `v2.X.X.X`: [Upgrading from v1.X.X.X to v2.X.X.X](https://github.com/MadLadSquad/UntitledGameSystemManager/wiki/Upgrading-from-1.X.X.X-to-2.X.X.X)
+
 A containerised system manager utility for gaming systems.
 
 ## About
