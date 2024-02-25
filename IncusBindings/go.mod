@@ -4,6 +4,8 @@ go 1.21
 
 toolchain go1.21.5
 
+require github.com/lxc/incus v0.6.0
+
 require (
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.6.0 // indirect
@@ -11,7 +13,6 @@ require (
 	github.com/gorilla/securecookie v1.1.2 // indirect
 	github.com/gorilla/websocket v1.5.1 // indirect
 	github.com/kr/fs v0.1.0 // indirect
-	github.com/lxc/incus v0.6.0 // indirect
 	github.com/muhlemmer/gu v0.3.1 // indirect
 	github.com/pkg/sftp v1.13.6 // indirect
 	github.com/sirupsen/logrus v1.9.3 // indirect
