@@ -37,7 +37,7 @@ echo "root:1000000:1000000000" >> /etc/subuid
 echo "root:1000000:1000000000" >> /etc/subgid
 
 # Add the user listed by the user to the incus group
-usermod -a -G incus incus-admin "${user}"
+usermod -a -G incus,incus-admin "${user}"
 
 # Start the incus service
 /etc/init.d/incus start || systemctl start incus.service
@@ -50,8 +50,8 @@ su "${user}" -c "(xhost +local: | grep 'access control disabled' || xhost +local
 # Start incus init with everything being default with the exception of the storage backend
 incus init --auto --storage-backend=dir
 # Disable IPv6 because it messes up some configurations' network connectivity
-lxc network set lxdbr0 ipv6.nat=false
-lxc network set lxdbr0 ipv6.address=none
+incus network set lxdbr0 ipv6.nat=false
+incus network set lxdbr0 ipv6.address=none
 
 # Restart Incus so that the network changes can take effect
 /etc/init.d/incus restart || systemctl restart incus.service
