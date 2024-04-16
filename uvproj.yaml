@@ -12,6 +12,7 @@ enabled-modules:
   notifications: false
   polkit: false
   ufont: false
+  open: true
   i18n: true
   undo_redo: false
   plotting: false
