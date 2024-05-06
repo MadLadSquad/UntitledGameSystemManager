@@ -138,12 +138,7 @@ if (USE_OS_MODULE)
         if (ENABLE_DBUS_UTILS)
             find_package(PkgConfig REQUIRED)
 
-            if (ENABLE_DBUS_UTILS)
-                pkg_check_modules(DBUS REQUIRED dbus-1)
-
-                link_directories(${DBUS_LIBRARY_DIRS})
-                include_directories(${DBUS_INCLUDE_DIRS})
-
+            if (BUILD_VARIANT_VENDOR)
                 add_subdirectory(Framework/Modules/OS/ThirdParty/UntitledDBusUtils)
                 list(APPEND ENABLED_LIBRARIES UntitledDBusUtils)
             else()
