@@ -23,7 +23,7 @@ jobs:
         shell: bash
         run: |
           rm -rf .git/
-          cd IncusBindings && GOMODCACHE="$PWD"/go-mod go mod download -modcacherw -x && cd ..
+          cd IncusBindings && GOMODCACHE="$PWD"/go-mod go mod download -modcacherw -x && go build -o libUGM_Incus_InternalFuncs.so -buildmode=c-shared . &&cd ..
           tar cfJ untitled-game-system-manager.tar.xz . || echo "Might have failed"
       - name: Create Release
         uses: softprops/action-gh-release@master
