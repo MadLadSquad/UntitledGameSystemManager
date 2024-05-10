@@ -52,3 +52,4 @@ Managers/CLI/cmake-build-*/
 UntitledImGuiFramework
 
 IncusBindings/go-mod/
+IncusBindings/vendor/
