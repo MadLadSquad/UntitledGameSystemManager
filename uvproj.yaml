@@ -24,7 +24,7 @@ enabled-modules:
 additional-installs:
   unix:
     - file: IncusBindings/libUGM_Incus_InternalFuncs.so
-      directory: lib/
+      directory: lib64/
       macro-name: UGM_INCUS_BINDINGS_DIR
       is-directory: false
     - file: Config/Dist/com.madladsquad.UntitledGameSystemManager.desktop
