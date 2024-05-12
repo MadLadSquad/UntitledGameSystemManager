@@ -12,7 +12,7 @@ jobs:
   Linux:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@main
         with:
           lfs: true
           ref: master
@@ -36,7 +36,7 @@ jobs:
         run: ./ci.sh
       - name: "Import bot's GPG key for signing commits"
         id: import-gpg
-        uses: crazy-max/ghaction-import-gpg@v5
+        uses: crazy-max/ghaction-import-gpg@master
         with:
           gpg_private_key: ${{ secrets.ACTION_COMMIT_SING_PRIVATE_KEY }}
           passphrase: ${{ secrets.ACTION_COMMIT_SING_PASS }}
