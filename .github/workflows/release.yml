@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@main
         with:
           lfs: true
           submodules: true
@@ -23,6 +23,7 @@ jobs:
         shell: bash
         run: |
           rm -rf .git/
+          cd IncusBindings && go mod vendor && cd ..
           tar cfJ untitled-game-system-manager.tar.xz . || echo "Might have failed"
       - name: Create Release
         uses: softprops/action-gh-release@master
