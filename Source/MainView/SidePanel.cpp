@@ -51,6 +51,7 @@ void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
     }
 
     bool bSelected;
+    size_t i = 0; // Generates unique IDs
     for (auto& a : inst->containers)
     {
         bSelected = false;
@@ -63,12 +64,16 @@ void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
         else
             ImGui::PushStyleColor(ImGuiCol_Button, { 0.0f, 0.0f, 0.0f, 0.0f, });
 
-        if (ImGui::Button(a.name.c_str(), { ImGui::GetContentRegionAvail().x, 0 }))
+        UImGui::FString status = IncusGetState(a.name.data()) == 1 ? " - ON" : " - OFF";
+
+        // Name - ON/OFF(hidden ID)
+        if (ImGui::Button((a.name + status + "##" + std::to_string(i)).c_str(), { ImGui::GetContentRegionAvail().x, 0 }))
             inst->selectedContainer = &a;
 
         if (bSelected)
             ImGui::PopStyleColor();
         ImGui::PopStyleColor();
+        ++i;
     }
     ImGui::End();
 }

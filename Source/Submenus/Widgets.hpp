@@ -12,3 +12,6 @@
 
 #include "More/About.hpp"
 #include "More/Help.hpp"
+
+#include "Popups/ConnectionPopup.hpp"
+#include "Popups/GenericErrorPopup.hpp"

@@ -92,24 +92,13 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                     out["pins"].push_back("lutris");
                     out["pins"].push_back("firefox");
 
-                    YAML::Node o;
-                    try
-                    {
-                        o = YAML::LoadFile(conf + "config/layout.yaml");
-                    }
-                    catch (YAML::BadFile&)
-                    {
-                        Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, conf, "config/layout.yaml");
-                        std::terminate();
-                    }
+                    YAML::Node o = inst->loadConfigGeneric();
                     auto cont = o["containers"];
                     if (cont)
                     {
                         cont.push_back(out);
                     }
-
-                    std::ofstream file(conf + "config/layout.yaml");
-                    file << o;
+                    inst->outputConfig(o);
 
                     state = UIMGUI_COMPONENT_STATE_PAUSED;
                     ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;

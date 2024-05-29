@@ -6,12 +6,12 @@
 #include <thread>
 #include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 
-#define INCUS_RUN(x, y, z, ...)                                                                     \
-    if (x(y __VA_OPT__(,) __VA_ARGS__) != 0)                                                        \
-    {                                                                                               \
-        Logger::log("Failed to " z " the following container: ", UVKLog::UVK_LOG_TYPE_ERROR, y,     \
-                    " Error: ", IncusGetError());                                                   \
-        UImGui::Instance::shutdown();                                                               \
+#define INCUS_RUN(x, y, z, ...)                                                                                 \
+    if (x(y __VA_OPT__(,) __VA_ARGS__) != 0)                                                                    \
+    {                                                                                                           \
+        inst->genericErrorPopup.state = UIMGUI_COMPONENT_STATE_RUNNING;                                         \
+        inst->genericErrorPopup.popupName = UImGui::FString("Failed to " z " the following container: ") + y;   \
+        inst->genericErrorPopup.popupString = inst->genericErrorPopup.popupName + " Error: " + IncusGetError(); \
     }
 
 
@@ -60,6 +60,11 @@ namespace UntitledGameSystemManager
         std::thread worker;
         bool bWorkerActive = false;
         bool bFinishedExecution = false;
+
+        GenericErrorPopup genericErrorPopup{};
+
+        YAML::Node loadConfigGeneric() noexcept;
+        void outputConfig(const YAML::Node& node) const noexcept;
     private:
         friend class MainBar;
         friend class MainView;
@@ -80,6 +85,8 @@ namespace UntitledGameSystemManager
         MainBar mainBar{};
         MainView mainView{};
         SidePanel sidePanel{};
+
+        ConnectionPopup connectionPopup{};
     };
 }
 

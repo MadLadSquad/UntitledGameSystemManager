@@ -39,16 +39,7 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                         ++it;
                 }
 
-                YAML::Node o;
-                try
-                {
-                    o = YAML::LoadFile(inst->configDir + "config/layout.yaml");
-                }
-                catch (YAML::BadFile&)
-                {
-                    Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, inst->configDir, "config/layout.yaml");
-                    std::terminate();
-                }
+                YAML::Node o = inst->loadConfigGeneric();
                 auto cont = o["containers"];
                 if (cont)
                 {
@@ -69,8 +60,7 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                 }
                 o["containers"] = cont;
 
-                std::ofstream file(inst->configDir + "config/layout.yaml");
-                file << o;
+                inst->outputConfig(o);
             }
             else if (ImGui::MenuItem("* Refresh"))
                 inst->loadConfigData();
@@ -100,7 +90,13 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
                     ImGui::TableNextColumn();
 
                     if (ImGui::Button("Run##buttonPlay"))
+                    {
+                        if (IncusGetState(inst->selectedContainer->name.data()) == 0) // Powered off
+                        {
+                            INCUS_RUN(IncusStartContainer, inst->selectedContainer->name.data(), "power on");
+                        }
                         IncusExec(inst->selectedContainer->name.data(), ("su{{b}}ubuntu{{b}}-c{{b}}" + pin.first + " & disown").data(), false);
+                    }
 
                     ImGui::TableNextColumn();
                     ImGui::PopID();

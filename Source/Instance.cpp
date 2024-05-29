@@ -1,6 +1,4 @@
 #include "Instance.hpp"
-#include <unistd.h>
-#include <pwd.h>
 #include <yaml-cpp/yaml.h>
 #include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 #include "Interfaces/RendererInterface.hpp"
@@ -27,7 +25,9 @@ UntitledGameSystemManager::Instance::Instance()
             &help,
             &about,
             &del,
-            &scriptGen
+            &scriptGen,
+            &connectionPopup,
+            &genericErrorPopup
         },
         .globalData = (void*)this,
         .bGlobalAllocatedOnHeap = false,
@@ -55,8 +55,8 @@ void UntitledGameSystemManager::Instance::begin()
     // Connect to Incus
     if (IncusCreateConnection() != 0)
     {
-        Logger::log("Failed to establish connection to Incus. Error: ", UVKLog::UVK_LOG_TYPE_ERROR, IncusGetError());
-        UImGui::Instance::shutdown();
+        connectionPopup.state = UIMGUI_COMPONENT_STATE_RUNNING;
+        connectionPopup.error = IncusGetError();
     }
 }
 
@@ -76,7 +76,8 @@ void UntitledGameSystemManager::Instance::end()
     endAutohandle();
     if (worker.joinable())
         worker.join();
-    IncusDestroyConnection();
+    if (connectionPopup.state == UIMGUI_COMPONENT_STATE_PAUSED)
+        IncusDestroyConnection();
 }
 
 UntitledGameSystemManager::Instance::~Instance()
@@ -93,16 +94,7 @@ void UntitledGameSystemManager::Instance::loadConfigData()
     containers.clear();
     selectedContainer = nullptr;
 
-    YAML::Node out;
-    try
-    {
-        out = YAML::LoadFile(configDir + "config/layout.yaml");
-    }
-    catch (YAML::BadFile&)
-    {
-        Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
-        std::terminate();
-    }
+    YAML::Node out = loadConfigGeneric();
     auto cont = out["containers"];
     if (cont)
     {
@@ -141,4 +133,25 @@ File in question: )", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml
                     "an array of containers in YAML. File: ", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
         std::terminate();
     }
+}
+
+YAML::Node UntitledGameSystemManager::Instance::loadConfigGeneric() noexcept
+{
+    YAML::Node out;
+    try
+    {
+        out = YAML::LoadFile(configDir + "config/layout.yaml");
+    }
+    catch (YAML::BadFile&)
+    {
+        Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
+        std::terminate();
+    }
+    return out;
+}
+
+void UntitledGameSystemManager::Instance::outputConfig(const YAML::Node& node) const noexcept
+{
+    std::ofstream file(configDir + "config/layout.yaml");
+    file << node;
 }

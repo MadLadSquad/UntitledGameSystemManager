@@ -84,6 +84,7 @@ extern char IncusNewContainer(char* name, char* alias);
 extern char IncusDeleteContainer(char* name);
 extern char IncusExec(char* name, char* command, char bWait);
 extern char IncusPushFile(char* name, char* path, char* file);
+extern char IncusGetState(char* name);
 
 #ifdef __cplusplus
 }

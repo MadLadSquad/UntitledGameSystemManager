@@ -86,8 +86,9 @@ func updateContainerState(name *C.char, action string, force bool, runOnActive b
 			return -1
 		}
 		handleWait(op)
+		return 0
 	}
-	return 0
+	return 1
 }
 
 //export IncusGetError
@@ -336,6 +337,21 @@ func IncusPushFile(name *C.char, path *C.char, file *C.char) C.char {
 	if err != nil {
 		errorG = err.Error()
 		return -1
+	}
+	return 0
+}
+
+//export IncusGetState
+func IncusGetState(name *C.char) C.char {
+	str := C.GoString(name)
+	container, e := getContainerHandle(name)
+	if e < 0 {
+		errorG = "Error getting container with the following name: " + str + "; Error code: " + strconv.Itoa(e)
+		return -1
+	}
+
+	if container.IsActive() {
+		return 1
 	}
 	return 0
 }

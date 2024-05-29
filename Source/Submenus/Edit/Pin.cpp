@@ -32,16 +32,7 @@ void UntitledGameSystemManager::Pin::tick(float deltaTime)
 
             if (ImGui::Button("Create"))
             {
-                YAML::Node o;
-                try
-                {
-                    o = YAML::LoadFile(inst->configDir + "config/layout.yaml");
-                }
-                catch (YAML::BadFile&)
-                {
-                    Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, inst->configDir, "config/layout.yaml");
-                    std::terminate();
-                }
+                YAML::Node o = inst->loadConfigGeneric();
                 auto cont = o["containers"];
                 if (cont)
                 {
@@ -57,9 +48,7 @@ void UntitledGameSystemManager::Pin::tick(float deltaTime)
                 }
                 o["containers"] = cont;
 
-                std::ofstream file(inst->configDir + "config/layout.yaml");
-                file << o;
-                file.close();
+                inst->outputConfig(o);
 
                 inst->loadConfigData();
                 cmd.clear();

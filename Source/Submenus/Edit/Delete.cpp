@@ -40,16 +40,7 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                     INCUS_RUN(IncusDeleteContainer, name.data(), "delete");
 
                     const std::lock_guard<std::mutex> lock(mutex);
-                    YAML::Node o;
-                    try
-                    {
-                        o = YAML::LoadFile(configDir + "config/layout.yaml");
-                    }
-                    catch (YAML::BadFile&)
-                    {
-                        Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
-                        std::terminate();
-                    }
+                    YAML::Node o = inst->loadConfigGeneric();
                     YAML::Node cont = o["containers"];
                     if (cont)
                     {
@@ -68,9 +59,7 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                         o["containers"] = containers;
                     }
 
-                    std::ofstream file(configDir + "config/layout.yaml");
-                    file << o;
-                    file.close();
+                    inst->outputConfig(o);
 
                     state = UIMGUI_COMPONENT_STATE_PAUSED;
                     ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
