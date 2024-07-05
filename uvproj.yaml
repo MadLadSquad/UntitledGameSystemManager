@@ -7,7 +7,7 @@ system-wide: true
 enabled-modules:
   os: true
   dbus: false
-  uexec: true
+  uexec: false
   theming: true
   ufont: false
   open: false
@@ -19,6 +19,7 @@ enabled-modules:
   toggles: false
   text_utils: false
   cli_parser: false
+  xdg: true
 additional-installs:
   unix:
     - file: IncusBindings/libUGM_Incus_InternalFuncs.so

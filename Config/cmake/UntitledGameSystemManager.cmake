@@ -7,11 +7,5 @@ function(custom_compile_step)
     endif()
 endfunction()
 
-set(USE_OS_MODULE ON)
-set(ENABLE_XDG_BASEDIR ON)
-
-set(USE_THEME_MODULE ON)
-set(USE_I18N_MODULE ON)
-
 file(GLOB_RECURSE UIMGUI_CUSTOM_APP_HEADERS "IncusBindings/libUGM_Incus_InternalFuncs.h")
 link_directories(IncusBindings/)
