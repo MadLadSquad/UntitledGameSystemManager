@@ -9,10 +9,10 @@ void UntitledGameSystemManager::About::begin()
 {
     beginAutohandle();
     brandIcon.init(UIMGUI_CONTENT_DIR"brand-icon.png");
-    brandIcon.loadImGui();
+    brandIcon.load();
 
     lxcIcon.init(UIMGUI_CONTENT_DIR"linux-containers-icon.png");
-    lxcIcon.loadImGui();
+    lxcIcon.load();
 }
 
 void UntitledGameSystemManager::About::tick(float deltaTime)
