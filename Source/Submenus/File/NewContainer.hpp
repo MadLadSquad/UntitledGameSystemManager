@@ -13,7 +13,7 @@ namespace UntitledGameSystemManager
         virtual ~NewContainer() override;
     private:
         bool bStartExecuting = false;
-        std::string currentEvent;
+        UImGui::FString currentEvent;
 
         std::mutex mutex;
     };
