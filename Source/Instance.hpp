@@ -25,10 +25,10 @@ namespace UntitledGameSystemManager
 {
     struct Container
     {
-        using Pin = std::pair<std::string, bool>;
+        using Pin = std::pair<FString, bool>;
 
-        std::string name;
-        std::vector<Pin> pins;
+        FString name;
+        TVector<Pin> pins;
     };
 
     struct RunWorkers
@@ -52,7 +52,7 @@ namespace UntitledGameSystemManager
 
         void loadConfigData();
 
-        std::vector<Container> containers;
+        TVector<Container> containers;
         Container* selectedContainer = nullptr;
 
         UImGui::FString configDir;
