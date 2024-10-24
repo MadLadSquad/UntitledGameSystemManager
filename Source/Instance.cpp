@@ -140,7 +140,7 @@ YAML::Node UntitledGameSystemManager::Instance::loadConfigGeneric() noexcept
     YAML::Node out;
     try
     {
-        out = YAML::LoadFile(configDir + "config/layout.yaml");
+        out = YAML::LoadFile((configDir + "config/layout.yaml").c_str());
     }
     catch (YAML::BadFile&)
     {
