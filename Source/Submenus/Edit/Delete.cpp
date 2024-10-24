@@ -29,8 +29,9 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                 inst->bWorkerActive = true;
                 inst->worker = std::thread([inst, this]() -> void
                 {
-                    std::string name;
-                    std::string configDir;
+		    UImGui::FString name;
+		    UImGui::FString configDir;
+
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
                         name = inst->selectedContainer->name;
@@ -44,12 +45,12 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                     YAML::Node cont = o["containers"];
                     if (cont)
                     {
-                        std::vector<YAML::Node> containers;
+		        UImGui::TVector<YAML::Node> containers;
                         for (const YAML::Node& a : cont)
                         {
                             if (a["container"] && a["pins"])
                             {
-                                auto r = a["container"].as<std::string>();
+                                auto r = a["container"].as<UImGui::FString>();
                                 if (name == r)
                                     continue;
                             }

@@ -27,7 +27,7 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
             inst->bFinishedExecution = false;
         }
 
-        static std::string name;
+        static UImGui::FString name;
 
         if (bStartExecuting)
         {

@@ -152,6 +152,6 @@ YAML::Node UntitledGameSystemManager::Instance::loadConfigGeneric() noexcept
 
 void UntitledGameSystemManager::Instance::outputConfig(const YAML::Node& node) const noexcept
 {
-    std::ofstream file(configDir + "config/layout.yaml");
+    std::ofstream file((configDir + "config/layout.yaml").c_str());
     file << node;
 }

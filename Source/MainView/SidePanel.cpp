@@ -67,7 +67,7 @@ void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
         UImGui::FString status = IncusGetState(a.name.data()) == 1 ? " - ON" : " - OFF";
 
         // Name - ON/OFF(hidden ID)
-        if (ImGui::Button((a.name + status + "##" + std::to_string(i)).c_str(), { ImGui::GetContentRegionAvail().x, 0 }))
+        if (ImGui::Button((a.name + status + "##" + std::to_string(i).c_str()).c_str(), { ImGui::GetContentRegionAvail().x, 0 }))
             inst->selectedContainer = &a;
 
         if (bSelected)
