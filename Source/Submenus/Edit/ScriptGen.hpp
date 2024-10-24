@@ -13,7 +13,7 @@ namespace UntitledGameSystemManager
         virtual void end() override;
         virtual ~ScriptGen() override;
     private:
-        static void generateScript(const std::string& command) noexcept;
+        static void generateScript(const UImGui::FString& command) noexcept;
 
     };
 }
