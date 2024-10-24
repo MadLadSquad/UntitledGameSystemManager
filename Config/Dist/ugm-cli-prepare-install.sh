@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 if [ "$1" == "--name" ] && [ "$2" != "" ]; then
   user="$2"
 else
