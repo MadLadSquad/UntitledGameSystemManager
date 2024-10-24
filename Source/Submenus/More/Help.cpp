@@ -21,9 +21,9 @@ void UntitledGameSystemManager::Help::tick(float deltaTime)
     {
         auto* inst = (Instance*)UImGui::Instance::getGlobal();
 
-        static std::string configDir = inst->configDir + "config/";
-        static std::string scriptsDir = inst->configDir + "scripts/";
-        static std::string resourcesDir = inst->configDir + "resources/";
+        static UImGui::FString configDir = inst->configDir + "config/";
+        static UImGui::FString scriptsDir = inst->configDir + "scripts/";
+        static UImGui::FString resourcesDir = inst->configDir + "resources/";
 
         ImGui::Text("Config directories");
 
