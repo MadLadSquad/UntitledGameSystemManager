@@ -103,9 +103,9 @@ void UntitledGameSystemManager::Instance::loadConfigData()
             if (a["container"] && a["pins"])
             {
                 containers.emplace_back();
-                for (auto& f : a["pins"].as<std::vector<std::string>>())
+                for (auto& f : a["pins"].as<UImGui::TVector<UImGui::FString>>())
                     containers.back().pins.emplace_back( f, false );
-                containers.back().name = a["container"].as<std::string>();
+                containers.back().name = a["container"].as<UImGui::FString>();
             }
             else
             {
@@ -122,7 +122,7 @@ containers:
       - arma3-unix-launcher
       - discord
 <endfile>
-File in question: )", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
+File in question: )", ULOG_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
                 std::terminate();
             }
         }
@@ -130,7 +130,7 @@ File in question: )", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml
     else
     {
         Logger::log("The config file isn't formatted correctly, it starts with a \"containers\" key that stores"
-                    "an array of containers in YAML. File: ", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
+                    "an array of containers in YAML. File: ", ULOG_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
         std::terminate();
     }
 }
@@ -144,7 +144,7 @@ YAML::Node UntitledGameSystemManager::Instance::loadConfigGeneric() noexcept
     }
     catch (YAML::BadFile&)
     {
-        Logger::log("Couldn't open the config file at: ", UVKLog::UVK_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
+        Logger::log("Couldn't open the config file at: ", ULOG_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
         std::terminate();
     }
     return out;
