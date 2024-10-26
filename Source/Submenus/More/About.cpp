@@ -1,11 +1,11 @@
 #include "About.hpp"
 
-UntitledGameSystemManager::About::About()
+UntitledGameSystemManager::About::About() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::About::begin()
+void UntitledGameSystemManager::About::begin() noexcept
 {
     beginAutohandle();
     brandIcon.init(UIMGUI_CONTENT_DIR"brand-icon.png");
@@ -15,7 +15,7 @@ void UntitledGameSystemManager::About::begin()
     lxcIcon.load();
 }
 
-void UntitledGameSystemManager::About::tick(float deltaTime)
+void UntitledGameSystemManager::About::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen("About us"))
@@ -30,7 +30,7 @@ void UntitledGameSystemManager::About::tick(float deltaTime)
         constexpr char* text = (char*)"https://linuxcontainers.org/";
         ImGui::InputText("##lxcinfo", text, strlen(text), ImGuiInputTextFlags_ReadOnly);
 
-        ImGui::Image((void*)(intptr_t)lxcIcon.get(), { 50.0f, 50.0f });
+        ImGui::Image(lxcIcon.get(), { 50.0f, 50.0f });
         if (ImGui::IsItemHovered())
         {
             ImGui::BeginTooltip();
@@ -38,7 +38,7 @@ void UntitledGameSystemManager::About::tick(float deltaTime)
             ImGui::EndTooltip();
         }
         ImGui::SameLine();
-        ImGui::Image((void*)(intptr_t)brandIcon.get(), { 50.0f, 50.0f });
+        ImGui::Image(brandIcon.get(), { 50.0f, 50.0f });
         if (ImGui::IsItemHovered())
         {
             ImGui::BeginTooltip();
@@ -52,13 +52,8 @@ void UntitledGameSystemManager::About::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::About::end()
+void UntitledGameSystemManager::About::end() noexcept
 {
     endAutohandle();
-
-}
-
-UntitledGameSystemManager::About::~About()
-{
 
 }

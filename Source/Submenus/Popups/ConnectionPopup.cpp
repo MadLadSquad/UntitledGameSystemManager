@@ -1,17 +1,17 @@
 #include "ConnectionPopup.hpp"
 
-UntitledGameSystemManager::ConnectionPopup::ConnectionPopup()
+UntitledGameSystemManager::ConnectionPopup::ConnectionPopup() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::ConnectionPopup::begin()
+void UntitledGameSystemManager::ConnectionPopup::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::ConnectionPopup::tick(float deltaTime)
+void UntitledGameSystemManager::ConnectionPopup::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen("Couldn't connect to Incus"))
@@ -26,13 +26,8 @@ void UntitledGameSystemManager::ConnectionPopup::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::ConnectionPopup::end()
+void UntitledGameSystemManager::ConnectionPopup::end() noexcept
 {
     endAutohandle();
-
-}
-
-UntitledGameSystemManager::ConnectionPopup::~ConnectionPopup()
-{
 
 }

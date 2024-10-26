@@ -1,17 +1,17 @@
 #include "GenericErrorPopup.hpp"
 
-UntitledGameSystemManager::GenericErrorPopup::GenericErrorPopup()
+UntitledGameSystemManager::GenericErrorPopup::GenericErrorPopup() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::GenericErrorPopup::begin()
+void UntitledGameSystemManager::GenericErrorPopup::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::GenericErrorPopup::tick(float deltaTime)
+void UntitledGameSystemManager::GenericErrorPopup::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen(popupName.c_str()))
@@ -26,13 +26,8 @@ void UntitledGameSystemManager::GenericErrorPopup::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::GenericErrorPopup::end()
+void UntitledGameSystemManager::GenericErrorPopup::end() noexcept
 {
     endAutohandle();
-
-}
-
-UntitledGameSystemManager::GenericErrorPopup::~GenericErrorPopup()
-{
 
 }

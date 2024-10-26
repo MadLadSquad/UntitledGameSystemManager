@@ -3,23 +3,18 @@
 #include <ranges>
 #include "Instance.hpp"
 
-UntitledGameSystemManager::MainView::MainView()
-{
-
-}
-
-void UntitledGameSystemManager::MainView::begin()
+void UntitledGameSystemManager::MainView::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::MainView::tick(float deltaTime)
+void UntitledGameSystemManager::MainView::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
 
-    ImGui::Begin("Main", (void*)nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_MenuBar);
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    ImGui::Begin("Main", static_cast<void*>(nullptr), ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_MenuBar);
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
 
     if (inst->selectedContainer != nullptr)
     {
@@ -110,13 +105,8 @@ void UntitledGameSystemManager::MainView::tick(float deltaTime)
     ImGui::End();
 }
 
-void UntitledGameSystemManager::MainView::end()
+void UntitledGameSystemManager::MainView::end() noexcept
 {
     endAutohandle();
-
-}
-
-UntitledGameSystemManager::MainView::~MainView()
-{
 
 }

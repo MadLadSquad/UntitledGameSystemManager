@@ -1,24 +1,19 @@
 #include "SidePanel.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::SidePanel::SidePanel()
-{
-
-}
-
-void UntitledGameSystemManager::SidePanel::begin()
+void UntitledGameSystemManager::SidePanel::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
+void UntitledGameSystemManager::SidePanel::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
 
-    ImGui::Begin("Sidebar", (bool*)nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_MenuBar);
+    ImGui::Begin("Sidebar", static_cast<bool*>(nullptr), ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_MenuBar);
 
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (ImGui::BeginMenuBar())
     {
         if (ImGui::MenuItem("* Refresh"))
@@ -50,11 +45,10 @@ void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
         ImGui::EndMenuBar();
     }
 
-    bool bSelected;
     size_t i = 0; // Generates unique IDs
     for (auto& a : inst->containers)
     {
-        bSelected = false;
+        bool bSelected = false;
         if (inst->selectedContainer == &a)
         {
             ImGui::PushStyleColor(ImGuiCol_Button, { 0.87f, 0.64f, 0.03, 1.0f });
@@ -78,14 +72,8 @@ void UntitledGameSystemManager::SidePanel::tick(float deltaTime)
     ImGui::End();
 }
 
-void UntitledGameSystemManager::SidePanel::end()
+void UntitledGameSystemManager::SidePanel::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::SidePanel::~SidePanel()
-{
-
-}
-

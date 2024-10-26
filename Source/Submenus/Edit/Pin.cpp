@@ -1,26 +1,26 @@
 #include "Pin.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::Pin::Pin()
+UntitledGameSystemManager::Pin::Pin() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Pin::begin()
+void UntitledGameSystemManager::Pin::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Pin::tick(float deltaTime)
+void UntitledGameSystemManager::Pin::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (inst->selectedContainer != nullptr)
     {
         if (!ImGui::IsPopupOpen("Pin"))
             ImGui::OpenPopup("Pin");
-        if (ImGui::BeginPopupModal("Pin", (bool*)nullptr))
+        if (ImGui::BeginPopupModal("Pin", static_cast<bool*>(nullptr)))
         {
             static UImGui::FString cmd;
 
@@ -44,7 +44,6 @@ void UntitledGameSystemManager::Pin::tick(float deltaTime)
                             break;
                         }
                     }
-                    //cont[inst->selectedContainer->name]["pins"].push_back(cmd);
                 }
                 o["containers"] = cont;
 
@@ -62,13 +61,8 @@ void UntitledGameSystemManager::Pin::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Pin::end()
+void UntitledGameSystemManager::Pin::end() noexcept
 {
     endAutohandle();
-
-}
-
-UntitledGameSystemManager::Pin::~Pin()
-{
 
 }

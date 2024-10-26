@@ -1,24 +1,19 @@
 #include "MainBar.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::MainBar::MainBar()
-{
-
-}
-
-void UntitledGameSystemManager::MainBar::begin()
+void UntitledGameSystemManager::MainBar::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::MainBar::tick(float deltaTime)
+void UntitledGameSystemManager::MainBar::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
     if (ImGui::BeginMainMenuBar())
     {
         // Get the instance from the global
-        auto* inst = (Instance*)Instance::getGlobal();
+        auto* inst = static_cast<Instance*>(Instance::getGlobal());
         if (ImGui::BeginMenu("File"))
         {
             if (ImGui::MenuItem("New Container"))
@@ -56,14 +51,8 @@ void UntitledGameSystemManager::MainBar::tick(float deltaTime)
 
 }
 
-void UntitledGameSystemManager::MainBar::end()
+void UntitledGameSystemManager::MainBar::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::MainBar::~MainBar()
-{
-
-}
-

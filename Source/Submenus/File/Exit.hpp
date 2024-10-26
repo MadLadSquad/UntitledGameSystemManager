@@ -3,14 +3,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API Exit : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API Exit final : public UImGui::WindowComponent
     {
     public:
-        Exit();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~Exit() override;
+        Exit() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~Exit() noexcept override = default;
     private:
 
     };

@@ -1,17 +1,17 @@
 #include "Exit.hpp"
 
-UntitledGameSystemManager::Exit::Exit()
+UntitledGameSystemManager::Exit::Exit() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Exit::begin()
+void UntitledGameSystemManager::Exit::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Exit::tick(float deltaTime)
+void UntitledGameSystemManager::Exit::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen("Exit"))
@@ -31,14 +31,8 @@ void UntitledGameSystemManager::Exit::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Exit::end()
+void UntitledGameSystemManager::Exit::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::Exit::~Exit()
-{
-
-}
-

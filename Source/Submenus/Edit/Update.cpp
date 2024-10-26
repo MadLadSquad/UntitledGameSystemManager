@@ -1,24 +1,24 @@
 #include "Update.hpp"
 #include <Instance.hpp>
 
-UntitledGameSystemManager::Update::Update()
+UntitledGameSystemManager::Update::Update() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Update::begin()
+void UntitledGameSystemManager::Update::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Update::tick(float deltaTime)
+void UntitledGameSystemManager::Update::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (!ImGui::IsPopupOpen("Update container"))
         ImGui::OpenPopup("Update container");
-    if (ImGui::BeginPopupModal("Update container", (bool*)nullptr))
+    if (ImGui::BeginPopupModal("Update container", static_cast<bool*>(nullptr)))
     {
         if (inst->bFinishedExecution)
         {
@@ -84,7 +84,7 @@ void UntitledGameSystemManager::Update::tick(float deltaTime)
                     INCUS_RUN(IncusRestartContainer, name.data(), "restart")
 
                     state = UIMGUI_COMPONENT_STATE_PAUSED;
-                    ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                    static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
                 });
             }
             else
@@ -96,14 +96,8 @@ void UntitledGameSystemManager::Update::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Update::end()
+void UntitledGameSystemManager::Update::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::Update::~Update()
-{
-
-}
-

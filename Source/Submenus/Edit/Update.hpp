@@ -3,14 +3,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API Update : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API Update final : public UImGui::WindowComponent
     {
     public:
-        Update();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~Update() override;
+        Update() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~Update() noexcept override = default;
     private:
         bool bStartExecuting = false;
         UImGui::FString currentEvent;

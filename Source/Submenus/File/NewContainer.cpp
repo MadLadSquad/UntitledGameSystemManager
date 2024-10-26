@@ -1,25 +1,25 @@
 #include "NewContainer.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::NewContainer::NewContainer()
+UntitledGameSystemManager::NewContainer::NewContainer() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::NewContainer::begin()
+void UntitledGameSystemManager::NewContainer::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
+void UntitledGameSystemManager::NewContainer::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
 
     if (!ImGui::IsPopupOpen("New container"))
         ImGui::OpenPopup("New container");
-    if (ImGui::BeginPopupModal("New container", (bool*)nullptr))
+    if (ImGui::BeginPopupModal("New container", static_cast<bool*>(nullptr)))
     {
         if (inst->bFinishedExecution)
         {
@@ -101,7 +101,7 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
                     inst->outputConfig(o);
 
                     state = UIMGUI_COMPONENT_STATE_PAUSED;
-                    ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                    static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
                 });
             }
             else
@@ -113,13 +113,7 @@ void UntitledGameSystemManager::NewContainer::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::NewContainer::end()
+void UntitledGameSystemManager::NewContainer::end() noexcept
 {
     endAutohandle();
 }
-
-UntitledGameSystemManager::NewContainer::~NewContainer()
-{
-
-}
-

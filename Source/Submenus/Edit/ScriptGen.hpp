@@ -4,14 +4,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API ScriptGen : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API ScriptGen final : public UImGui::WindowComponent
     {
     public:
-        ScriptGen();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~ScriptGen() override;
+        ScriptGen() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~ScriptGen() noexcept override = default;
     private:
         static void generateScript(const UImGui::FString& command) noexcept;
 

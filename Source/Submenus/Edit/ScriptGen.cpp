@@ -1,21 +1,21 @@
 #include "ScriptGen.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::ScriptGen::ScriptGen()
+UntitledGameSystemManager::ScriptGen::ScriptGen() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::ScriptGen::begin()
+void UntitledGameSystemManager::ScriptGen::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::ScriptGen::tick(float deltaTime)
+void UntitledGameSystemManager::ScriptGen::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    const auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (inst->selectedContainer != nullptr)
     {
         if (!ImGui::IsPopupOpen("Generate script"))
@@ -46,21 +46,16 @@ void UntitledGameSystemManager::ScriptGen::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::ScriptGen::end()
+void UntitledGameSystemManager::ScriptGen::end() noexcept
 {
     endAutohandle();
 
 }
 
-UntitledGameSystemManager::ScriptGen::~ScriptGen()
+void UntitledGameSystemManager::ScriptGen::generateScript(const UImGui::FString& command) noexcept
 {
-
-}
-
-void UntitledGameSystemManager::ScriptGen::generateScript(const std::string& command) noexcept
-{
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
-    std::filesystem::path p(inst->configDir + "scripts/" + inst->selectedContainer->name + "-" + command);
+    const auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
+    const std::filesystem::path p(inst->configDir + "scripts/" + inst->selectedContainer->name + "-" + command);
     std::ofstream out(p);
     out << "#!/bin/bash" << std::endl << "lxc exec " << inst->selectedContainer->name << " -- bash -c '" << command << "'" << std::endl;
 

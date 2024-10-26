@@ -1,26 +1,26 @@
 #include "Delete.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::Delete::Delete()
+UntitledGameSystemManager::Delete::Delete() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Delete::begin()
+void UntitledGameSystemManager::Delete::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Delete::tick(float deltaTime)
+void UntitledGameSystemManager::Delete::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (inst->selectedContainer != nullptr)
     {
         if (!ImGui::IsPopupOpen("Delete"))
             ImGui::OpenPopup("Delete");
-        if (ImGui::BeginPopupModal("Delete", (bool*)nullptr))
+        if (ImGui::BeginPopupModal("Delete", static_cast<bool*>(nullptr)))
         {
             ImGui::TextWrapped("This action WILL DELETE the currently selected container! This CANNOT be undone!");
 
@@ -29,8 +29,8 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                 inst->bWorkerActive = true;
                 inst->worker = std::thread([inst, this]() -> void
                 {
-		    UImGui::FString name;
-		    UImGui::FString configDir;
+		            UImGui::FString name;
+		            UImGui::FString configDir;
 
                     {
                         const std::lock_guard<std::mutex> lock(mutex);
@@ -63,7 +63,7 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
                     inst->outputConfig(o);
 
                     state = UIMGUI_COMPONENT_STATE_PAUSED;
-                    ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                    static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
 
                     inst->loadConfigData();
                     inst->selectedContainer = nullptr;
@@ -77,14 +77,8 @@ void UntitledGameSystemManager::Delete::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Delete::end()
+void UntitledGameSystemManager::Delete::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::Delete::~Delete()
-{
-
-}
-

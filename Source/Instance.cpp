@@ -3,7 +3,7 @@
 #include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 #include "Interfaces/RendererInterface.hpp"
 
-UntitledGameSystemManager::Instance::Instance()
+UntitledGameSystemManager::Instance::Instance() noexcept
 {
     initInfo = UImGui::InitInfo
     {
@@ -29,7 +29,7 @@ UntitledGameSystemManager::Instance::Instance()
             &connectionPopup,
             &genericErrorPopup
         },
-        .globalData = (void*)this,
+        .globalData = static_cast<void*>(this),
         .bGlobalAllocatedOnHeap = false,
         UIMGUI_INIT_INFO_DEFAULT_DIRS,
     };
@@ -47,7 +47,7 @@ UntitledGameSystemManager::Instance::Instance()
     std::filesystem::copy(UIMGUI_CONFIG_DIR"Dist", std::filesystem::path(configDir)/"scripts/");
 }
 
-void UntitledGameSystemManager::Instance::begin()
+void UntitledGameSystemManager::Instance::begin() noexcept
 {
     beginAutohandle();
     loadConfigData();
@@ -60,7 +60,7 @@ void UntitledGameSystemManager::Instance::begin()
     }
 }
 
-void UntitledGameSystemManager::Instance::tick(float deltaTime)
+void UntitledGameSystemManager::Instance::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
     if (bWorkerActive && bFinishedExecution && worker.joinable())
@@ -71,7 +71,7 @@ void UntitledGameSystemManager::Instance::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Instance::end()
+void UntitledGameSystemManager::Instance::end() noexcept
 {
     endAutohandle();
     if (worker.joinable())
@@ -80,12 +80,7 @@ void UntitledGameSystemManager::Instance::end()
         IncusDestroyConnection();
 }
 
-UntitledGameSystemManager::Instance::~Instance()
-{
-
-}
-
-void UntitledGameSystemManager::Instance::onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io)
+void UntitledGameSystemManager::Instance::onEventConfigureStyle(ImGuiStyle& style, ImGuiIO& io) noexcept
 {
 }
 
@@ -135,7 +130,7 @@ File in question: )", ULOG_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
     }
 }
 
-YAML::Node UntitledGameSystemManager::Instance::loadConfigGeneric() noexcept
+YAML::Node UntitledGameSystemManager::Instance::loadConfigGeneric()
 {
     YAML::Node out;
     try

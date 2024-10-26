@@ -1,27 +1,27 @@
 #include "Poweroff.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::Poweroff::Poweroff()
+UntitledGameSystemManager::Poweroff::Poweroff() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Poweroff::begin()
+void UntitledGameSystemManager::Poweroff::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Poweroff::tick(float deltaTime)
+void UntitledGameSystemManager::Poweroff::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
 
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (inst->selectedContainer != nullptr)
     {
         if (!ImGui::IsPopupOpen("Power off"))
             ImGui::OpenPopup("Power off");
-        if (ImGui::BeginPopupModal("Power off", (bool*)nullptr))
+        if (ImGui::BeginPopupModal("Power off", static_cast<bool*>(nullptr)))
         {
             ImGui::TextWrapped("This action will force the current container to power off! This CANNOT be reversed!");
 
@@ -37,14 +37,8 @@ void UntitledGameSystemManager::Poweroff::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Poweroff::end()
+void UntitledGameSystemManager::Poweroff::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::Poweroff::~Poweroff()
-{
-
-}
-

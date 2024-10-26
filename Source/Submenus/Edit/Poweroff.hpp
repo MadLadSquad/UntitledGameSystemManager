@@ -3,14 +3,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API Poweroff : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API Poweroff final : public UImGui::WindowComponent
     {
     public:
-        Poweroff();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~Poweroff() override;
+        Poweroff() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~Poweroff() noexcept override = default;
     private:
 
     };

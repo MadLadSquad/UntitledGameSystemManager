@@ -3,14 +3,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API Poweron : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API Poweron final : public UImGui::WindowComponent
     {
     public:
-        Poweron();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~Poweron() override;
+        Poweron() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~Poweron() noexcept override = default;
     private:
 
     };

@@ -4,14 +4,14 @@
 
 namespace UntitledGameSystemManager 
 {
-    class UIMGUI_PUBLIC_API GenericErrorPopup  : public UImGui::WindowComponent 
+    class UIMGUI_PUBLIC_API GenericErrorPopup final : public UImGui::WindowComponent
     {
     public:
-        GenericErrorPopup ();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~GenericErrorPopup () override;
+        GenericErrorPopup() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~GenericErrorPopup() noexcept override = default;
 
         UImGui::FString popupName;
         UImGui::FString popupString;

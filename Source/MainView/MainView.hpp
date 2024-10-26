@@ -3,14 +3,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API MainView : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API MainView final : public UImGui::WindowComponent
     {
     public:
-        MainView();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~MainView() override;
+        MainView() noexcept = default;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~MainView() noexcept override = default;
     private:
 
     };

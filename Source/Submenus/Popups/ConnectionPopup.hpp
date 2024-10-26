@@ -4,14 +4,14 @@
 
 namespace UntitledGameSystemManager 
 {
-    class UIMGUI_PUBLIC_API ConnectionPopup  : public UImGui::WindowComponent 
+    class UIMGUI_PUBLIC_API ConnectionPopup final : public UImGui::WindowComponent
     {
     public:
-        ConnectionPopup ();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~ConnectionPopup () override;
+        ConnectionPopup() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~ConnectionPopup() noexcept override = default;
     private:
         friend class Instance;
 

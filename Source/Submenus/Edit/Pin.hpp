@@ -3,14 +3,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API Pin : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API Pin final : public UImGui::WindowComponent
     {
     public:
-        Pin();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~Pin() override;
+        Pin() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~Pin() noexcept override = default;
     private:
 
     };

@@ -4,14 +4,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API About : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API About final : public UImGui::WindowComponent
     {
     public:
-        About();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~About() override;
+        About() noexcept;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~About() noexcept override = default;
     private:
         UImGui::Texture brandIcon;
         UImGui::Texture lxcIcon;

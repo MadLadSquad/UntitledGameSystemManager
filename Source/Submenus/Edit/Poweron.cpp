@@ -1,27 +1,27 @@
 #include "Poweron.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::Poweron::Poweron()
+UntitledGameSystemManager::Poweron::Poweron() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Poweron::begin()
+void UntitledGameSystemManager::Poweron::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Poweron::tick(float deltaTime)
+void UntitledGameSystemManager::Poweron::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
 
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (inst->selectedContainer != nullptr)
     {
         if (!ImGui::IsPopupOpen("Power on"))
             ImGui::OpenPopup("Power on");
-        if (ImGui::BeginPopupModal("Power on", (bool*)nullptr))
+        if (ImGui::BeginPopupModal("Power on", static_cast<bool*>(nullptr)))
         {
             ImGui::TextWrapped("This action will force the current container to power on! This CANNOT be reversed!");
 
@@ -37,14 +37,8 @@ void UntitledGameSystemManager::Poweron::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Poweron::end()
+void UntitledGameSystemManager::Poweron::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::Poweron::~Poweron()
-{
-
-}
-

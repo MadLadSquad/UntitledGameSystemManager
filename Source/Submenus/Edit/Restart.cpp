@@ -1,26 +1,26 @@
 #include "Restart.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::Restart::Restart()
+UntitledGameSystemManager::Restart::Restart() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Restart::begin()
+void UntitledGameSystemManager::Restart::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Restart::tick(float deltaTime)
+void UntitledGameSystemManager::Restart::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
-    auto* inst = (Instance*)UImGui::Instance::getGlobal();
+    auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
     if (inst->selectedContainer != nullptr)
     {
         if (!ImGui::IsPopupOpen("Restart"))
             ImGui::OpenPopup("Restart");
-        if (ImGui::BeginPopupModal("Restart", (bool*)nullptr))
+        if (ImGui::BeginPopupModal("Restart", static_cast<bool*>(nullptr)))
         {
             ImGui::TextWrapped("This action will force the current container to restart! This CANNOT be reversed!");
 
@@ -36,14 +36,8 @@ void UntitledGameSystemManager::Restart::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Restart::end()
+void UntitledGameSystemManager::Restart::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::Restart::~Restart()
-{
-
-}
-

@@ -3,14 +3,14 @@
 
 namespace UntitledGameSystemManager
 {
-    class UIMGUI_PUBLIC_API SidePanel : public UImGui::WindowComponent
+    class UIMGUI_PUBLIC_API SidePanel final : public UImGui::WindowComponent
     {
     public:
-        SidePanel();
-        virtual void begin() override;
-        virtual void tick(float deltaTime) override;
-        virtual void end() override;
-        virtual ~SidePanel() override;
+        SidePanel() noexcept = default;
+        virtual void begin() noexcept override;
+        virtual void tick(float deltaTime) noexcept override;
+        virtual void end() noexcept override;
+        virtual ~SidePanel() noexcept override = default;
     private:
     };
 }

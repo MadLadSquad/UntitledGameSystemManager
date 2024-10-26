@@ -1,25 +1,25 @@
 #include "Help.hpp"
 #include "Instance.hpp"
 
-UntitledGameSystemManager::Help::Help()
+UntitledGameSystemManager::Help::Help() noexcept
 {
     state = UIMGUI_COMPONENT_STATE_PAUSED;
 }
 
-void UntitledGameSystemManager::Help::begin()
+void UntitledGameSystemManager::Help::begin() noexcept
 {
     beginAutohandle();
 
 }
 
-void UntitledGameSystemManager::Help::tick(float deltaTime)
+void UntitledGameSystemManager::Help::tick(const float deltaTime) noexcept
 {
     tickAutohandle(deltaTime);
     if (!ImGui::IsPopupOpen("Info"))
         ImGui::OpenPopup("Info");
     if (ImGui::BeginPopupModal("Info", &state))
     {
-        auto* inst = (Instance*)UImGui::Instance::getGlobal();
+        const auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
 
         static UImGui::FString configDir = inst->configDir + "config/";
         static UImGui::FString scriptsDir = inst->configDir + "scripts/";
@@ -46,14 +46,8 @@ void UntitledGameSystemManager::Help::tick(float deltaTime)
     }
 }
 
-void UntitledGameSystemManager::Help::end()
+void UntitledGameSystemManager::Help::end() noexcept
 {
     endAutohandle();
 
 }
-
-UntitledGameSystemManager::Help::~Help()
-{
-
-}
-
