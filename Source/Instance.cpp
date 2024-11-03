@@ -45,6 +45,14 @@ UntitledGameSystemManager::Instance::Instance() noexcept
     if (std::filesystem::exists(configDir + "scripts/"))
         std::filesystem::remove_all(configDir + "scripts/");
     std::filesystem::copy(UIMGUI_CONFIG_DIR"Dist", std::filesystem::path(configDir)/"scripts/");
+
+    if (!std::filesystem::exists(configDir + "config/"))
+        std::filesystem::create_directory(configDir + "config/");
+    if (!std::filesystem::exists(configDir + "config/layout.yaml"))
+    {
+        std::ofstream outfile((configDir + "config/layout.yaml").c_str());
+        outfile << "containers: {}" << std::endl;
+    }
 }
 
 void UntitledGameSystemManager::Instance::begin() noexcept

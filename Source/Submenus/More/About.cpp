@@ -55,5 +55,6 @@ void UntitledGameSystemManager::About::tick(const float deltaTime) noexcept
 void UntitledGameSystemManager::About::end() noexcept
 {
     endAutohandle();
-
+    brandIcon.clear();
+    lxcIcon.clear();
 }
