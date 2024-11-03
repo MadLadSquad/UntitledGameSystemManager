@@ -15,8 +15,13 @@ else
   done
 fi
 
+if [[ "$(whoami)" != "root" ]]; then
+  echo "You need to be root to run this script"
+  exit
+fi
+
 # Enable Incus daemon
-rc-update add incus default || systemctl enable incus.service
+rc-update add incus default &> /dev/null || systemctl enable incus.service
 
 # Remove the last line from limits.conf
 sed -i '$ d' /etc/security/limits.conf
@@ -40,12 +45,16 @@ echo "root:1000000:1000000000" >> /etc/subgid
 usermod -a -G incus,incus-admin "${user}"
 
 # Start the incus service
-/etc/init.d/incus start || systemctl start incus.service
+/etc/init.d/incus start &> /dev/null || systemctl start incus.service
 
 su "${user}" -c "(xhost +local: | grep 'access control disabled' || xhost +local:) && exit"
 
 # This complicated line checks if the needed string is there, if it is continue, if it's not add it, restart pulseaudio and continue
-(grep "load-module module-native-protocol-unix auth-anonymous=1" /etc/pulse/default.pa &> /dev/null && echo -e "\x1B[32mPulseAudio already installed!\x1B[0m") || (sed -i "s/load-module module-native-protocol-unix/& auth-anonymous=1/" /etc/pulse/default.pa && su "${user}" -c "killall pulseaudio && pulseaudio &> /dev/null & disown && exit")
+if [[ -e /etc/pulse/default.pa ]]; then
+  (grep "load-module module-native-protocol-unix auth-anonymous=1" /etc/pulse/default.pa &> /dev/null && echo -e "\x1B[32mPulseAudio already installed!\x1B[0m") || (sed -i "s/load-module module-native-protocol-unix/& auth-anonymous=1/" /etc/pulse/default.pa && su "${user}" -c "killall pulseaudio && pulseaudio &> /dev/null & disown && exit")
+else
+  echo "load-module module-native-protocol-unix auth-anonymous=1" > /etc/pulse/default.pa
+fi
 
 # Start incus init with everything being default with the exception of the storage backend
 incus admin init --auto --storage-backend=dir
@@ -54,7 +63,7 @@ incus network set incusbr0 ipv6.nat=false
 incus network set incusbr0 ipv6.address=none
 
 # Restart Incus so that the network changes can take effect
-/etc/init.d/incus restart || systemctl restart incus.service
+/etc/init.d/incus restart &> /dev/null || systemctl restart incus.service
 
 echo -e "\x1B[32mPre-install finished successfully!\x1B[0m"
 echo -e "\x1B[32mAdd the following path to your PATH environment variable in order for scripts to work: ~/.config/UntitledLinuxGamingManager/scripts/\x1B[0m"
