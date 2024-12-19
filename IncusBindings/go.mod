@@ -7,6 +7,7 @@ toolchain go1.21.5
 require github.com/lxc/incus v0.7.0
 
 require (
+	github.com/go-jose/go-jose/v4 v4.0.1 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
 	github.com/gorilla/schema v1.4.1 // indirect
