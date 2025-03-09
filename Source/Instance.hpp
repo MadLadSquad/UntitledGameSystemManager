@@ -22,7 +22,7 @@
 
 
 #define INCUS_RUN_AND_CLOSE(x, y) inst->bWorkerActive = true;                                           \
-inst->worker = std::thread([&]() -> void {                                                              \
+inst->worker = std::thread([inst, this]() -> void {                                                    \
     UImGui::FString name;                                                                               \
     LOCK(name = inst->selectedContainer->name)                                                          \
     INCUS_RUN(x, name.data(), y);                                                                       \

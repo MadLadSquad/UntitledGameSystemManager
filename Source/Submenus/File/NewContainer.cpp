@@ -46,7 +46,7 @@ void UntitledGameSystemManager::NewContainer::tick(const float deltaTime)
             if (ImGui::Button("New container##button"))
             {
                 inst->bWorkerActive = true;
-                inst->worker = std::thread([=]() -> void
+                inst->worker = std::thread([this, inst]() -> void
                 {
                     // We can't just append because multithreading is retarded, instead, we need to copy the data and
                     // then append, otherwise we get a logic error exception thrown.
