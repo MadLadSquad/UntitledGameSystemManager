@@ -43,48 +43,32 @@ void UntitledGameSystemManager::Update::tick(const float deltaTime) noexcept
                 inst->bWorkerActive = true;
                 inst->worker = std::thread([container, inst, this]() -> void
                 {
-                    UImGui::FString dir;
-                    UImGui::FString type;
+                    mutex.lock();
+
+                    UImGui::FString dir = inst->configDir + "scripts/ugm-cli-update.sh";
+                    const UImGui::FString type = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
+                    const UImGui::FString version = UImGui::Renderer::getDriverVersion();
+                    UImGui::FString name = container->name;
 
                     bStartExecuting = true;
-                    UImGui::FString version;
+                    currentEvent = "Uploading installation script to container!";
 
-                    UImGui::FString name;
-
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Uploading installation script to container!";
-
-                        dir = inst->configDir;
-                        dir += "scripts/ugm-cli-update.sh";
-
-                        version = UImGui::Renderer::getDriverVersion();
-                        type = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
-
-                        name = container->name;
-                    }
+                    mutex.unlock();
                     INCUS_RUN(IncusStartContainer, name.data(), "start");
 
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Copying update script to container!";
-                    }
+                    LOCK(currentEvent = "Copying update script to container!");
                     INCUS_RUN(IncusPushFile, name.data(), "copy file", (char*)"/root/ugm-cli-update.sh", dir.data());
 
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Copying update script to container!";
-                    }
+                    LOCK(currentEvent = "Running the update script(output written to the terminal)!");
                     INCUS_RUN(IncusExec, name.data(), "execute command", ("bash{{b}}-c{{b}}/root/ugm-cli-update.sh " + type + " " + version + "  &> /root/out.txt").data(), true);
 
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Restarting container, finalising installation!";
-                    }
+                    LOCK(currentEvent = "Restarting container, finalising installation!");
                     INCUS_RUN(IncusRestartContainer, name.data(), "restart")
 
-                    state = UIMGUI_COMPONENT_STATE_PAUSED;
-                    static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                    LOCK(
+                        state = UIMGUI_COMPONENT_STATE_PAUSED;
+                        static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                    )
                 });
             }
             else

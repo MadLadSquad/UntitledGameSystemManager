@@ -14,7 +14,6 @@ namespace UntitledGameSystemManager
     private:
         bool bStartExecuting = false;
         UImGui::FString currentEvent;
-        std::mutex mutex;
     };
 }
 

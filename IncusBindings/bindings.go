@@ -6,6 +6,7 @@ import (
 	"github.com/lxc/incus/shared/api"
 	"io"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 	_ "sync"
@@ -32,6 +33,7 @@ var (
 		"/.pulse/native":        InternalPulseSocketAppendTypeHome,
 		"/run/pulse/native":     InternalPulseSocketAppendTypeNone,
 	}
+	ranXHost bool = false
 )
 
 func handleWait(operation incus.Operation) C.char {
@@ -89,6 +91,15 @@ func updateContainerState(name *C.char, action string, force bool, runOnActive b
 		return 0
 	}
 	return 1
+}
+
+//export IncusRunXHost
+func IncusRunXHost() {
+	if os.Getenv("XDG_SESSION_TYPE") == "wayland" && !ranXHost {
+		cmd := exec.Command("xhost", "+local:")
+		_ = cmd.Run()
+		ranXHost = true
+	}
 }
 
 //export IncusGetError
@@ -211,6 +222,13 @@ func IncusNewContainer(name *C.char, alias *C.char) C.char {
 		"environment.DISPLAY":         ":0",
 	}
 
+	if os.Getenv("XDG_SESSION_TYPE") == "wayland" {
+		req.Config["environment.WAYLAND_DISPLAY"] = "wayland-0"
+		req.Config["environment.QT_QPA_PLATFORM"] = "wayland"
+		req.Config["environment.XDG_RUNTIME_DIR"] = "/home/ubuntu/1000"
+		req.Config["environment.XDG_SESSION_TYPE"] = "wayland"
+	}
+
 	req.Devices = map[string]map[string]string{
 		"mygpu": {
 			"type": "gpu",
@@ -236,6 +254,11 @@ func IncusNewContainer(name *C.char, alias *C.char) C.char {
 			"security.uid": "1000",
 			"type":         "proxy",
 			"uid":          "1000",
+		},
+		"u1000": {
+			"type":   "disk",
+			"source": "/run/user/1000",
+			"path":   "/home/ubuntu/1000",
 		},
 	}
 

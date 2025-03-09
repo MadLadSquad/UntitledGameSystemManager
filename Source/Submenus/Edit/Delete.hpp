@@ -12,7 +12,6 @@ namespace UntitledGameSystemManager
         virtual void end() noexcept override;
         virtual ~Delete() noexcept override = default;
     private:
-        std::mutex mutex;
     };
 }
 

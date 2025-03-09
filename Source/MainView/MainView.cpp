@@ -87,9 +87,7 @@ void UntitledGameSystemManager::MainView::tick(const float deltaTime) noexcept
                     if (ImGui::Button("Run##buttonPlay"))
                     {
                         if (IncusGetState(inst->selectedContainer->name.data()) == 0) // Powered off
-                        {
-                            INCUS_RUN(IncusStartContainer, inst->selectedContainer->name.data(), "power on");
-                        }
+                            IncusStartContainer(inst->selectedContainer->name.data());
                         IncusExec(inst->selectedContainer->name.data(), ("su{{b}}ubuntu{{b}}-c{{b}}" + pin.first + " & disown").data(), false);
                     }
 

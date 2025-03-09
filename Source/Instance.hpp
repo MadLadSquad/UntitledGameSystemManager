@@ -4,22 +4,34 @@
 #include "MainView/Widgets.hpp"
 #include "Submenus/Widgets.hpp"
 #include <thread>
+#include <Mutex.hpp>
 #include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 
-#define INCUS_RUN(x, y, z, ...)                                                                                 \
-    if (x(y __VA_OPT__(,) __VA_ARGS__) != 0)                                                                    \
-    {                                                                                                           \
-        inst->genericErrorPopup.state = UIMGUI_COMPONENT_STATE_RUNNING;                                         \
-        inst->genericErrorPopup.popupName = UImGui::FString("Failed to " z " the following container: ") + y;   \
-        inst->genericErrorPopup.popupString = inst->genericErrorPopup.popupName + " Error: " + IncusGetError(); \
+#define LOCK(x) { mutex.lock(); x; mutex.unlock(); }
+#define INCUS_RUN(x, y, z, ...)                                                                                     \
+    if (x(y __VA_OPT__(,) __VA_ARGS__) != 0)                                                                        \
+    {                                                                                                               \
+        LOCK(                                                                                                       \
+            inst->genericErrorPopup.state = UIMGUI_COMPONENT_STATE_RUNNING;                                         \
+            inst->genericErrorPopup.popupName = UImGui::FString("Failed to " z " the following container: ") + y;   \
+            char* error = IncusGetError();                                                                          \
+            if (error != nullptr)                                                                                   \
+                inst->genericErrorPopup.popupString = inst->genericErrorPopup.popupName + " Error: " + error;       \
+        )                                                                                                            \
     }
 
 
 #define INCUS_RUN_AND_CLOSE(x, y) inst->bWorkerActive = true;                                           \
-    inst->worker = std::thread([&]() -> void { INCUS_RUN(x, inst->selectedContainer->name.data(), y);   \
-    state = UIMGUI_COMPONENT_STATE_PAUSED;                                                              \
-    ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;                              \
+inst->worker = std::thread([&]() -> void {                                                              \
+    UImGui::FString name;                                                                               \
+    LOCK(name = inst->selectedContainer->name)                                                          \
+    INCUS_RUN(x, name.data(), y);                                                                       \
+    LOCK(                                                                                               \
+        state = UIMGUI_COMPONENT_STATE_PAUSED;                                                          \
+        ((Instance*)UImGui::Instance::getGlobal())->bFinishedExecution = true;                          \
+    )                                                                                                   \
 });
+
 
 namespace UntitledGameSystemManager
 {

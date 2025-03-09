@@ -12,7 +12,6 @@ namespace UntitledGameSystemManager
         virtual void end() noexcept override;
         virtual ~Poweron() noexcept override = default;
     private:
-
     };
 }
 

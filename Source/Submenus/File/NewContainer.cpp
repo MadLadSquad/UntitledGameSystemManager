@@ -12,7 +12,7 @@ void UntitledGameSystemManager::NewContainer::begin() noexcept
 
 }
 
-void UntitledGameSystemManager::NewContainer::tick(const float deltaTime) noexcept
+void UntitledGameSystemManager::NewContainer::tick(const float deltaTime)
 {
     tickAutohandle(deltaTime);
     auto* inst = static_cast<Instance*>(UImGui::Instance::getGlobal());
@@ -46,62 +46,57 @@ void UntitledGameSystemManager::NewContainer::tick(const float deltaTime) noexce
             if (ImGui::Button("New container##button"))
             {
                 inst->bWorkerActive = true;
-                inst->worker = std::thread([&]() -> void
+                inst->worker = std::thread([=]() -> void
                 {
                     // We can't just append because multithreading is retarded, instead, we need to copy the data and
                     // then append, otherwise we get a logic error exception thrown.
-                    UImGui::FString dir = inst->configDir;
-                    UImGui::FString conf = dir;
-                    UImGui::FString type;
+                    mutex.lock();
 
-                    dir += "scripts/ugm-cli-install.sh";
+                    UImGui::FString dir = inst->configDir + "scripts/ugm-cli-install.sh";
+                    UImGui::FString localName = name;
+
+                    const UImGui::FString type = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
+                    const UImGui::FString version = UImGui::Renderer::getDriverVersion();
+
                     bStartExecuting = true;
-                    UImGui::FString version;
+                    currentEvent = "Creating a new container!";
 
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Creating a new container!";
-                        version = UImGui::Renderer::getDriverVersion();
-                        type = UImGui::Renderer::getGPUName()[0] == 'N' ? "N" : "M";
-                    }
-                    INCUS_RUN(IncusNewContainer, name.data(), "create", (char*)"archlinux");
+                    mutex.unlock();
+                    INCUS_RUN(IncusNewContainer, localName.data(), "create", (char*)"archlinux");
 
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Uploading installation script to container!";
-                    }
-                    INCUS_RUN(IncusPushFile, name.data(), "copy file", (char*)"/root/ugm-cli-install.sh", dir.data());
-                    IncusExec(name.data(), (char*)"bash{{b}}-c{{b}}ping -c 5 google.com || ping -c 5 google.com", true);
-                    IncusRestartContainer(name.data());
+                    LOCK(currentEvent = "Uploading installation script to container!");
+                    INCUS_RUN(IncusPushFile, localName.data(), "copy file", (char*)"/root/ugm-cli-install.sh", dir.data());
 
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Running installation script, may take more than 20 minutes!";
-                    }
-                    INCUS_RUN(IncusExec, name.data(), "execute installation script", ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + type + " " + version).data(), true);
+                    LOCK(currentEvent = "Checking for network connection!");
+                    INCUS_RUN(IncusExec, localName.data(), "check for network connection in", (char*)"bash{{b}}-c{{b}}ping -c 5 google.com || ping -c 5 google.com", true);
 
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        currentEvent = "Restarting container, finalising installation!";
-                    }
-                    INCUS_RUN(IncusRestartContainer, name.data(), "restart");
+                    LOCK(currentEvent = "Restarting container!");
+                    INCUS_RUN(IncusRestartContainer, localName.data(), "restart");
 
-                    YAML::Node out;
-                    out["container"] = name;
-                    out["pins"].push_back("steam");
-                    out["pins"].push_back("lutris");
-                    out["pins"].push_back("firefox");
+                    LOCK(currentEvent = "Running installation script, may take more than 20 minutes!");
+                    INCUS_RUN(IncusExec, localName.data(), "execute installation script", ("bash{{b}}-c{{b}}/root/ugm-cli-install.sh " + type + " " + version).data(), true);
 
-                    YAML::Node o = inst->loadConfigGeneric();
-                    auto cont = o["containers"];
-                    if (cont)
-                    {
-                        cont.push_back(out);
-                    }
-                    inst->outputConfig(o);
+                    LOCK(currentEvent = "Restarting container, finalising installation!");
+                    INCUS_RUN(IncusRestartContainer, localName.data(), "restart");
 
-                    state = UIMGUI_COMPONENT_STATE_PAUSED;
-                    static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                    LOCK(
+                        YAML::Node out{};
+                        out["container"] = name;
+                        out["pins"].push_back("steam");
+                        out["pins"].push_back("lutris");
+                        out["pins"].push_back("firefox");
+
+                        YAML::Node o = inst->loadConfigGeneric();
+                        if (o["containers"])
+                        {
+                            o["containers"].SetStyle(YAML::EmitterStyle::Block);
+                            o["containers"].push_back(out);
+                        }
+                        inst->outputConfig(o);
+
+                        state = UIMGUI_COMPONENT_STATE_PAUSED;
+                        static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                    )
                 });
             }
             else

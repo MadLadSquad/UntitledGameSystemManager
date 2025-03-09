@@ -29,44 +29,39 @@ void UntitledGameSystemManager::Delete::tick(const float deltaTime) noexcept
                 inst->bWorkerActive = true;
                 inst->worker = std::thread([inst, this]() -> void
                 {
-		            UImGui::FString name;
-		            UImGui::FString configDir;
-
-                    {
-                        const std::lock_guard<std::mutex> lock(mutex);
-                        name = inst->selectedContainer->name;
-                        configDir = inst->configDir;
-                    }
-
+                    mutex.lock();
+		            UImGui::FString name = inst->selectedContainer->name;
+                    mutex.unlock();
                     INCUS_RUN(IncusDeleteContainer, name.data(), "delete");
 
-                    const std::lock_guard<std::mutex> lock(mutex);
-                    YAML::Node o = inst->loadConfigGeneric();
-                    YAML::Node cont = o["containers"];
-                    if (cont)
-                    {
-		        UImGui::TVector<YAML::Node> containers;
-                        for (const YAML::Node& a : cont)
+                    LOCK(
+                        YAML::Node o = inst->loadConfigGeneric();
+                        YAML::Node cont = o["containers"];
+                        if (cont)
                         {
-                            if (a["container"] && a["pins"])
+		                    UImGui::TVector<YAML::Node> containers;
+                            for (const YAML::Node& a : cont)
                             {
-                                auto r = a["container"].as<UImGui::FString>();
-                                if (name == r)
-                                    continue;
+                                if (a["container"] && a["pins"])
+                                {
+                                    auto r = a["container"].as<UImGui::FString>();
+                                    if (name == r)
+                                        continue;
+                                }
+
+                                containers.push_back(a);
                             }
-
-                            containers.push_back(a);
+                            o["containers"] = containers;
                         }
-                        o["containers"] = containers;
-                    }
 
-                    inst->outputConfig(o);
+                        inst->outputConfig(o);
 
-                    state = UIMGUI_COMPONENT_STATE_PAUSED;
-                    static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
+                        state = UIMGUI_COMPONENT_STATE_PAUSED;
+                        static_cast<Instance*>(UImGui::Instance::getGlobal())->bFinishedExecution = true;
 
-                    inst->loadConfigData();
-                    inst->selectedContainer = nullptr;
+                        inst->loadConfigData();
+                        inst->selectedContainer = nullptr;
+                    )
                 });
             }
             ImGui::SameLine();

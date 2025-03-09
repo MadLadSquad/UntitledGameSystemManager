@@ -1,4 +1,6 @@
 layout-location: DefaultLayout
+load-layout: true                               # Whether to load the layout file ImGui writes to
+save-layout: true                               # Whether to automatically save to the layout file ImGui writes to
 icon: untitled-game-system-manager.png
 width: 800
 height: 600

@@ -51,7 +51,7 @@ UntitledGameSystemManager::Instance::Instance() noexcept
     if (!std::filesystem::exists(configDir + "config/layout.yaml"))
     {
         std::ofstream outfile((configDir + "config/layout.yaml").c_str());
-        outfile << "containers: {}" << std::endl;
+        outfile << "containers: []" << std::endl;
     }
 }
 
@@ -66,6 +66,7 @@ void UntitledGameSystemManager::Instance::begin() noexcept
         connectionPopup.state = UIMGUI_COMPONENT_STATE_RUNNING;
         connectionPopup.error = IncusGetError();
     }
+    IncusRunXHost();
 }
 
 void UntitledGameSystemManager::Instance::tick(const float deltaTime) noexcept

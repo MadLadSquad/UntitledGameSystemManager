@@ -56,6 +56,7 @@ fi
 pacman -S --noconfirm pulseaudio steam lutris firefox wine winetricks python-pip python-pipx python-setuptools python-virtualenv mpv thunar kitty vim ibus git base-devel
 # Create an ubuntu user on arch for compatibility reasons lmao
 useradd -m ubuntu && usermod -G wheel,audio,video ubuntu
+chown ubuntu:ubuntu /home/ubuntu
 
 # Install protontricks trough pipx
 pipx install protontricks && pipx ensurepath
@@ -63,7 +64,7 @@ pipx install protontricks && pipx ensurepath
 sed -i 's/; enable-shm = yes/enable-shm = no/g' /etc/pulse/client.conf
 sed -i 's/autospawn = no/autospawn = yes/g' /etc/pulse/client.conf
 
-pacman -S --noconfirm xdg-utils git perl-file-mimeinfo dolphin
+pacman -S --noconfirm xdg-utils git perl-file-mimeinfo dolphin xwayland weston mutter
 
 # Set locale to en_US
 sed -i 's/#en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/g' /etc/locale.gen
@@ -71,6 +72,9 @@ locale-gen
 localectl set-locale LANG=en_US.UTF-8
 unset LANG
 source /etc/profile.d/locale.sh
+
+# Adds needed user directories
+su ubuntu -c "xdg-user-dirs-update"
 
 # Install some utility client applications
 pacman -S --noconfirm dolphin vscode gimp discord teamspeak3 pacman-contrib base-devel reflector rsync papirus-icon-theme breeze-gtk kde-gtk-config

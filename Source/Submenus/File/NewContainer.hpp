@@ -8,14 +8,12 @@ namespace UntitledGameSystemManager
     public:
         NewContainer() noexcept;
         virtual void begin() noexcept override;
-        virtual void tick(float deltaTime) noexcept override;
+        virtual void tick(float deltaTime) override;
         virtual void end() noexcept override;
         virtual ~NewContainer() noexcept override = default;
     private:
         bool bStartExecuting = false;
         UImGui::FString currentEvent;
-
-        std::mutex mutex;
     };
 }
 
