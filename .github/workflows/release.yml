@@ -31,7 +31,7 @@ jobs:
         run: |
           rm -rf .git/
           cd IncusBindings && go mod vendor && cd ..
-          ttar cfJ ${{ steps.tag.outputs.out }}.tar.xz . --transform "s,^,${{ steps.tag.outputs.tag }}/," * || echo "Might have failed"
+          tar cfJ ${{ steps.tag.outputs.out }}.tar.xz . --transform "s,^,${{ steps.tag.outputs.tag }}/," * || echo "Might have failed"
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
