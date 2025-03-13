@@ -21,17 +21,21 @@ jobs:
           git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
       - name: Get tag
         shell: bash
-        id: tag
+        id: mod
         run: |
           tag="${{ github.ref_name }}"
-          tag="${tag:1}"
-          echo "out=untitled-game-system-manager-${tag}" >> $GITHUB_OUTPUT
+          echo "out=untitled-game-system-manager-${tag:1}" >> $GITHUB_OUTPUT
       - name: Create archive
         shell: bash
         run: |
           rm -rf .git/
           cd IncusBindings && go mod vendor && cd ..
-          tar cfJ ${{ steps.tag.outputs.out }}.tar.xz . --transform "s,^,${{ steps.tag.outputs.tag }}/," * || echo "Might have failed"
+
+          mkdir "${{ steps.mod.outputs.out }}" || exit
+          mv * ${{ steps.mod.outputs.out }}/ || echo "Errors in move"
+          mv .* "${{ steps.mod.outputs.out }}" || echo "Errors in move"
+
+          tar cfJ ${{ steps.mod.outputs.out }}.tar.xz ${{ steps.mod.outputs.out }} || echo "Might have failed"
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
