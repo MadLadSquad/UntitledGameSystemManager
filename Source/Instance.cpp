@@ -1,5 +1,4 @@
 #include "Instance.hpp"
-#include <yaml-cpp/yaml.h>
 #include "IncusBindings/libUGM_Incus_InternalFuncs.h"
 #include "Interfaces/RendererInterface.hpp"
 
@@ -98,18 +97,29 @@ void UntitledGameSystemManager::Instance::loadConfigData()
     containers.clear();
     selectedContainer = nullptr;
 
-    YAML::Node out = loadConfigGeneric();
-    auto cont = out["containers"];
-    if (cont)
+    ryml::Tree tree;
+
+    auto result = loadConfigGeneric(tree);
+
+    auto cont = result["containers"];
+    if (keyValid(cont) && cont.is_seq())
     {
-        for (YAML::Node a : cont)
+        cont.clear_style();
+        for (auto a : cont.children())
         {
-            if (a["container"] && a["pins"])
+            auto container = a["container"];
+            auto pins = a["pins"];
+
+            if (keyValid(container) && keyValid(pins) && pins.is_seq())
             {
                 containers.emplace_back();
-                for (auto& f : a["pins"].as<UImGui::TVector<UImGui::FString>>())
+
+                UImGui::TVector<UImGui::FString> data{};
+                pins >> data;
+                for (auto& f : data)
                     containers.back().pins.emplace_back( f, false );
-                containers.back().name = a["container"].as<UImGui::FString>();
+
+                container >> containers.back().name;
             }
             else
             {
@@ -139,22 +149,25 @@ File in question: )", ULOG_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
     }
 }
 
-YAML::Node UntitledGameSystemManager::Instance::loadConfigGeneric()
+ryml::NodeRef UntitledGameSystemManager::Instance::loadConfigGeneric(ryml::Tree& tree)
 {
-    YAML::Node out;
-    try
-    {
-        out = YAML::LoadFile((configDir + "config/layout.yaml").c_str());
-    }
-    catch (YAML::BadFile&)
+    const auto string = UImGui::Utility::loadFileToString(configDir + "config/layout.yaml");
+    if (string.empty())
     {
         Logger::log("Couldn't open the config file at: ", ULOG_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
         std::terminate();
     }
-    return out;
+
+    tree = ryml::parse_in_arena(string.c_str());
+    if (tree.empty())
+    {
+        Logger::log("Couldn't parse the config file at: ", ULOG_LOG_TYPE_ERROR, configDir, "config/layout.yaml");
+        std::terminate();
+    }
+    return tree.rootref();
 }
 
-void UntitledGameSystemManager::Instance::outputConfig(const YAML::Node& node) const noexcept
+void UntitledGameSystemManager::Instance::outputConfig(const ryml::NodeRef node) const noexcept
 {
     std::ofstream file((configDir + "config/layout.yaml").c_str());
     file << node;

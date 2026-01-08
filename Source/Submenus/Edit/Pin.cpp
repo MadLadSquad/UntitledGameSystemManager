@@ -32,24 +32,41 @@ void UntitledGameSystemManager::Pin::tick(const float deltaTime) noexcept
 
             if (ImGui::Button("Create"))
             {
-                YAML::Node o = inst->loadConfigGeneric();
+                ryml::Tree tree{};
+                auto o = inst->loadConfigGeneric(tree);
+
                 auto cont = o["containers"];
-                if (cont)
+                if (keyValid(cont) && cont.is_seq())
                 {
-                    for (YAML::Node a : cont)
+                    cont.clear_style();
+
+                    for (auto a : cont.children())
                     {
-                        if (a["container"] && a["pins"] && a["container"].as<UImGui::FString>() == inst->selectedContainer->name)
+                        auto c = a["container"];
+                        auto pins = a["pins"];
+
+                        if (keyValid(c) && keyValid(pins) && pins.is_seq())
                         {
-                            a["pins"].push_back(cmd);
-                            break;
+                            UImGui::FString name{};
+                            c >> name;
+
+                            if (name == inst->selectedContainer->name)
+                            {
+                                UImGui::TVector<UImGui::FString> arr{};
+                                pins >> arr;
+
+                                arr.push_back(cmd);
+
+                                pins.clear_children();
+                                pins << arr;
+                                break;
+                            }
                         }
                     }
                 }
-                o["containers"] = cont;
-
                 inst->outputConfig(o);
+                inst->selectedContainer->pins.push_back({ cmd, false });
 
-                inst->loadConfigData();
                 cmd.clear();
                 state = UIMGUI_COMPONENT_STATE_PAUSED;
             }

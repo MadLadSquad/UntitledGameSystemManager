@@ -35,25 +35,31 @@ void UntitledGameSystemManager::Delete::tick(const float deltaTime) noexcept
                     INCUS_RUN(IncusDeleteContainer, name.data(), "delete");
 
                     LOCK(
-                        YAML::Node o = inst->loadConfigGeneric();
-                        YAML::Node cont = o["containers"];
-                        if (cont)
+                        ryml::Tree tree{};
+                        auto o = inst->loadConfigGeneric(tree);
+
+                        auto cont = o["containers"];
+                        if (keyValid(cont) && cont.is_seq())
                         {
-		                    UImGui::TVector<YAML::Node> containers;
-                            for (const YAML::Node& a : cont)
+                            cont.clear_style();
+
+                            for (auto a : cont.children())
                             {
-                                if (a["container"] && a["pins"])
+                                auto c = a["container"];
+                                auto pins = a["pins"];
+
+                                if (keyValid(c) && keyValid(pins) && pins.is_seq())
                                 {
-                                    auto r = a["container"].as<UImGui::FString>();
-                                    if (name == r)
-                                        continue;
+                                    UImGui::FString r{};
+                                    c >> r;
+                                    if (r == name)
+                                    {
+                                        cont.remove_child(a);
+                                        break;
+                                    }
                                 }
-
-                                containers.push_back(a);
                             }
-                            o["containers"] = containers;
                         }
-
                         inst->outputConfig(o);
 
                         state = UIMGUI_COMPONENT_STATE_PAUSED;

@@ -75,8 +75,8 @@ namespace UntitledGameSystemManager
 
         GenericErrorPopup genericErrorPopup{};
 
-        YAML::Node loadConfigGeneric();
-        void outputConfig(const YAML::Node& node) const noexcept;
+        ryml::NodeRef loadConfigGeneric(ryml::Tree& tree);
+        void outputConfig(ryml::NodeRef node) const noexcept;
     private:
         friend class MainBar;
         friend class MainView;

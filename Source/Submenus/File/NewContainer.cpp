@@ -80,17 +80,24 @@ void UntitledGameSystemManager::NewContainer::tick(const float deltaTime)
                     INCUS_RUN(IncusRestartContainer, localName.data(), "restart");
 
                     LOCK(
-                        YAML::Node out{};
-                        out["container"] = name;
-                        out["pins"].push_back("steam");
-                        out["pins"].push_back("lutris");
-                        out["pins"].push_back("firefox");
+                        ryml::Tree tree{};
+                        auto o = inst->loadConfigGeneric(tree);
 
-                        YAML::Node o = inst->loadConfigGeneric();
-                        if (o["containers"])
+                        auto cont = o["containers"];
+                        if (keyValid(cont) && cont.is_seq())
                         {
-                            o["containers"].SetStyle(YAML::EmitterStyle::Block);
-                            o["containers"].push_back(out);
+                            cont.clear_style();
+
+                            auto child = cont.append_child();
+                            child |= ryml::MAP;
+
+                            child["container"] << name;
+
+                            auto pins = child["pins"];
+                            pins |= ryml::SEQ;
+                            pins.append_child() << "steam";
+                            pins.append_child() << "lutris";
+                            pins.append_child() << "firefox";
                         }
                         inst->outputConfig(o);
 

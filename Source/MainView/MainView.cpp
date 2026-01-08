@@ -34,31 +34,62 @@ void UntitledGameSystemManager::MainView::tick(const float deltaTime) noexcept
                         ++it;
                 }
 
-                YAML::Node o = inst->loadConfigGeneric();
-                auto cont = o["containers"];
-                if (cont)
-                {
-                    for (YAML::Node a : cont)
-                    {
-                        if (a["container"] && a["pins"] && a["container"].as<UImGui::FString>() == inst->selectedContainer->name)
-                        {
-                            YAML::Node tmp;
-                            for (auto& f : pins)
-                                tmp.push_back(f.first);
-                            if (tmp.IsNull())
-                                tmp.push_back("steam");
+                ryml::Tree tree{};
+                auto o = inst->loadConfigGeneric(tree);
 
-                            a["pins"] = tmp;
-                            break;
+                auto cont = o["containers"];
+                if (keyValid(cont) && cont.is_seq())
+                {
+                    cont.clear_style();
+                    for (auto a : cont.children())
+                    {
+                        auto n = a["container"];
+                        auto p = a["pins"];
+
+                        if (keyValid(n) && keyValid(p) && p.is_seq())
+                        {
+                            UImGui::FString str{};
+                            n >> str;
+
+                            if (str == inst->selectedContainer->name)
+                            {
+                                p.clear_children();
+
+                                for (const auto& s : pins)
+                                    p.append_child() << s.first;
+                                break;
+                            }
                         }
                     }
                 }
-                o["containers"] = cont;
-
                 inst->outputConfig(o);
             }
             else if (ImGui::MenuItem("* Refresh"))
+            {
+                const auto name = inst->selectedContainer->name;
                 inst->loadConfigData();
+
+                // Since loadConfigData sets the selected container to null, we can automatically select the previously
+                // selected container again for a smooth refresh
+                bool bFound = false;
+                for (auto& c : inst->containers)
+                {
+                    if (c.name == name)
+                    {
+                        inst->selectedContainer = &c;
+                        bFound = true;
+                        break;
+                    }
+                }
+
+                // If for some reason the config doesn't contain the current container end early
+                if (!bFound)
+                {
+                    ImGui::EndMenuBar();
+                    ImGui::End();
+                    return;
+                }
+            }
             else if (ImGui::MenuItem("+ Generate script"))
             {
                 auto& pins = inst->selectedContainer->pins;
@@ -71,7 +102,7 @@ void UntitledGameSystemManager::MainView::tick(const float deltaTime) noexcept
 
             // This is just for keeping track of ids
             size_t i = 0;
-            if (ImGui::BeginTable("MainTable", 2))
+            if (inst->selectedContainer != nullptr && ImGui::BeginTable("MainTable", 2))
             {
                 ImGui::TableNextColumn();
                 for (auto& pin : inst->selectedContainer->pins)
