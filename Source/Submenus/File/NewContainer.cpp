@@ -89,12 +89,12 @@ void UntitledGameSystemManager::NewContainer::tick(const float deltaTime)
                             cont.clear_style();
 
                             auto child = cont.append_child();
-                            child |= ryml::MAP;
+                            child.set_map();
 
                             child["container"] << name;
 
                             auto pins = child["pins"];
-                            pins |= ryml::SEQ;
+                            pins.set_seq();
                             pins.append_child() << "steam";
                             pins.append_child() << "lutris";
                             pins.append_child() << "firefox";
