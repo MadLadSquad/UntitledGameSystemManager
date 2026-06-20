@@ -91,13 +91,13 @@ void UntitledGameSystemManager::NewContainer::tick(const float deltaTime)
                             auto child = cont.append_child();
                             child.set_map();
 
-                            child["container"] << name;
+                            child["container"].save(name);
 
                             auto pins = child["pins"];
                             pins.set_seq();
-                            pins.append_child() << "steam";
-                            pins.append_child() << "lutris";
-                            pins.append_child() << "firefox";
+                            pins.append_child().save("steam");
+                            pins.append_child().save("lutris");
+                            pins.append_child().save("firefox");
                         }
                         inst->outputConfig(o);
 

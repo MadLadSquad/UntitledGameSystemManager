@@ -115,11 +115,11 @@ void UntitledGameSystemManager::Instance::loadConfigData()
                 containers.emplace_back();
 
                 UImGui::TVector<UImGui::FString> data{};
-                pins >> data;
+                pins.load(&data);
                 for (auto& f : data)
                     containers.back().pins.emplace_back( f, false );
 
-                container >> containers.back().name;
+                container.load(&containers.back().name);
             }
             else
             {

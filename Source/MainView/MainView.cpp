@@ -49,14 +49,14 @@ void UntitledGameSystemManager::MainView::tick(const float deltaTime) noexcept
                         if (keyValid(n) && keyValid(p) && p.is_seq())
                         {
                             UImGui::FString str{};
-                            n >> str;
+                            n.load(&str);
 
                             if (str == inst->selectedContainer->name)
                             {
                                 p.clear_children();
 
                                 for (const auto& s : pins)
-                                    p.append_child() << s.first;
+                                    p.append_child().save(s.first);
                                 break;
                             }
                         }

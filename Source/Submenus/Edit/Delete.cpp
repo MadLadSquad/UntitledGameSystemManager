@@ -51,7 +51,7 @@ void UntitledGameSystemManager::Delete::tick(const float deltaTime) noexcept
                                 if (keyValid(c) && keyValid(pins) && pins.is_seq())
                                 {
                                     UImGui::FString r{};
-                                    c >> r;
+                                    c.load(&r);
                                     if (r == name)
                                     {
                                         cont.remove_child(a);

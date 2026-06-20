@@ -48,17 +48,17 @@ void UntitledGameSystemManager::Pin::tick(const float deltaTime) noexcept
                         if (keyValid(c) && keyValid(pins) && pins.is_seq())
                         {
                             UImGui::FString name{};
-                            c >> name;
+                            c.load(&name);
 
                             if (name == inst->selectedContainer->name)
                             {
                                 UImGui::TVector<UImGui::FString> arr{};
-                                pins >> arr;
+                                pins.load(&arr);
 
                                 arr.push_back(cmd);
 
                                 pins.clear_children();
-                                pins << arr;
+                                pins.save(arr);
                                 break;
                             }
                         }
